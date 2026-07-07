@@ -33,46 +33,50 @@ public object G2pLangTag {
  * Implémentation Free du [G2p] : modèle **CharsiuG2P** (ByT5 seq2seq, licence MIT)
  * exécuté via onnxruntime, décodage glouton (argmax) mot par mot.
  *
- * ⚠ NÉCESSITE un modèle exporté (`charsiu_g2p.onnx`) + validation ON-DEVICE : tant
- * que l'export/asset n'existe pas, cette classe compile mais n'est pas exerçable
- * (aucun test unitaire ne l'instancie — la logique testable, ByT5Tokenizer /
- * PhonemePipeline / PhonemePost, l'est séparément).
+ * Contrat d'export (optimum, `use_cache=False`) — VALIDÉ au banc : deux modèles ONNX.
+ *   encoder_model.onnx : `input_ids` i64 [1,S], `attention_mask` i64 [1,S]
+ *                        → `last_hidden_state` f32 [1,S,256]
+ *   decoder_model.onnx : `input_ids` i64 [1,T], `encoder_attention_mask` i64 [1,S],
+ *                        `encoder_hidden_states` f32 [1,S,256] → `logits` f32 [1,T,384]
+ * L'encodeur tourne une fois ; le décodeur est ré-alimenté avec toute la séquence
+ * générée à chaque pas (O(n²), mais les mots sont courts — pas de cache KV côté Kotlin).
  *
- * Contrat d'export attendu (optimum, `use_cache=False`, encodeur+décodeur fusionnés) :
- *   entrées  : [inputIdsName] int64 [1,S], [attentionMaskName] int64 [1,S],
- *              [decoderInputIdsName] int64 [1,T]
- *   sortie 0 : logits float32 [1,T,V]
- * Le décodeur est ré-alimenté avec toute la séquence à chaque pas (O(n²) mais les
- * mots sont courts) — pas de gestion de cache KV côté Kotlin.
+ * Prétraitement VALIDÉ : entrée encodeur SANS `eos` (`ByT5Tokenizer.encode`, addEos=false)
+ * → décodage identique à PyTorch HF (6/6). `decoder_start_token_id = pad(0)`.
+ *
+ * ⚠ Nécessite les assets exportés + validation on-device ; aucun test unitaire ne
+ * l'instancie (la logique testable — ByT5Tokenizer / PhonemePipeline / PhonemePost —
+ * l'est séparément).
  */
 public class CharsiuG2p(
     private val env: OrtEnvironment,
-    private val session: OrtSession,
+    private val encoder: OrtSession,
+    private val decoder: OrtSession,
     private val maxTokens: Int = 64,
-    private val inputIdsName: String = "input_ids",
-    private val attentionMaskName: String = "attention_mask",
-    private val decoderInputIdsName: String = "decoder_input_ids",
 ) : G2p, Closeable {
 
     override fun phonemize(word: String, lang: String): String {
         if (word.isEmpty()) return ""
-        val enc = ByT5Tokenizer.encode(G2pLangTag.prompt(lang, word))
-        val encIds = enc.reshape1xN()
-        val encMask = LongArray(enc.size) { 1L }.reshape1xN()
+        val inputIds = ByT5Tokenizer.encode(G2pLangTag.prompt(lang, word)).reshape1xN()
+        val mask = LongArray(inputIds[0].size) { 1L }.reshape1xN()
 
-        val encTensor = OnnxTensor.createTensor(env, encIds)
-        val maskTensor = OnnxTensor.createTensor(env, encMask)
+        val idsTensor = OnnxTensor.createTensor(env, inputIds)
+        val maskTensor = OnnxTensor.createTensor(env, mask)
+        val encHidden = encoder.run(
+            mapOf("input_ids" to idsTensor, "attention_mask" to maskTensor),
+        )
         try {
+            val hidden = encHidden[0] as OnnxTensor      // last_hidden_state [1,S,256]
             val generated = ArrayList<Long>(maxTokens)
-            var decoder = longArrayOf(ByT5Tokenizer.PAD)   // decoder_start_token_id = pad(0)
+            var decIn = longArrayOf(ByT5Tokenizer.PAD)   // decoder_start = pad(0)
             for (step in 0 until maxTokens) {
-                val decTensor = OnnxTensor.createTensor(env, decoder.reshape1xN())
+                val decTensor = OnnxTensor.createTensor(env, decIn.reshape1xN())
                 val next: Long = try {
-                    session.run(
+                    decoder.run(
                         mapOf(
-                            inputIdsName to encTensor,
-                            attentionMaskName to maskTensor,
-                            decoderInputIdsName to decTensor,
+                            "input_ids" to decTensor,
+                            "encoder_attention_mask" to maskTensor,
+                            "encoder_hidden_states" to hidden,
                         ),
                     ).use { result -> argmaxLastStep(result[0].value) }
                 } finally {
@@ -80,21 +84,21 @@ public class CharsiuG2p(
                 }
                 if (next == ByT5Tokenizer.EOS) break
                 generated.add(next)
-                decoder += next
+                decIn += next
             }
             return ByT5Tokenizer.decode(generated.toLongArray())
         } finally {
-            encTensor.close()
+            encHidden.close()
+            idsTensor.close()
             maskTensor.close()
         }
     }
 
-    /** logits [1,T,V] → argmax du dernier pas T-1. */
+    /** logits [1,T,384] → argmax du dernier pas T-1. */
     @Suppress("UNCHECKED_CAST")
     private fun argmaxLastStep(value: Any?): Long {
         val logits = value as Array<Array<FloatArray>>   // [1][T][V]
-        val step = logits[0]
-        val last = step[step.size - 1]
+        val last = logits[0][logits[0].size - 1]
         var bestId = 0
         var bestVal = last[0]
         for (i in 1 until last.size) if (last[i] > bestVal) { bestVal = last[i]; bestId = i }
@@ -102,7 +106,8 @@ public class CharsiuG2p(
     }
 
     override fun close() {
-        session.close()
+        encoder.close()
+        decoder.close()
     }
 
     private companion object {

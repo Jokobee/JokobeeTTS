@@ -21,14 +21,18 @@ public object ByT5Tokenizer {
     private const val BYTE_OFFSET: Int = 3
 
     /**
-     * Texte → ids d'entrée de l'encodeur : octets UTF-8 décalés de +3, puis `</s>`.
-     * (T5 ajoute l'eos en fin d'entrée ; pas de bos.)
+     * Texte → ids d'entrée de l'encodeur : octets UTF-8 décalés de +3.
+     *
+     * ⚠ `addEos = false` par défaut : CharsiuG2P encode ses prompts avec
+     * `add_special_tokens=False` (aucun `</s>` sur l'entrée). VALIDÉ au banc d'export :
+     * sans eos → décodage ONNX identique à PyTorch (6/6) ; avec eos → qualité dégradée
+     * (3/6). Le drapeau reste disponible pour un usage ByT5 générique.
      */
-    public fun encode(text: String): LongArray {
+    public fun encode(text: String, addEos: Boolean = false): LongArray {
         val bytes = text.toByteArray(Charsets.UTF_8)
-        val ids = LongArray(bytes.size + 1)
+        val ids = LongArray(bytes.size + if (addEos) 1 else 0)
         for (i in bytes.indices) ids[i] = (bytes[i].toInt() and 0xFF).toLong() + BYTE_OFFSET
-        ids[bytes.size] = EOS
+        if (addEos) ids[bytes.size] = EOS
         return ids
     }
 
