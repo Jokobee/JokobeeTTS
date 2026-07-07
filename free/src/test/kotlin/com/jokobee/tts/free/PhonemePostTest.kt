@@ -1,0 +1,35 @@
+package com.jokobee.tts.free
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.text.Normalizer
+
+/** PhonemePost — NFD imposé (attendu du tokeniseur Kokoro) + pas de stripping. */
+class PhonemePostTest {
+
+    @Test fun forcesNfdDecomposition() {
+        // "é" composé (1 code point) → "e" + U+0301 (2 code points) après NFD
+        val out = PhonemePost.apply("é", "fr")
+        assertEquals(2, out.length)
+        assertEquals('e', out[0])
+        assertEquals('́', out[1])
+        assertTrue(Normalizer.isNormalized(out, Normalizer.Form.NFD))
+    }
+
+    @Test fun keepsSuprasegmentals() {
+        // stress ˈ ˌ et tons ne sont pas strippés
+        val ipa = "ˈhɛˌloʊ"
+        assertEquals(Normalizer.normalize(ipa, Normalizer.Form.NFD), PhonemePost.apply(ipa, "en_US"))
+    }
+
+    @Test fun unknownLangIsNfdOnly() {
+        val ipa = "abc"
+        assertEquals("abc", PhonemePost.apply(ipa, "xx"))
+    }
+
+    @Test fun idempotentModuloNfd() {
+        val once = PhonemePost.apply("naïve ɑ̃", "fr")
+        assertEquals(once, PhonemePost.apply(once, "fr"))
+    }
+}
