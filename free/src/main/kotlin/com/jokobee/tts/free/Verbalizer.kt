@@ -25,7 +25,14 @@ public interface Verbalizer {
     public fun spellout(n: Long, locale: String, ruleset: String): String
 }
 
-/** Implémentation icu4j (production + test, sortie identique). Purge soft hyphens. */
+/**
+ * Implémentation icu4j (production + test, sortie identique). Purge soft hyphens.
+ *
+ * TODO(v1.1) : icu4j embarqué (+~13 Mo pré-R8) parce qu'`android.icu` ne publie PAS
+ * `RuleBasedNumberFormat`. Cible v1.1 : impl maison compacte (nombre→mots des 6
+ * latines) OU proguard/R8 ciblé pour repasser l'AAR sous 5 Mo. Réversible : le reste
+ * du code dépend de l'interface [Verbalizer], pas de cette classe.
+ */
 public class IcuVerbalizer : Verbalizer {
 
     private val cache = HashMap<String, RuleBasedNumberFormat>()
