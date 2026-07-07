@@ -3,9 +3,11 @@ package com.jokobee.tts.free
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
+import android.content.Context
 import com.jokobee.tts.core.G2p
 import com.jokobee.tts.core.UnsupportedLanguageException
 import java.io.Closeable
+import java.io.File
 
 /**
  * Correspondance locale JokobeeTTS → étiquette de langue CharsiuG2P (préfixe `<tag>`).
@@ -110,7 +112,47 @@ public class CharsiuG2p(
         decoder.close()
     }
 
-    private companion object {
+    public companion object {
         private fun LongArray.reshape1xN(): Array<LongArray> = arrayOf(this)
+
+        /** Nom du sous-dossier assets ET du dossier de cache téléchargé. */
+        public const val G2P_DIR: String = "g2p"
+
+        /**
+         * Charge CharsiuG2p, avec **priorité au modèle TÉLÉCHARGÉ** (upgrade Pro tiny→small)
+         * sur l'asset embarqué. Sessions construites une fois ici, réutilisées ensuite.
+         *
+         * Ordre : `getExternalFilesDir("g2p")/<name>` (déposé par le Model Manager Pro)
+         * s'il existe, sinon l'asset `assets/g2p/<name>` (tiny int8, Free — offline direct).
+         * Zéro migration : déposer le small dans le cache le fait prendre le pas sur le tiny,
+         * sans changement de code.
+         */
+        public fun fromAssetsOrCache(
+            context: Context,
+            env: OrtEnvironment,
+            options: OrtSession.SessionOptions = OrtSession.SessionOptions(),
+            maxTokens: Int = 64,
+        ): CharsiuG2p = CharsiuG2p(
+            env,
+            loadSession(context, env, "encoder_model.onnx", options),
+            loadSession(context, env, "decoder_model.onnx", options),
+            maxTokens,
+        )
+
+        private fun loadSession(
+            context: Context,
+            env: OrtEnvironment,
+            name: String,
+            options: OrtSession.SessionOptions,
+        ): OrtSession {
+            val cached = context.getExternalFilesDir(G2P_DIR)?.let { File(it, name) }
+            return if (cached != null && cached.exists()) {
+                env.createSession(cached.absolutePath, options)     // modèle téléchargé (Pro)
+            } else {
+                context.assets.open("$G2P_DIR/$name").use {          // asset embarqué (Free)
+                    env.createSession(it.readBytes(), options)
+                }
+            }
+        }
     }
 }

@@ -20,6 +20,14 @@ ce repo par **composite build**.
 - Dépendances shippables : `android.icu` (plateforme) + CharsiuG2P (MIT) + ONNX
   Runtime (MIT). **Zéro GPL/LGPL** (voir `THIRD-PARTY-NOTICES.md`).
 
+## G2P (grapheme → phoneme)
+Le modèle **CharsiuG2P ByT5 *tiny* int8** (~20 Mo, MIT) est **embarqué** dans
+`free/src/main/assets/g2p/` (via Git LFS) → phonémisation **offline out-of-the-box**,
+zéro réseau. Chargé paresseusement par `CharsiuG2p.fromAssetsOrCache(context, env)`
+(session réutilisée). **Chemin d'upgrade** : déposer le variant *small* (meilleure
+qualité) dans `getExternalFilesDir("g2p")` — le cache local prend automatiquement le pas
+sur l'asset embarqué, sans changement de code (feature du Model Manager Pro).
+
 ## Build
 ```
 ./gradlew :free:assembleRelease
