@@ -22,6 +22,10 @@ kotlin {
     }
 }
 
+dependencies {
+    testImplementation(libs.junit)
+}
+
 mavenPublishing {
     coordinates("com.jokobee", "jokobeetts-core", "0.1.0")
 }

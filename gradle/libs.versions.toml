@@ -3,9 +3,15 @@ agp = "8.10.0"
 kotlin = "2.1.0"
 onnxruntime = "1.20.0"
 mavenPublish = "0.30.0"
+junit = "4.13.2"
+icu4j = "76.1"
 
 [libraries]
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
+junit = { module = "junit:junit", version.ref = "junit" }
+# icu4j = android.icu (même lib) — TEST SCOPE uniquement pour exécuter la
+# verbalisation RBNF sur la JVM (android.icu n'est pas mockée en test unitaire).
+icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }
