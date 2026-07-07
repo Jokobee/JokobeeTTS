@@ -36,6 +36,7 @@ dependencies {
     //   optimiser vs cible AAR <5 Mo). Licence : voir THIRD-PARTY-NOTICES.md.
     api(libs.icu4j)
     testImplementation(libs.junit)
+    testImplementation(libs.org.json)      // lecture des cas JSON (test-scope)
 }
 
 mavenPublishing {

@@ -5,6 +5,7 @@ onnxruntime = "1.20.0"
 mavenPublish = "0.30.0"
 junit = "4.13.2"
 icu4j = "76.1"
+orgJson = "20240303"
 
 [libraries]
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
@@ -12,6 +13,8 @@ junit = { module = "junit:junit", version.ref = "junit" }
 # icu4j = android.icu (même lib) — TEST SCOPE uniquement pour exécuter la
 # verbalisation RBNF sur la JVM (android.icu n'est pas mockée en test unitaire).
 icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
+# org.json — TEST scope : lit les fichiers de cas JSON (test_cases_XX.json).
+org-json = { module = "org.json:json", version.ref = "orgJson" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "agp" }

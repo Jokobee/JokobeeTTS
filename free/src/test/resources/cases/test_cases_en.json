@@ -1,0 +1,56 @@
+[
+  {"categorie": "TIME", "source": "It's 3:30 PM already.", "attendu": "It's three thirty PM already."},
+  {"categorie": "TIME", "source": "The meeting is at 8:05.", "attendu": "The meeting is at eight oh five."},
+  {"categorie": "TIME", "source": "The train leaves at 15:45.", "attendu": "The train leaves at fifteen forty-five."},
+  {"categorie": "TIME", "source": "See you at 3 PM.", "attendu": "See you at three PM."},
+
+  {"categorie": "DATE", "source": "It happened on July 6, 2026.", "attendu": "It happened on July sixth twenty twenty-six."},
+  {"categorie": "DATE", "source": "March 1st is a Sunday.", "attendu": "March first is a Sunday."},
+  {"categorie": "DATE", "source": "She was born on February 14, 1998.", "attendu": "She was born on February fourteenth nineteen ninety-eight."},
+  {"categorie": "DATE", "source": "The deadline is May 3, 2005.", "attendu": "The deadline is May third two thousand five."},
+
+  {"categorie": "TEMP", "source": "It's -25°F outside.", "attendu": "It's minus twenty-five degrees Fahrenheit outside."},
+  {"categorie": "TEMP", "source": "Normal body temperature is 98.6 °F.", "attendu": "Normal body temperature is ninety-eight point six degrees Fahrenheit."},
+  {"categorie": "TEMP", "source": "Water boils at 100 °C.", "attendu": "Water boils at one hundred degrees Celsius."},
+
+  {"categorie": "CURRENCY", "source": "It costs $1,234.50.", "attendu": "It costs one thousand two hundred thirty-four dollars and fifty cents."},
+  {"categorie": "CURRENCY", "source": "Coffee is $5.", "attendu": "Coffee is five dollars."},
+  {"categorie": "CURRENCY", "source": "There is $1 left.", "attendu": "There is one dollar left."},
+
+  {"categorie": "ORDINAL", "source": "He finished in 3rd place.", "attendu": "He finished in third place."},
+  {"categorie": "ORDINAL", "source": "This is the 21st century.", "attendu": "This is the twenty-first century."},
+
+  {"categorie": "NUMBER", "source": "Pi is about 3.14.", "attendu": "Pi is about three point one four."},
+  {"categorie": "NUMBER", "source": "There are 42 apples.", "attendu": "There are forty-two apples."},
+  {"categorie": "NUMBER", "source": "The city has 550,000 people.", "attendu": "The city has five hundred fifty thousand people."},
+
+  {"categorie": "MIXED", "source": "On July 1, 2026 at 2:30 PM it was 90°F and tickets cost $12.75.", "attendu": "On July first twenty twenty-six at two thirty PM it was ninety degrees Fahrenheit and tickets cost twelve dollars and seventy-five cents."},
+
+  {"categorie": "PROTECT", "source": "Call 1-800-555-1234 today.", "attendu": "Call 1-800-555-1234 today."},
+  {"categorie": "PROTECT", "source": "Download version 3.2.1 now.", "attendu": "Download version 3.2.1 now."},
+  {"categorie": "PROTECT", "source": "Visit https://example.com for details.", "attendu": "Visit https://example.com for details."},
+  {"categorie": "PROTECT", "source": "Reach me at hello@example.com.", "attendu": "Reach me at hello@example.com."},
+
+  {"categorie": "PERCENT", "source": "Sales rose 100% this year.", "attendu": "Sales rose one hundred percent this year."},
+  {"categorie": "PERCENT", "source": "A 3.5% increase overall.", "attendu": "A three point five percent increase overall."},
+
+  {"categorie": "CARDINAL", "source": "Take Exit 3 E toward downtown.", "attendu": "Take Exit three East toward downtown."},
+  {"categorie": "CARDINAL", "source": "Vitamin E is good.", "attendu": "Vitamin E is good."},
+
+  {"categorie": "ABBREV", "source": "Dr. Jones visited St. Patrick.", "attendu": "Doctor Jones visited Saint Patrick."},
+  {"categorie": "ABBREV", "source": "Mrs. Lee lives in Apt. 3 today.", "attendu": "Misses Lee lives in Apartment three today."},
+
+  {"categorie": "WHITELIST", "source": "Bring snacks, e.g. bars, i.e. food.", "attendu": "Bring snacks, for example bars, that is food."},
+
+  {"categorie": "SYMBOL", "source": "R&D costs 5 × 3 = 15 dollars.", "attendu": "R and D costs five times three equals fifteen dollars."},
+
+  {"categorie": "FRACTION", "source": "Add 1/2 cup and 3/4 milk.", "attendu": "Add one half cup and three quarters milk."},
+  {"categorie": "RANGE", "source": "Bake 10-15 minutes, see pages 3-7.", "attendu": "Bake ten to fifteen minutes, see pages three to seven."},
+
+  {"categorie": "ROMAN", "source": "King Henry VIII and Chapter IV.", "attendu": "King Henry the eighth and Chapter four."},
+  {"categorie": "ROMAN", "source": "Vitamin C and plan B.", "attendu": "Vitamin C and plan B."},
+
+  {"categorie": "ROOM", "source": "Your room 1408, gate 237.", "attendu": "Your room fourteen oh eight, gate two thirty-seven."},
+
+  {"categorie": "LETTERS", "source": "The FBI and NASA use HTML.", "attendu": "The F B I and NASA use H T M L."}
+]

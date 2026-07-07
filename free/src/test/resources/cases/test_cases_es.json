@@ -1,0 +1,22 @@
+[
+  {"categorie": "HORA", "source": "Son las 15:30.", "attendu": "Son las quince treinta."},
+  {"categorie": "HORA", "source": "La reunión es a las 8:05.", "attendu": "La reunión es a las ocho cero cinco."},
+
+  {"categorie": "FECHA", "source": "Ocurrió el 6 de julio de 2026.", "attendu": "Ocurrió el seis de julio de dos mil veintiséis."},
+  {"categorie": "FECHA", "source": "Hoy es 1º de marzo.", "attendu": "Hoy es primero de marzo."},
+  {"categorie": "FECHA", "source": "Nació el 14 de febrero de 1998.", "attendu": "Nació el catorce de febrero de mil novecientos noventa y ocho."},
+
+  {"categorie": "TEMP", "source": "Hace -25 °C afuera.", "attendu": "Hace menos veinticinco grados Celsius afuera."},
+  {"categorie": "TEMP", "source": "La fiebre subió a 37,5 °C.", "attendu": "La fiebre subió a treinta y siete coma cinco grados Celsius."},
+
+  {"categorie": "MONEDA", "source": "Cuesta 1.234,50 €.", "attendu": "Cuesta mil doscientos treinta y cuatro euros con cincuenta céntimos."},
+  {"categorie": "MONEDA", "source": "El café cuesta 5 €.", "attendu": "El café cuesta cinco euros."},
+  {"categorie": "MONEDA", "source": "Vale 20 $.", "attendu": "Vale veinte dólares."},
+
+  {"categorie": "ORDINAL", "source": "Terminó en 3º lugar.", "attendu": "Terminó en tercero lugar."},
+
+  {"categorie": "NUMERO", "source": "Pi vale 3,14.", "attendu": "Pi vale tres coma catorce."},
+  {"categorie": "NUMERO", "source": "Hay 42 manzanas.", "attendu": "Hay cuarenta y dos manzanas."},
+  {"categorie": "NUMERO", "source": "La ciudad tiene 550.000 habitantes.", "attendu": "La ciudad tiene quinientos cincuenta mil habitantes."},
+  {"categorie": "PORCENTAJE", "source": "Un 100 % de acuerdo.", "attendu": "Un cien por ciento de acuerdo."}
+]

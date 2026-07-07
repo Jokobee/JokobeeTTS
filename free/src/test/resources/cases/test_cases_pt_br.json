@@ -1,0 +1,53 @@
+[
+ {
+  "categorie": "HORA",
+  "source": "São 15h30.",
+  "attendu": "São quinze horas e trinta."
+ },
+ {
+  "categorie": "HORA",
+  "source": "A loja abre às 9h.",
+  "attendu": "A loja abre às nove horas."
+ },
+ {
+  "categorie": "HORA",
+  "source": "É 1h da tarde.",
+  "attendu": "É uma hora da tarde."
+ },
+ {
+  "categorie": "HORA",
+  "source": "São 2h da manhã.",
+  "attendu": "São duas horas da manhã."
+ },
+ {
+  "categorie": "MOEDA",
+  "source": "Custa R$ 1.234,50.",
+  "attendu": "Custa mil duzentos e trinta e quatro reais e cinquenta centavos."
+ },
+ {
+  "categorie": "MOEDA",
+  "source": "O café custa R$ 5.",
+  "attendu": "O café custa cinco reais."
+ },
+ {
+  "categorie": "TEMP",
+  "source": "Faz -25 °C.",
+  "attendu": "Faz menos vinte e cinco graus Celsius."
+ },
+ {
+  "categorie": "DATA",
+  "source": "Aconteceu em 6 de julho de 2026.",
+  "attendu": "Aconteceu em seis de julho de dois mil e vinte e seis."
+ },
+ {
+  "categorie": "DATA",
+  "source": "Hoje é 1º de março.",
+  "attendu": "Hoje é primeiro de março."
+ },
+ {
+  "categorie": "NUMERO",
+  "source": "Pi vale 3,5.",
+  "attendu": "Pi vale três vírgula cinco."
+ },
+ {"categorie": "PORCENTAGEM", "source": "Um aumento de 50 %.", "attendu": "Um aumento de cinquenta por cento."}
+]

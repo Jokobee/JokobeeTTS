@@ -1,0 +1,53 @@
+[
+ {
+  "categorie": "ORA",
+  "source": "Sono le 15:30.",
+  "attendu": "Sono le quindici e trenta."
+ },
+ {
+  "categorie": "ORA",
+  "source": "La riunione è alle 8:05.",
+  "attendu": "La riunione è alle otto e cinque."
+ },
+ {
+  "categorie": "VALUTA",
+  "source": "Costa 1.234,50 €.",
+  "attendu": "Costa milleduecentotrentaquattro euro e cinquanta centesimi."
+ },
+ {
+  "categorie": "VALUTA",
+  "source": "Il caffè costa 5 €.",
+  "attendu": "Il caffè costa cinque euro."
+ },
+ {
+  "categorie": "TEMP",
+  "source": "Fa -25 °C.",
+  "attendu": "Fa meno venticinque gradi Celsius."
+ },
+ {
+  "categorie": "TEMP",
+  "source": "La febbre è a 37,5 °C.",
+  "attendu": "La febbre è a trentasette virgola cinque gradi Celsius."
+ },
+ {
+  "categorie": "DATA",
+  "source": "È successo il 6 luglio 2026.",
+  "attendu": "È successo il sei luglio duemilaventisei."
+ },
+ {
+  "categorie": "DATA",
+  "source": "Oggi è il 1º marzo.",
+  "attendu": "Oggi è il primo marzo."
+ },
+ {
+  "categorie": "ORDINALE",
+  "source": "È arrivato 3º.",
+  "attendu": "È arrivato terzo."
+ },
+ {
+  "categorie": "NUMERO",
+  "source": "Ci sono 42 mele.",
+  "attendu": "Ci sono quarantadue mele."
+ },
+ {"categorie": "PERCENTUALE", "source": "Il 100 % è pronto.", "attendu": "Il cento per cento è pronto."}
+]

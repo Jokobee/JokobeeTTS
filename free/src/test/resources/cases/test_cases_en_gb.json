@@ -1,0 +1,32 @@
+[
+ {
+  "categorie": "DATE",
+  "source": "It happened on 6 July 2026.",
+  "attendu": "It happened on the sixth of July twenty twenty-six."
+ },
+ {
+  "categorie": "DATE",
+  "source": "The deadline is 1st March.",
+  "attendu": "The deadline is the first of March."
+ },
+ {
+  "categorie": "CURRENCY",
+  "source": "It costs £1,234.50.",
+  "attendu": "It costs one thousand two hundred thirty-four pounds and fifty pence."
+ },
+ {
+  "categorie": "CURRENCY",
+  "source": "Tea costs £5.",
+  "attendu": "Tea costs five pounds."
+ },
+ {
+  "categorie": "CURRENCY",
+  "source": "There is £1 left.",
+  "attendu": "There is one pound left."
+ },
+ {
+  "categorie": "TIME",
+  "source": "It's 3:30 PM.",
+  "attendu": "It's three thirty PM."
+ }
+]

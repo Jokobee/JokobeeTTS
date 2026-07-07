@@ -1,0 +1,37 @@
+[
+ {
+  "categorie": "SIGAN",
+  "source": "회의는 15:30입니다.",
+  "attendu": "회의는 열다섯 시 삼십 분입니다."
+ },
+ {
+  "categorie": "SIGAN",
+  "source": "지금은 3시입니다.",
+  "attendu": "지금은 세 시입니다."
+ },
+ {
+  "categorie": "NALJJA",
+  "source": "2026년 7월 6일",
+  "attendu": "이천이십육 년 칠 월 육 일"
+ },
+ {
+  "categorie": "TONGHWA",
+  "source": "가격은 ₩1,234입니다.",
+  "attendu": "가격은 천이백삼십사 원입니다."
+ },
+ {
+  "categorie": "ONDO",
+  "source": "기온은 -25도입니다.",
+  "attendu": "기온은 영하 이십오 도입니다."
+ },
+ {
+  "categorie": "SUTJA",
+  "source": "파이는 3.14입니다.",
+  "attendu": "파이는 삼 점 일 사입니다."
+ },
+ {
+  "categorie": "SUTJA",
+  "source": "페이지 42를 보세요.",
+  "attendu": "페이지 사십이를 보세요."
+ }
+]

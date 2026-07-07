@@ -1,0 +1,42 @@
+[
+ {
+  "categorie": "SAMAY",
+  "source": "समय 15:30 है।",
+  "attendu": "समय पन्द्रह बजकर तीस मिनट है।"
+ },
+ {
+  "categorie": "SAMAY",
+  "source": "बैठक 8:05 पर है।",
+  "attendu": "बैठक आठ बजकर पाँच मिनट पर है।"
+ },
+ {
+  "categorie": "MUDRA",
+  "source": "कीमत ₹500 है।",
+  "attendu": "कीमत पाँच सौ रुपये है।"
+ },
+ {
+  "categorie": "MUDRA",
+  "source": "सिर्फ़ ₹1 बचा।",
+  "attendu": "सिर्फ़ एक रुपया बचा।"
+ },
+ {
+  "categorie": "TAAP",
+  "source": "तापमान -25 °C है।",
+  "attendu": "तापमान माइनस पच्चीस डिग्री सेल्सियस है।"
+ },
+ {
+  "categorie": "TITHI",
+  "source": "6 जुलाई 2026 को हुआ।",
+  "attendu": "छह जुलाई दो हज़ार छब्बीस को हुआ।"
+ },
+ {
+  "categorie": "SANKHYA",
+  "source": "पाई 3.14 है।",
+  "attendu": "पाई तीन दशमलव एक चार है।"
+ },
+ {
+  "categorie": "SANKHYA",
+  "source": "42 सेब हैं।",
+  "attendu": "बयालीस सेब हैं।"
+ }
+]

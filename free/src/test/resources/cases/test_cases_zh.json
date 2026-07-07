@@ -1,0 +1,37 @@
+[
+ {
+  "categorie": "SHIJIAN",
+  "source": "会议在15:30。",
+  "attendu": "会议在十五点三十分。"
+ },
+ {
+  "categorie": "SHIJIAN",
+  "source": "现在是2点。",
+  "attendu": "现在是两点。"
+ },
+ {
+  "categorie": "RIQI",
+  "source": "2026年7月6日",
+  "attendu": "二〇二六年七月六日"
+ },
+ {
+  "categorie": "HUOBI",
+  "source": "价格是1,234元。",
+  "attendu": "价格是一千二百三十四元。"
+ },
+ {
+  "categorie": "WENDU",
+  "source": "气温是-25°C。",
+  "attendu": "气温是零下二十五度。"
+ },
+ {
+  "categorie": "SHUZI",
+  "source": "圆周率是3.14。",
+  "attendu": "圆周率是三点一四。"
+ },
+ {
+  "categorie": "SHUZI",
+  "source": "有42个苹果。",
+  "attendu": "有四十二个苹果。"
+ }
+]

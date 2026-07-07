@@ -1,0 +1,85 @@
+[
+  {"categorie": "HEURE", "source": "Il est 15 h 30.", "attendu": "Il est quinze heures trente."},
+  {"categorie": "HEURE", "source": "Le rendez-vous est à 8 h 05.", "attendu": "Le rendez-vous est à huit heures cinq."},
+  {"categorie": "HEURE", "source": "On se voit à 15h30 demain.", "attendu": "On se voit à quinze heures trente demain."},
+  {"categorie": "HEURE", "source": "Le magasin ouvre à 9 h.", "attendu": "Le magasin ouvre à neuf heures."},
+
+  {"categorie": "DATE", "source": "Le 6 juillet 2026, tout a changé.", "attendu": "Le six juillet deux mille vingt-six, tout a changé."},
+  {"categorie": "DATE", "source": "Nous sommes le 1er mars.", "attendu": "Nous sommes le premier mars."},
+  {"categorie": "DATE", "source": "Noël tombe le 25 décembre.", "attendu": "Noël tombe le vingt-cinq décembre."},
+  {"categorie": "DATE", "source": "Elle est née le 14 février 1998.", "attendu": "Elle est née le quatorze février mille neuf cent quatre-vingt-dix-huit."},
+
+  {"categorie": "TEMP", "source": "Il fait -25 °C dehors.", "attendu": "Il fait moins vingt-cinq degrés Celsius dehors."},
+  {"categorie": "TEMP", "source": "Le four est à 350 °F.", "attendu": "Le four est à trois cent cinquante degrés Fahrenheit."},
+  {"categorie": "TEMP", "source": "La fièvre monte à 37,5 °C.", "attendu": "La fièvre monte à trente-sept virgule cinq degrés Celsius."},
+  {"categorie": "TEMP", "source": "Il fait 1 °C ce matin.", "attendu": "Il fait un degré Celsius ce matin."},
+
+  {"categorie": "DEVISE", "source": "Ça coûte 1 234,50 $.", "attendu": "Ça coûte mille deux cent trente-quatre dollars et cinquante sous."},
+  {"categorie": "DEVISE", "source": "Le café est à 5 $.", "attendu": "Le café est à cinq dollars."},
+  {"categorie": "DEVISE", "source": "Il reste 1 $ dans le compte.", "attendu": "Il reste un dollar dans le compte."},
+
+  {"categorie": "ORDINAL", "source": "C'est la 1re fois qu'il gagne.", "attendu": "C'est la première fois qu'il gagne."},
+  {"categorie": "ORDINAL", "source": "Il termine au 3e rang.", "attendu": "Il termine au troisième rang."},
+
+  {"categorie": "NOMBRE", "source": "Pi vaut environ 3,14.", "attendu": "Pi vaut environ trois virgule quatorze."},
+  {"categorie": "NOMBRE", "source": "Il y a 42 pommes.", "attendu": "Il y a quarante-deux pommes."},
+  {"categorie": "NOMBRE", "source": "La ville compte 550 000 habitants.", "attendu": "La ville compte cinq cent cinquante mille habitants."},
+
+  {"categorie": "LIEU", "source": "Je pars pour Trois-Rivières demain.", "attendu": "Je pars pour Trois-Rivières demain.", "wer_indicatif": true},
+  {"categorie": "LIEU", "source": "Chicoutimi est magnifique en automne.", "attendu": "Chicoutimi est magnifique en automne.", "wer_indicatif": true},
+  {"categorie": "LIEU", "source": "Rivière-du-Loup borde le fleuve.", "attendu": "Rivière-du-Loup borde le fleuve.", "wer_indicatif": true},
+  {"categorie": "LIEU", "source": "Il vient de Saint-Louis-du-Ha! Ha!", "attendu": "Il vient de Saint-Louis-du-Ha! Ha!", "wer_indicatif": true},
+
+  {"categorie": "MIXTE", "source": "Le 1er juillet 2026 à 14 h 30, il faisait 32 °C et l'entrée coûtait 12,75 $.", "attendu": "Le premier juillet deux mille vingt-six à quatorze heures trente, il faisait trente-deux degrés Celsius et l'entrée coûtait douze dollars et soixante-quinze sous."},
+
+  {"categorie": "DISTANCE", "source": "Le trajet fait 5 km.", "attendu": "Le trajet fait cinq kilomètres."},
+  {"categorie": "DISTANCE", "source": "La règle mesure 30 cm.", "attendu": "La règle mesure trente centimètres."},
+  {"categorie": "DISTANCE", "source": "Il reste 250 m avant la sortie.", "attendu": "Il reste deux cent cinquante mètres avant la sortie."},
+  {"categorie": "DISTANCE", "source": "La course est de 10 miles.", "attendu": "La course est de dix milles."},
+
+  {"categorie": "POIDS", "source": "Le colis pèse 3 kg.", "attendu": "Le colis pèse trois kilogrammes."},
+  {"categorie": "POIDS", "source": "Ajoutez 500 g de farine.", "attendu": "Ajoutez cinq cents grammes de farine."},
+  {"categorie": "POIDS", "source": "Le camion transporte 2 t.", "attendu": "Le camion transporte deux tonnes."},
+  {"categorie": "POIDS", "source": "Le bébé fait 4 lb.", "attendu": "Le bébé fait quatre livres."},
+
+  {"categorie": "VITESSE", "source": "Roulez à 80 km/h.", "attendu": "Roulez à quatre-vingts kilomètres à l'heure."},
+  {"categorie": "VITESSE", "source": "Le vent souffle à 10 m/s.", "attendu": "Le vent souffle à dix mètres par seconde."},
+  {"categorie": "VITESSE", "source": "La limite est 60 mph.", "attendu": "La limite est soixante milles à l'heure."},
+
+  {"categorie": "DEVISE", "source": "Ça fait 1,01 $.", "attendu": "Ça fait un dollar et un sou."},
+  {"categorie": "DEVISE", "source": "Le café coûte 2,50 $.", "attendu": "Le café coûte deux dollars et cinquante sous."},
+
+  {"categorie": "PROTECT", "source": "Appelez le 418-555-1234 aujourd'hui.", "attendu": "Appelez le 418-555-1234 aujourd'hui."},
+  {"categorie": "PROTECT", "source": "Composez le 1-800-555-1234 sans frais.", "attendu": "Composez le 1-800-555-1234 sans frais."},
+  {"categorie": "PROTECT", "source": "Visitez https://jokobee.com pour en savoir plus.", "attendu": "Visitez https://jokobee.com pour en savoir plus."},
+  {"categorie": "PROTECT", "source": "Écrivez à info@jokobee.com.", "attendu": "Écrivez à info@jokobee.com."},
+  {"categorie": "PROTECT", "source": "La version 3.2.1 est disponible.", "attendu": "La version 3.2.1 est disponible."},
+  {"categorie": "PROTECT", "source": "Mon code postal est G1R 2Z3.", "attendu": "Mon code postal est G1R 2Z3."},
+
+  {"categorie": "POURCENT", "source": "Il y a 100 % de chances.", "attendu": "Il y a cent pour cent de chances."},
+  {"categorie": "POURCENT", "source": "Une hausse de 50 % cette année.", "attendu": "Une hausse de cinquante pour cent cette année."},
+
+  {"categorie": "CARDINAL", "source": "Prenez la sortie 3 E.", "attendu": "Prenez la sortie trois Est."},
+  {"categorie": "CARDINAL", "source": "Suivez l'autoroute 40 O.", "attendu": "Suivez l'autoroute quarante Ouest."},
+  {"categorie": "CARDINAL", "source": "La vitamine E est bonne.", "attendu": "La vitamine E est bonne."},
+
+  {"categorie": "ABREV", "source": "M. Tremblay habite Boul. St-Laurent à Québec.", "attendu": "monsieur Tremblay habite boulevard Saint-Laurent à Québec."},
+  {"categorie": "ABREV", "source": "Dr Nguyen loge à l'app. 12.", "attendu": "docteur Nguyen loge à l'appartement douze."},
+
+  {"categorie": "WHITELIST", "source": "Voir p. ex. les fruits, etc., puis partir.", "attendu": "Voir par exemple les fruits, et cétéra, puis partir."},
+  {"categorie": "PONCT", "source": "Attends... vraiment ?? Oui !!", "attendu": "Attends… vraiment ? Oui !"},
+
+  {"categorie": "SYMBOLE", "source": "R&D coûte 5 × 3 = 15 $.", "attendu": "R et D coûte cinq fois trois égale quinze dollars."},
+
+  {"categorie": "FRACTION", "source": "Ajoute 1/2 tasse et 3/4 de lait.", "attendu": "Ajoute un demi tasse et trois quarts de lait."},
+  {"categorie": "FRACTION", "source": "Il faut 2 1/2 tasses de farine.", "attendu": "Il faut deux et demi tasses de farine."},
+  {"categorie": "PLAGE", "source": "Cuire 10-15 minutes, voir pages 3-7.", "attendu": "Cuire dix à quinze minutes, voir pages trois à sept."},
+
+  {"categorie": "ROMAIN", "source": "Louis XIV et François Ier ont régné.", "attendu": "Louis quatorze et François premier ont régné."},
+  {"categorie": "ROMAIN", "source": "Le chapitre III au XXIe siècle.", "attendu": "Le chapitre trois au vingt-et-unième siècle."},
+  {"categorie": "ROMAIN", "source": "La vitamine C et le plan B.", "attendu": "La vitamine C et le plan B."},
+
+  {"categorie": "PIECE", "source": "Votre chambre 1408, salle 237.", "attendu": "Votre chambre quatorze zéro huit, salle deux trente-sept."},
+
+  {"categorie": "SIGLE", "source": "Le FBI, la NASA et un OVNI.", "attendu": "Le F B I, la NASA et un OVNI."}
+]
