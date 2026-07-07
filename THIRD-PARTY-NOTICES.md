@@ -12,7 +12,7 @@ les marques des projets sources ne sont pas utilisées comme marque du produit).
 | **Kokoro-82M** | hexgrad | **Apache-2.0** | modèle de synthèse (poids ONNX). JokobeeTTS est « **based on Kokoro-82M** ». |
 | **ONNX Runtime** | Microsoft | **MIT** | moteur d'inférence |
 | **CharsiuG2P** | CharsiuNLP | **MIT** | phonémisation (grapheme→phoneme) |
-| **ICU** (`android.icu.text`) | Unicode, Inc. | **Unicode/ICU License** (permissive) | verbalisation des nombres (RBNF), API 24+ |
+| **ICU4J** (`com.ibm.icu:icu4j`) | Unicode, Inc. | **Unicode/ICU License** (permissive) | verbalisation des nombres (RBNF spellout). **Embarqué** car `android.icu` n'expose PAS `RuleBasedNumberFormat` dans l'API publique. |
 | Code JokobeeTTS | Jokobee | propriétaire (Free = Apache-2.0 côté public) | frontend, registre de voix, orchestration |
 
 **Aucune dépendance GPL/LGPL dans l'artefact distribué.**

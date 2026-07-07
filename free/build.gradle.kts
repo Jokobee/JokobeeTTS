@@ -29,7 +29,13 @@ kotlin {
 dependencies {
     api(project(":core"))
     api(libs.onnxruntime.android)          // inférence Kokoro + CharsiuG2P
-    // ICU = android.icu.text (plateforme, API 24+) : aucune dépendance à ajouter.
+    // ⚠ icu4j EMBARQUÉ : android.icu n'expose PAS RuleBasedNumberFormat (spellout
+    //   nombre→mots) dans l'API publique (API 36 : NumberFormat/PluralRules oui, RBNF
+    //   NON). On bundle icu4j (licence Unicode, permissive). Le Verbalizer est une
+    //   interface → remplaçable par une impl maison compacte plus tard (~13 Mo à
+    //   optimiser vs cible AAR <5 Mo). Licence : voir THIRD-PARTY-NOTICES.md.
+    api(libs.icu4j)
+    testImplementation(libs.junit)
 }
 
 mavenPublishing {
