@@ -13,6 +13,7 @@ android {
         minSdk = 24
         // Free = arm64-v8a uniquement (le x86_64 émulateur est réservé au Pro).
         ndk { abiFilters += listOf("arm64-v8a") }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -37,6 +38,9 @@ dependencies {
     api(libs.icu4j)
     testImplementation(libs.junit)
     testImplementation(libs.org.json)      // lecture des cas JSON (test-scope)
+    // Instrumented (device arm64) : validation latence G2P réelle. org.json = plateforme.
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
 }
 
 mavenPublishing {

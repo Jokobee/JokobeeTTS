@@ -245,7 +245,11 @@ public abstract class BaseNormalizer(
         )
 
         private fun symRules(mapping: Map<String, String>) = mapping.map { (s, w) ->
-            Regex("(?U)(?<=\\w)\\s*" + Regex.escape(s) + "\\s*(?=\\w)") to " $w "
+            // ⚠ Classes Unicode EXPLICITES [\p{L}\p{N}_] au lieu de (?U)\w : le flag inline
+            //   (?U) et `\w` Unicode sont rejetés par le moteur regex ICU d'Android
+            //   (crash au chargement) alors qu'ils passent sur la JVM. Vérifié on-device.
+            val wc = "[\\p{L}\\p{N}_]"
+            Regex("(?<=$wc)\\s*" + Regex.escape(s) + "\\s*(?=$wc)") to " $w "
         }
         private val SYM_FR = symRules(mapOf("&" to "et", "=" to "égale", "+" to "plus", "×" to "fois", "→" to "vers", "@" to "arobase"))
         private val SYM_EN = symRules(mapOf("&" to "and", "=" to "equals", "+" to "plus", "×" to "times", "→" to "to", "@" to "at"))

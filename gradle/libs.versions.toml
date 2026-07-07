@@ -6,10 +6,15 @@ mavenPublish = "0.30.0"
 junit = "4.13.2"
 icu4j = "76.1"
 orgJson = "20240303"
+androidxTestExtJunit = "1.2.1"
+androidxTestRunner = "1.6.2"
 
 [libraries]
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
 junit = { module = "junit:junit", version.ref = "junit" }
+# androidx.test — INSTRUMENTED scope (validation on-device : latence G2P réelle arm64).
+androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExtJunit" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
 # icu4j = android.icu (même lib) — TEST SCOPE uniquement pour exécuter la
 # verbalisation RBNF sur la JVM (android.icu n'est pas mockée en test unitaire).
 icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
