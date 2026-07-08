@@ -17,7 +17,7 @@ internal class LoanwordsG2p(
     private val delegate: G2p,
 ) : G2p {
     override fun phonemize(word: String, lang: String): String =
-        loanwords.lookup(word) ?: delegate.phonemize(word, lang)
+        loanwords.lookup(word, lang) ?: delegate.phonemize(word, lang)
 }
 
 /** G2P décorateur : accent (IPA vers IPA) après le délégué. */

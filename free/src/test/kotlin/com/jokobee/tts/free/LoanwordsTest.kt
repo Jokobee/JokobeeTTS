@@ -18,7 +18,10 @@ class LoanwordsTest {
 
     private fun assets() = File(System.getProperty("user.dir"), "src/main/assets")
     private fun loanwords() =
-        LoanwordsLexicon.fromStream(File(assets(), "jokobeetts/loanwords_en_ipa.tsv").inputStream())
+        LoanwordsLexicon.fromStreams(
+            File(assets(), "jokobeetts/loanwords_en_ipa.tsv").inputStream(),
+            File(assets(), "jokobeetts/loanwords_exclude.tsv").inputStream(),
+        )
 
     private fun vocabChars(): Set<Char> {
         val o = JSONObject(File(assets(), "kokoro/vocab.json").readText(Charsets.UTF_8))
@@ -31,7 +34,7 @@ class LoanwordsTest {
     @Test fun loanwordsAllInVocab() {
         val vocab = vocabChars()
         val loan = loanwords()
-        assertEquals("401 entrées attendues (chat retiré : collision fr)", 401, loan.size)
+        assertEquals("402 entrées attendues", 402, loan.size)
         val oov = LinkedHashMap<String, String>()
         for ((word, ipa) in loan.all) {
             val bad = PhonemePost.apply(ipa, "en_US").filter { it !in vocab && it != ' ' }
@@ -42,14 +45,14 @@ class LoanwordsTest {
 
     // ----- pipeline : anglicisme prononcé en anglais -----
     private fun expect(loan: LoanwordsLexicon, word: String, lang: String) =
-        PhonemePost.apply(loan.lookup(word)!!, lang)
+        PhonemePost.apply(loan.lookup(word, lang)!!, lang)
 
     @Test fun loanwordPronouncedInEnglish() {
         val loan = loanwords()
         val fe = Frontend(stub, loanwords = loan)
         assertEquals(expect(loan, "package", "fr"), fe.toPhonemes("package", "fr"))
         assertEquals(expect(loan, "cloud", "es"), fe.toPhonemes("cloud", "es"))
-        assertEquals(expect(loan, "weekend", "it"), fe.toPhonemes("weekend", "it"))
+        assertEquals(expect(loan, "streaming", "it"), fe.toPhonemes("streaming", "it"))
         assertEquals(expect(loan, "marketing", "pt_BR"), fe.toPhonemes("marketing", "pt_BR"))
     }
 
@@ -97,5 +100,30 @@ class LoanwordsTest {
         val loan = loanwords()
         val fe = Frontend(stub, loanwords = loan)
         assertEquals(expect(loan, "machine learning", "fr"), fe.toPhonemes("machine learning", "fr"))
+    }
+
+    // ----- exclusion par langue : le natif gagne si collision -----
+    @Test fun nativeWinsOnCollisionPerLanguage() {
+        val loan = loanwords()
+        assertEquals(null, loan.lookup("chat", "fr"))       // « chat » = félin en fr -> exclu
+        assertEquals(null, loan.lookup("chat", "fr_CA"))    // variante de fr
+        assertTrue("chat gardé en es (anglicisme)", loan.lookup("chat", "es") != null)
+        assertEquals(null, loan.lookup("pain", "fr"))       // faux-ami fr
+        assertEquals(null, loan.lookup("coin", "fr"))
+        assertTrue("package : anglicisme partout", loan.lookup("package", "fr") != null)
+        assertTrue(loan.lookup("cloud", "es") != null)
+    }
+
+    @Test fun excludedLoanwordFallsToNative() {
+        val loan = loanwords()
+        val fe = Frontend(stub, loanwords = loan)
+        assertEquals("X", fe.toPhonemes("chat", "fr"))                    // exclu fr -> CharsiuG2P (stub)
+        assertEquals(expect(loan, "chat", "es"), fe.toPhonemes("chat", "es"))  // gardé es -> anglais
+    }
+
+    @Test fun devLexiconOverridesExclusion() {
+        val fe = Frontend(stub, loanwords = loanwords())
+        fe.lexicon.add("chat", "tʃæt", "fr")               // le dev force l'anglais
+        assertEquals("tʃæt", fe.toPhonemes("chat", "fr"))  // tts.lexicon prime sur l'exclusion
     }
 }

@@ -52,7 +52,7 @@ public class Frontend(
                 var hit: String? = null
                 while (end > i) {
                     val phrase = (i..end).joinToString(" ") { anns[it].token }.lowercase()
-                    hit = dict.lookup(phrase, lang) ?: loanwords.lookup(phrase)   // dict > loanwords
+                    hit = dict.lookup(phrase, lang) ?: loanwords.lookup(phrase, lang)   // dict > loanwords
                     if (hit != null) break
                     end--
                 }

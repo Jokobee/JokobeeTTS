@@ -28,14 +28,23 @@ class LoanwordsDeviceTest {
         // "package" en fr -> prononciation anglaise (loanwords), pas la française.
         val out = fe.toPhonemes("package", "fr")
         Log.i(tag, "package(fr) = $out")
-        assertEquals(PhonemePost.apply(loan.lookup("package")!!, "fr"), out)
+        assertEquals(PhonemePost.apply(loan.lookup("package", "fr")!!, "fr"), out)
         assertTrue("phonème anglais æ attendu", out.contains("æ"))
     }
 
     @Test fun multiWordLoanwordOnDevice() {
         val (fe, loan) = frontend()
-        assertEquals(PhonemePost.apply(loan.lookup("machine learning")!!, "fr"),
+        assertEquals(PhonemePost.apply(loan.lookup("machine learning", "fr")!!, "fr"),
             fe.toPhonemes("machine learning", "fr"))
+    }
+
+    @Test fun perLanguageExclusionOnDevice() {
+        val (fe, loan) = frontend()
+        val chatFr = fe.toPhonemes("chat", "fr")   // exclu fr (félin) -> natif CharsiuG2P
+        val chatEs = fe.toPhonemes("chat", "es")   // gardé es (anglicisme) -> anglais
+        Log.i(tag, "chat fr=$chatFr es=$chatEs")
+        assertTrue("chat(fr) doit être natif (pas d'æ anglais) : $chatFr", !chatFr.contains("æ"))
+        assertEquals(PhonemePost.apply(loan.lookup("chat", "es")!!, "es"), chatEs)
     }
 
     @Test fun romanceLanguagesPhonemizeOnDevice() {
