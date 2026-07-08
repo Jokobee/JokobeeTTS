@@ -14,7 +14,7 @@ leur propre suivi (voir [README](README.md#modules--tiers)).
 - **Normalisation** 10 locales (fr, en_US, en_GB, es, it, pt_BR, hi, ja, zh, ko) :
   nombres, dates (nommées et numériques), heures, devises (par locale), ordinaux, fractions,
   plages, chiffres romains, unités de mesure, acronymes, abréviations (titres et adresses),
-  symboles.
+  symboles, numéros de téléphone, adresses e-mail, URL et codes postaux (lus à voix haute).
 - **Verbalisation** des nombres via ICU (icu4j embarqué).
 
 ### Ajouté — G2P (grapheme → phoneme)

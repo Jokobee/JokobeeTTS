@@ -1,4 +1,6 @@
 [
+  {"categorie": "ELECTRONIC", "source": "Escribe a info@jokobee.com.", "attendu": "Escribe a info arroba jokobee punto com."},
+  {"categorie": "TELEPHONE", "source": "Llama al +34 612 345 678.", "attendu": "Llama al más tres cuatro, seis uno dos, tres cuatro cinco, seis siete ocho."},
   {"categorie": "HORA", "source": "Son las 15:30.", "attendu": "Son las quince treinta."},
   {"categorie": "HORA", "source": "La reunión es a las 8:05.", "attendu": "La reunión es a las ocho cero cinco."},
 

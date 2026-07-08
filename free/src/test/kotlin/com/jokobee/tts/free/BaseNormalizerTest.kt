@@ -19,9 +19,9 @@ class BaseNormalizerTest {
         assertEquals("", n.normalize(""))
     }
 
-    @Test fun protecteurTelUrl() {
-        assertEquals("Appelez le 418-555-1234 svp.", n.normalize("Appelez le 418-555-1234 svp."))
-        assertEquals("Voir https://jokobee.com ici.", n.normalize("Voir https://jokobee.com ici."))
+    @Test fun verbaliseTelUrl() {
+        assertEquals("Appelez le quatre un huit, cinq cinq cinq, un deux trois quatre svp.", n.normalize("Appelez le 418-555-1234 svp."))
+        assertEquals("Voir jokobee point com ici.", n.normalize("Voir https://jokobee.com ici."))
     }
 
     @Test fun whitelist() {

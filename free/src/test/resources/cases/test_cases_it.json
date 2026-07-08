@@ -1,4 +1,6 @@
 [
+  {"categorie": "ELECTRONIC", "source": "Scrivi a info@jokobee.com.", "attendu": "Scrivi a info chiocciola jokobee punto com."},
+  {"categorie": "TELEPHONE", "source": "Chiama il +39 06 1234 5678.", "attendu": "Chiama il più tre nove, zero sei, uno due tre quattro, cinque sei sette otto."},
  {
   "categorie": "ORA",
   "source": "Sono le 15:30.",

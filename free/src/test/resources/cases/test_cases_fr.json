@@ -49,12 +49,12 @@
   {"categorie": "DEVISE", "source": "Ça fait 1,01 $.", "attendu": "Ça fait un dollar et un sou."},
   {"categorie": "DEVISE", "source": "Le café coûte 2,50 $.", "attendu": "Le café coûte deux dollars et cinquante sous."},
 
-  {"categorie": "PROTECT", "source": "Appelez le 418-555-1234 aujourd'hui.", "attendu": "Appelez le 418-555-1234 aujourd'hui."},
-  {"categorie": "PROTECT", "source": "Composez le 1-800-555-1234 sans frais.", "attendu": "Composez le 1-800-555-1234 sans frais."},
-  {"categorie": "PROTECT", "source": "Visitez https://jokobee.com pour en savoir plus.", "attendu": "Visitez https://jokobee.com pour en savoir plus."},
-  {"categorie": "PROTECT", "source": "Écrivez à info@jokobee.com.", "attendu": "Écrivez à info@jokobee.com."},
+  {"categorie": "TELEPHONE", "source": "Appelez le 418-555-1234 aujourd'hui.", "attendu": "Appelez le quatre un huit, cinq cinq cinq, un deux trois quatre aujourd'hui."},
+  {"categorie": "TELEPHONE", "source": "Composez le 1-800-555-1234 sans frais.", "attendu": "Composez le un, huit zéro zéro, cinq cinq cinq, un deux trois quatre sans frais."},
+  {"categorie": "ELECTRONIC", "source": "Visitez https://jokobee.com pour en savoir plus.", "attendu": "Visitez jokobee point com pour en savoir plus."},
+  {"categorie": "ELECTRONIC", "source": "Écrivez à info@jokobee.com.", "attendu": "Écrivez à info arobase jokobee point com."},
   {"categorie": "PROTECT", "source": "La version 3.2.1 est disponible.", "attendu": "La version 3.2.1 est disponible."},
-  {"categorie": "PROTECT", "source": "Mon code postal est G1R 2Z3.", "attendu": "Mon code postal est G1R 2Z3."},
+  {"categorie": "POSTAL", "source": "Mon code postal est G1R 2Z3.", "attendu": "Mon code postal est G un R deux Z trois."},
 
   {"categorie": "POURCENT", "source": "Il y a 100 % de chances.", "attendu": "Il y a cent pour cent de chances."},
   {"categorie": "POURCENT", "source": "Une hausse de 50 % cette année.", "attendu": "Une hausse de cinquante pour cent cette année."},

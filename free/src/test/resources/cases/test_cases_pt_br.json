@@ -1,4 +1,6 @@
 [
+  {"categorie": "ELECTRONIC", "source": "Escreva para contato@jokobee.com.", "attendu": "Escreva para contato arroba jokobee ponto com."},
+  {"categorie": "POSTAL", "source": "O código postal é 12345-678.", "attendu": "O código postal é um dois três quatro cinco, seis sete oito."},
  {
   "categorie": "HORA",
   "source": "São 15h30.",

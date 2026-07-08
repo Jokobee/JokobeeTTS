@@ -26,10 +26,10 @@
 
   {"categorie": "MIXED", "source": "On July 1, 2026 at 2:30 PM it was 90°F and tickets cost $12.75.", "attendu": "On July first twenty twenty-six at two thirty PM it was ninety degrees Fahrenheit and tickets cost twelve dollars and seventy-five cents."},
 
-  {"categorie": "PROTECT", "source": "Call 1-800-555-1234 today.", "attendu": "Call 1-800-555-1234 today."},
+  {"categorie": "TELEPHONE", "source": "Call 1-800-555-1234 today.", "attendu": "Call one, eight zero zero, five five five, one two three four today."},
   {"categorie": "PROTECT", "source": "Download version 3.2.1 now.", "attendu": "Download version 3.2.1 now."},
-  {"categorie": "PROTECT", "source": "Visit https://example.com for details.", "attendu": "Visit https://example.com for details."},
-  {"categorie": "PROTECT", "source": "Reach me at hello@example.com.", "attendu": "Reach me at hello@example.com."},
+  {"categorie": "ELECTRONIC", "source": "Visit https://example.com for details.", "attendu": "Visit example dot com for details."},
+  {"categorie": "ELECTRONIC", "source": "Reach me at hello@example.com.", "attendu": "Reach me at hello at example dot com."},
 
   {"categorie": "PERCENT", "source": "Sales rose 100% this year.", "attendu": "Sales rose one hundred percent this year."},
   {"categorie": "PERCENT", "source": "A 3.5% increase overall.", "attendu": "A three point five percent increase overall."},

@@ -1,4 +1,6 @@
 [
+  {"categorie": "ELECTRONIC", "source": "Email me at hello@example.co.uk.", "attendu": "Email me at hello at example dot co dot uk."},
+  {"categorie": "TELEPHONE", "source": "Call 0800-555-017 now.", "attendu": "Call zero eight zero zero, five five five, zero one seven now."},
  {
   "categorie": "DATE",
   "source": "It happened on 6 July 2026.",

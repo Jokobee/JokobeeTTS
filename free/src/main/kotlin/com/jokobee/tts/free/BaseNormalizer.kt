@@ -33,7 +33,8 @@ public abstract class BaseNormalizer(
     private fun protect(textIn: String): Pair<String, List<String>> {
         var text = textIn
         val store = ArrayList<String>()
-        for (pat in PROTECT_PATTERNS) {
+        val pats = if (locale in ELECTRONIC_WORDS) PROTECT_ALWAYS else PROTECT_ALWAYS + PROTECT_COND
+        for (pat in pats) {
             text = pat.replace(text) { mr -> store.add(mr.value); (PROT_BASE + store.size - 1).toChar().toString() }
         }
         return text to store
@@ -146,6 +147,47 @@ public abstract class BaseNormalizer(
         return ACR_RE.replace(text) { mr -> if (mr.value in keep) mr.value else mr.value.toCharArray().joinToString(" ") }
     }
 
+    private fun digitWords(s: String): String =
+        s.filter { it.isDigit() }.map { card(it.digitToInt().toLong()) }.joinToString(" ")
+
+    /** Verbalise les adresses e-mail et les URL. */
+    protected fun rElectronic(text: String): String {
+        val w = ELECTRONIC_WORDS[locale] ?: return text
+        fun sep(s: String): String = s
+            .replace("@", " ${w.at} ").replace("_", " ${w.under} ").replace("/", " ${w.slash} ")
+            .replace("+", " ${w.plus} ").replace("-", " ${w.dash} ").replace(".", " ${w.dot} ")
+        var t = EMAIL_RE.replace(text) { sep(it.value) }
+        t = URL_RE.replace(t) { sep(PROTO_RE.replace(it.value, "")) }
+        return t
+    }
+
+    /** Verbalise les numéros de téléphone chiffre à chiffre. */
+    protected fun rTelephone(text: String): String {
+        val w = ELECTRONIC_WORDS[locale] ?: return text
+        fun speak(raw: String): String {
+            val plus = raw.startsWith("+")
+            val groups = raw.removePrefix("+").split(Regex("[\\s.\\-]+")).filter { it.isNotEmpty() }
+            val spoken = groups.joinToString(", ") { digitWords(it) }
+            return if (plus) "${w.plus} $spoken" else spoken
+        }
+        var t = TEL_INTL_RE.replace(text) { speak(it.value) }
+        t = TEL_LOCAL_RE.replace(t) { speak(it.value) }
+        return t
+    }
+
+    /** Verbalise les codes postaux (canadien, brésilien, ZIP). */
+    protected fun rPostal(text: String): String {
+        if (locale !in ELECTRONIC_WORDS) return text
+        fun alnum(s: String) = s.map { if (it.isDigit()) card(it.digitToInt().toLong()) else it.toString() }.joinToString(" ")
+        var t = CA_POST_RE.replace(text) { alnum(it.groupValues[1]) + " " + alnum(it.groupValues[2]) }
+        t = BR_POST_RE.replace(t) { digitWords(it.groupValues[1]) + ", " + digitWords(it.groupValues[2]) }
+        t = ZIP_KW_RE.replace(t) { mr ->
+            val tail = mr.groupValues[3]
+            mr.groupValues[1] + " " + digitWords(mr.groupValues[2]) + if (tail.isNotEmpty()) ", " + digitWords(tail) else ""
+        }
+        return t
+    }
+
     public fun normalize(text: String?): String {
         warnings.clear()
         if (text.isNullOrEmpty()) return ""
@@ -154,6 +196,9 @@ public abstract class BaseNormalizer(
         t = protectedText
         t = safe("whitelist") { rWhitelist(t) } ?: t
         t = safe("punctuation") { rPunctuation(t) } ?: t
+        t = safe("electronic") { rElectronic(t) } ?: t
+        t = safe("telephone") { rTelephone(t) } ?: t
+        t = safe("postal") { rPostal(t) } ?: t
         for (rule in rules()) t = safe("règle") { rule(t) } ?: t
         return finish(t, store)
     }
@@ -204,19 +249,47 @@ public abstract class BaseNormalizer(
         )
 
         private val CI = setOf(RegexOption.IGNORE_CASE)
-        private val PROTECT_PATTERNS = listOf(
-            Regex("(?:https?://|www\\.)\\S+", CI),
-            Regex("[\\w.+-]+@[\\w-]+\\.[\\w.-]+", CI),
+        // Toujours protégés (jamais verbalisés).
+        private val PROTECT_ALWAYS = listOf(
             Regex("(?:v|version|バージョン|버전|版本)\\s*\\.?\\s*\\d+(?:\\.\\d+)*", CI),
-            Regex("\\+\\d{1,4}(?:[\\s.\\-]\\d{1,4}){2,}"),
-            Regex("\\d{1,4}(?:[.\\-]\\d{1,4}){2,}"),
             Regex("〒\\s?\\d{3}-\\d{4}"),
-            Regex("\\b[A-Z]\\d[A-Z]\\s?\\d[A-Z]\\d\\b"),
-            Regex("\\b\\d{5}-\\d{3}\\b"),
-            Regex("(?:ZIP|Zip|code postal)\\s*:?\\s*\\d{5}(?:-\\d{4})?", CI),
             Regex("\\b[A-Z]{2}\\s?\\d{3,4}\\b"),
             Regex("#\\d+\\b"),
         )
+        // Protégés seulement pour les locales qui ne les verbalisent pas.
+        private val PROTECT_COND = listOf(
+            Regex("(?:https?://|www\\.)\\S+", CI),
+            Regex("[\\w.+-]+@[\\w-]+\\.[\\w.-]+", CI),
+            Regex("\\+\\d{1,4}(?:[\\s.\\-]\\d{1,4}){2,}"),
+            Regex("\\d{1,4}(?:[.\\-]\\d{1,4}){2,}"),
+            Regex("\\b[A-Z]\\d[A-Z]\\s?\\d[A-Z]\\d\\b"),
+            Regex("\\b\\d{5}-\\d{3}\\b"),
+            Regex("(?:ZIP|Zip|code postal)\\s*:?\\s*\\d{5}(?:-\\d{4})?", CI),
+        )
+
+        private data class ElWords(
+            val at: String, val dot: String, val slash: String,
+            val dash: String, val under: String, val plus: String,
+        )
+        private val EL_FR = ElWords("arobase", "point", "barre oblique", "tiret", "souligné", "plus")
+        private val EL_EN = ElWords("at", "dot", "slash", "dash", "underscore", "plus")
+        private val EL_ES = ElWords("arroba", "punto", "barra", "guion", "guion bajo", "más")
+        private val EL_PT = ElWords("arroba", "ponto", "barra", "traço", "sublinhado", "mais")
+        private val EL_IT = ElWords("chiocciola", "punto", "barra", "trattino", "trattino basso", "più")
+        private val ELECTRONIC_WORDS = mapOf(
+            "fr_CA" to EL_FR, "fr" to EL_FR, "en_US" to EL_EN, "en_GB" to EL_EN,
+            "es" to EL_ES, "pt_BR" to EL_PT, "it" to EL_IT,
+        )
+
+        private val PROTO_RE = Regex("^https?://", CI)
+        private val EMAIL_RE = Regex("[\\w.+-]+@[\\w-]+(?:\\.[\\w-]+)+", CI)
+        private val URL_RE = Regex("(?:https?://|www\\.)\\S*[\\w/]", CI)
+        private val TEL_INTL_RE = Regex("\\+\\d{1,4}(?:[\\s.\\-]\\d{1,4}){2,}")
+        private val TEL_LOCAL_RE = Regex("(?<![\\d.\\-])\\d{1,4}(?:[.\\-]\\d{1,4}){2,}(?![\\d.\\-])")
+        private val CA_POST_RE = Regex("\\b([A-Z]\\d[A-Z])\\s?(\\d[A-Z]\\d)\\b")
+        private val BR_POST_RE = Regex("\\b(\\d{5})-(\\d{3})\\b")
+        private val ZIP_KW_RE = Regex(
+            "\\b(zip|cp|cep|code postal|código postal|codice postale)\\b\\s*:?\\s*(\\d{5})(?:-(\\d{4}))?", CI)
 
         private val PERCENT_WORDS = mapOf(
             "fr" to Triple("pour cent", false, "virgule"), "fr_CA" to Triple("pour cent", false, "virgule"),
