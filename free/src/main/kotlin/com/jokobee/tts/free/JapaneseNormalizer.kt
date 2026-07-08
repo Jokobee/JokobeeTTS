@@ -2,18 +2,7 @@ package com.jokobee.tts.free
 
 import java.text.Normalizer
 
-/**
- * Normalisation japonaise (ja, minimale par conception). Port de ja.py.
- *
- * Stratégie : convertir les chiffres en KANJI et déléguer les lectures (yoji
- * pour 4時, muika pour 6日, rendaku des compteurs…) au G2P japonais dédié
- * (pyopenjtalk), qui lit les kanji correctement.
- *
- * - Pleine chasse → demi-chasse (１２３→123, ：→:) en première règle.
- * - Années en CARDINAL (2026年 → 二千二十六年).
- * - Décimales : 3.14 → 三点一四 (点, chiffres un à un).
- * - Compteurs génériques (本, 人, 個…) laissés au G2P : hors scope.
- */
+/** Normalisation japonaise (ja, minimale par conception) */
 public class JapaneseNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -24,7 +13,6 @@ public class JapaneseNormalizer(
     private fun year(y: Long): String = card(y) // cardinal : 二千二十六
     private fun digits(s: String): String = s.map { card(it.toString().toLong()) }.joinToString("")
 
-    // Pleine chasse → demi-chasse (NFKC ciblé chiffres/ponctuation)
     private fun rWidth(text: String): String = buildString(text.length) {
         for (c in text) append(if (c in WIDTH_CHARS) Normalizer.normalize(c.toString(), Normalizer.Form.NFKC) else c.toString())
     }

@@ -6,14 +6,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.text.Normalizer
 
-/**
- * Orchestrateur PhonemePipeline — teste avec un G2P STUB (le vrai CharsiuG2p exige
- * le modele exporte). Verifie : bypass des overrides IPA, appel G2P sur les mots
- * nus, ponctuation litterale recollee, post-traitement (NFD) applique.
- */
+/** Orchestrateur */
 class PhonemePipelineTest {
 
-    /** G2P stub deterministe : chaque mot -> "[mot]" en minuscules (tracable). */
+    /** G2P stub deterministe */
     private class StubG2p : G2p {
         val seen = mutableListOf<String>()
         override fun phonemize(word: String, lang: String): String {
@@ -51,14 +47,12 @@ class PhonemePipelineTest {
     }
 
     @Test fun postProcessingIsApplied() {
-        // post par defaut = PhonemePost.apply -> NFD ; U+00E9 (e compose) -> "e" + U+0301
         val composed = "é"
         val out = PhonemePipeline(StubG2p()).phonemizeAnnotations(listOf(Ann("mot", composed)), "fr")
         assertEquals(Normalizer.normalize(composed, Normalizer.Form.NFD), out)
     }
 
     @Test fun nonFrenchDelegatesAllWords() {
-        // langues sans homographes : toutes les annotations ont ipa=null -> tout au G2P
         val stub = StubG2p()
         val anns = listOf(Ann("東京", null), Ann("は", null))  // 東京 / は
         val out = PhonemePipeline(stub, post = identity).phonemizeAnnotations(anns, "ja")

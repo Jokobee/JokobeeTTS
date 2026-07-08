@@ -9,17 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 
-/**
- * PREUVE BOUT-EN-BOUT ON-DEVICE (arm64) : texte → WAV, tout en Kotlin sur le téléphone.
- *   texte → normalisation → G2P (CharsiuG2P tiny embarqué) → tokens Kokoro →
- *   Kokoro ONNX (model_quantized) → forme d'onde → WAV.
- *
- * Prérequis (poussés avant le run) : le modèle Kokoro dans
- *   getExternalFilesDir("kokoro")/model_quantized.onnx  (~88 Mo, non embarqué).
- * La voix `ff_siwis.bin` est un asset de test ; le G2P tiny et le vocab Kokoro sont
- * embarqués dans `:free`. WAV écrit dans getExternalFilesDir(null) (à `adb pull`).
- * Silence de tête 1 s (convention fichiers de test).
- */
+/** PREUVE BOUT-EN-BOUT ON-DEVICE (arm64) */
 @RunWith(AndroidJUnit4::class)
 class TtsDeviceTest {
 
@@ -64,7 +54,6 @@ class TtsDeviceTest {
         val modelFile = File(ctx.getExternalFilesDir("kokoro"), "model_quantized.onnx")
         assertTrue("modèle Kokoro absent — le pousser avant le run", modelFile.exists())
 
-        // Pipeline ANGLAIS : misaki (lexique embarqué) + fallback CharsiuG2P + lexique marque.
         val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(ctx, env))
         val brands = com.jokobee.tts.core.MapLexiconSource(mapOf("jokobee" to "dʒoʊkoʊbi"), "en_US")
         val misakiUs = MisakiEnG2p.fromAssets(ctx, fallback = g2p, customLexicon = brands)

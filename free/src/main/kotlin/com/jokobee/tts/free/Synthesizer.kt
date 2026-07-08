@@ -1,10 +1,7 @@
 package com.jokobee.tts.free
 
-/**
- * Moteur de synthèse phonèmes + voix → forme d'onde. Abstraction du moteur concret
- * ([KokoroSynth]) pour découpler la façade [Tts] (testable par stub, remplaçable).
- */
+/** Moteur de synthèse phonèmes + voix */
 public interface Synthesizer {
-    /** Phonèmes IPA + voix + vitesse → forme d'onde f32 [-1,1] à 24 kHz. */
+    /** Phonèmes IPA + voix + vitesse */
     public fun synth(phonemes: String, voice: Voice, speed: Float): FloatArray
 }

@@ -1,18 +1,6 @@
 package com.jokobee.tts.core
 
-/**
- * Convertit de l'**ARPABET** (CMUdict, 39 phonèmes, chiffre de stress collé aux voyelles)
- * vers l'**IPA** dans le vocab Kokoro. Pur, zéro dépendance.
- *
- * Corrections vérifiées contre le vocab Kokoro réel + la sortie misaki :
- * - affriquées **CH→ʧ, JH→ʤ** (ligatures U+02A7/U+02A4, présentes dans le vocab), pas `tʃ/dʒ` ;
- * - **ER0→əɹ, ER1/2→ɜɹ** (`ɝ` U+025D absent du vocab ; misaki écrit `ɜɹ`/`əɹ`, ex. `bird→bˈɜɹd`) ;
- * - **G→ɡ** (U+0261, pas g ASCII) et **R→ɹ** (pas r ASCII).
- *
- * Stress (chiffre suffixé à la voyelle) : 1→`ˈ`, 2→`ˌ`, 0→aucun ; marqueur émis **avant** la
- * voyelle (convention misaki, ex. `ʧˈɜɹʧ`). Token hors des 39 → ignoré + `onWarn` (jamais de crash).
- * La sortie doit **toujours** passer ensuite par le clamp de vocab (garde-fou).
- */
+/** Conversion d'une prononciation ARPABET vers l'IPA. */
 public object ArpabetToIpa {
 
     private val TOKEN = Regex("^([A-Za-z]+)([0-2]?)$")
@@ -34,7 +22,7 @@ public object ArpabetToIpa {
 
     private fun marker(stress: String): String = when (stress) { "1" -> "ˈ"; "2" -> "ˌ"; else -> "" }
 
-    /** ARPABET (tokens séparés par espaces) → IPA. `onWarn` appelé sur token inconnu. */
+    /** Convertit une prononciation ARPABET en IPA. */
     public fun toIpa(arpabet: String, onWarn: (String) -> Unit = {}): String {
         val sb = StringBuilder()
         for (tok in arpabet.trim().split(Regex("\\s+"))) {

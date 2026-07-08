@@ -5,11 +5,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.text.Normalizer
 
-/** PhonemePost — NFD imposé (attendu du tokeniseur Kokoro) + pas de stripping. */
 class PhonemePostTest {
 
     @Test fun forcesNfdDecomposition() {
-        // "é" composé (1 code point) → "e" + U+0301 (2 code points) après NFD
         val out = PhonemePost.apply("é", "fr")
         assertEquals(2, out.length)
         assertEquals('e', out[0])
@@ -34,27 +32,22 @@ class PhonemePostTest {
     }
 
     @Test fun mapsAsciiGToIpaG() {
-        // 'g' ASCII (U+0067, sorti par CharsiuG2P) -> 'ɡ' IPA (U+0261, seul dans le vocab
-        // Kokoro) ; sans ce mapping le g serait droppé (audit OOV : 64 mots fr + 42 es).
         assertEquals("ɡ", PhonemePost.apply("g", "fr"))          // g -> ɡ
         assertEquals("teŋɡo", PhonemePost.apply("teŋgo", "es"))  // teŋgo -> teŋɡo
         assertEquals("ɡʁɑ̃", PhonemePost.apply("gʁɑ̃", "fr")) // grã
     }
 
     @Test fun dropsHaspireMarker() {
-        // ʼ (U+02BC) marqueur de h muet -> supprimé explicitement (« hommes→ʼɔm » -> « ɔm »)
         assertEquals("ɔm", PhonemePost.apply("ʼɔm", "fr"))
     }
 
     @Test fun mapsEnglishRhoticAndDarkL() {
-        // fallback anglais CharsiuG2P : ɫ→l, ɝ→ɜɹ, ɚ→əɹ (sinon droppés hors vocab Kokoro)
         assertEquals("pˈɔl", PhonemePost.apply("pˈɔɫ", "en_US"))       // Paul
         assertEquals("wˈɜɹld", PhonemePost.apply("wˈɝld", "en_US"))    // world
         assertEquals("bˈɛtəɹ", PhonemePost.apply("bˈɛtɚ", "en_US"))    // better
     }
 
     @Test fun tieBarAffricatesToLigatures() {
-        // CharsiuG2P (pt/it/es) lie les affriquées par tie-bar U+0361 -> ligatures du vocab
         assertEquals("ʤiɐ", PhonemePost.apply("d͡ʒiɐ", "pt_BR"))   // dia (pt)
         assertEquals("ʧao", PhonemePost.apply("t͡ʃao", "it"))       // ciao (it)
         assertEquals("ʣ", PhonemePost.apply("d͡z", "it"))

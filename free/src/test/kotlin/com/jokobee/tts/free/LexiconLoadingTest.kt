@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-/** BLOC B3/B4 — chargement de lexique (TSV, ARPABET), priorité, override end-to-end. */
+/** BLOC B3/B4 */
 class LexiconLoadingTest {
 
     private fun tsv(s: String, alphabet: PhoneticAlphabet = PhoneticAlphabet.IPA, lang: String = "en_US") =
@@ -45,7 +45,6 @@ class LexiconLoadingTest {
     }
 
     @Test fun lexiconPriorityOrder() {
-        // deux sources : la DERNIÈRE chargée gagne (documenté).
         val lex = MapLexiconSource()
             .load(tsv("word\tAAA\n"))
             .load(tsv("word\tBBB\n"))

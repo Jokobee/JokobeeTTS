@@ -10,19 +10,13 @@ import org.junit.Test
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/**
- * Registre de voix — surface FREE (Voice + VoiceCatalog). Port des invariants de
- * `test_voice_registry.py` accessibles hors banc : parsing/format autoritaire,
- * indexation du style, round-trip octets, consultation du catalogue, erreurs
- * explicites. L'équivalence AUDIO officiel/custom (onnxruntime + modèle HF) reste
- * un golden test du repo privé — hors scope :free (pas de réseau/modèle en CI).
- */
+/** Registre de voix */
 class VoiceCatalogTest {
 
     private val N = VoiceFormat.N_ROWS
     private val D = VoiceFormat.STYLE_DIM
 
-    /** Embedding déterministe : la ligne i vaut (i + seed) × 0.001 sur ses 256 dims. */
+    /** Embedding déterministe */
     private fun emb(seed: Int = 0): FloatArray =
         FloatArray(N * D) { ((it / D) + seed) * 0.001f }
 
@@ -32,7 +26,7 @@ class VoiceCatalogTest {
         return buf.array()
     }
 
-    /** Sous-classe de test : expose le `add` protégé pour peupler un catalogue. */
+    /** Sous-classe de test */
     private class OpenCatalog : VoiceCatalog() {
         fun put(v: Voice): Voice = add(v)
     }
@@ -64,7 +58,6 @@ class VoiceCatalogTest {
         assertArrayEquals(last, v.styleFor(N - 1), 0f)
     }
 
-    // --- négatifs : erreurs explicites, jamais de crash silencieux -------------
 
     @Test fun truncatedBytesRejected() {
         val ex = assertThrows(VoiceError::class.java) {

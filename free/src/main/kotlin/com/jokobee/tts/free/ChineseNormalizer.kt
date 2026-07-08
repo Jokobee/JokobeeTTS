@@ -2,16 +2,7 @@ package com.jokobee.tts.free
 
 import java.text.Normalizer
 
-/**
- * Normalisation chinoise (zh, mandarin, minimale par conception). Port de zh.py.
- *
- * Stratégie : chiffres → HANZI, lectures et tons délégués au G2P zh dédié.
- *
- * - Années par CHIFFRES (二〇二六年) via le ruleset ICU %spellout-numbering-year.
- * - Jours en cardinal — %spellout-numbering-days est lunaire (初六, 廿五), PIÈGE évité.
- * - Heures : 15:30 → 十五点三十分 ; règle 两 : 2点 → 两点 (jamais 二点).
- * - Températures négatives : -25°C → 零下二十五度 (usage météo).
- */
+/** Normalisation chinoise (zh, mandarin, minimale par conception) */
 public class ChineseNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,

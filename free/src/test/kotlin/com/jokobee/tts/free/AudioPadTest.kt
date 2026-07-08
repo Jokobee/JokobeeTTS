@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertArrayEquals
 import org.junit.Test
 
-/** AudioPad : silence de tête/queue (zéros), tailles exactes selon ms × sampleRate. */
+/** AudioPad */
 class AudioPadTest {
 
     @Test fun addsLeadAndTrailSilence() {

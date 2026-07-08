@@ -8,7 +8,7 @@ import org.junit.Test
 import java.io.File
 import java.text.Normalizer
 
-/** BLOC B1 — ArpabetToIpa (39 phonèmes CMUdict → IPA vocab Kokoro, stress, corrections). */
+/** BLOC B1 */
 class ArpabetToIpaTest {
 
     private val vocab: Set<Char> by lazy {
@@ -29,7 +29,6 @@ class ArpabetToIpaTest {
     }
 
     @Test fun arpabetSchwaVsWedge() {
-        // nuance critique : AH0 = schwa ə (non accentué), AH1/AH2 = wedge ʌ (accentué)
         assertEquals("ə", i("AH0"))
         assertEquals("ˈʌ", i("AH1"))
         assertEquals("ˌʌ", i("AH2"))

@@ -5,7 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Bloc 1 : cardinaux/ordinaux ICU sur les 6 locales latines (via icu4j). */
+/** Bloc 1 */
 class VerbalizerTest {
 
     private val v: Verbalizer = IcuVerbalizer()   // icu4j embarqué (= android.icu au device)

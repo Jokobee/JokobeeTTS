@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation espagnole (es). Port de es.py. Milliers = point, décimale = virgule. */
+/** Normalisation espagnole (es) */
 public class SpanishNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -10,7 +10,6 @@ public class SpanishNormalizer(
 
     private fun intEs(s: String): Long = s.replace(".", "").toLong()
 
-    // DEVISE : symbole AVANT (« $5,50 ») OU APRÈS (« 5,50 € »), €/$/£ parlés par locale.
     private fun money(sym: String, intStr: String, centStr: String): String {
         val d = intEs(intStr); val c = CUR.getValue(sym)
         val sb = StringBuilder(card(d) + " " + if (d == 1L) c[0] else c[1])
@@ -27,14 +26,12 @@ public class SpanishNormalizer(
         return t
     }
 
-    // ABRÉVIATIONS : Sr./Sra./Dr.… (plus spécifiques d'abord).
     private fun rAbbreviations(text: String): String {
         var t = text
         for ((pat, rep) in ABBREV) t = pat.replace(t) { rep }
         return t
     }
 
-    // POINTS CARDINAUX : en contexte de direction (hacia/al/…), sans lookbehind (ICU-safe).
     private fun rCardinal(text: String): String = CARDINAL_RE.replace(text) { m ->
         m.groupValues[1] + m.groupValues[2] + CARD.getValue(m.groupValues[3].uppercase())
     }
@@ -57,7 +54,6 @@ public class SpanishNormalizer(
         sb.toString()
     }
 
-    // DATE numérique « 15/03/2024 » → « quince de marzo de dos mil veinticuatro ».
     private fun rDateNum(text: String): String = DATE_NUM_RE.replace(text) { m ->
         val d = m.groupValues[1].toInt(); val mo = m.groupValues[2].toInt(); val yr = m.groupValues[3]
         if (mo < 1 || mo > 12) return@replace m.value
@@ -96,7 +92,6 @@ public class SpanishNormalizer(
             "septiembre|octubre|noviembre|diciembre"
         private val MONTHS_ARR = MONTHS.split("|")
 
-        // symbole → [unité sing, unité plur, sous-unité sing, sous-unité plur]
         private val CUR = mapOf(
             "€" to listOf("euro", "euros", "céntimo", "céntimos"),
             "$" to listOf("dólar", "dólares", "centavo", "centavos"),
@@ -120,7 +115,6 @@ public class SpanishNormalizer(
             "N" to "Norte", "S" to "Sur", "E" to "Este", "O" to "Oeste",
             "NE" to "Noreste", "NO" to "Noroeste", "SE" to "Sureste", "SO" to "Suroeste",
         )
-        // (prep)(article optionnel + espace)(cardinal) — pas de lookbehind.
         private val CARDINAL_RE = Regex(
             "\\b(hacia|hasta|desde|rumbo|al)((?:\\s+(?:el|la|los|las))?\\s+)(NO|NE|SO|SE|N|S|E|O)\\b")
 

@@ -4,14 +4,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-/**
- * GARDE anti-GPL : le chemin shippable (:core + :free, sources main) ne référence
- * JAMAIS espeak ni phonemizer (GPL-3.0). Port de test_no_gpl_imports.py.
- *
- * Le G2P GPL (espeak) n'existe que dans les scripts d'ÉVALUATION Python, jamais
- * dans les modules livrés. Verbalisation = icu4j (ICU, MIT/X) ; aucun num2words
- * (LGPL) non plus côté Kotlin. Ce garde cible la contamination GPL.
- */
+/** GARDE anti-GPL */
 class NoGplImportsTest {
 
     @Test fun noGplTokensInShippableSources() {

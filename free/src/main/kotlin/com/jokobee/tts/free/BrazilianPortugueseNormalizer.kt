@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation portugaise brésilienne (pt_BR). Port de pt_br.py. Heures FÉMININES. */
+/** Normalisation portugaise brésilienne (pt_BR) */
 public class BrazilianPortugueseNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -11,7 +11,6 @@ public class BrazilianPortugueseNormalizer(
     private fun intPt(s: String): Long = s.replace(".", "").toLong()
     private fun cardFemHour(h: Long): String = FEM[h] ?: card(h)
 
-    // MOEDA : R$ (avant) + €/$/£ (avant ou après). « R$ 5,50 »→« cinco reais e cinquenta centavos ».
     private fun money(sym: String, intStr: String, centStr: String): String {
         val d = intPt(intStr); val c = CUR.getValue(sym)
         val sb = StringBuilder(card(d) + " " + if (d == 1L) c[0] else c[1])

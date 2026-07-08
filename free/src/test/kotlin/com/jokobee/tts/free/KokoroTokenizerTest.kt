@@ -6,13 +6,9 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Tokeniseur Kokoro : ids = [0] + chars du vocab (après NFD) + [0] ; nTokens = taille−2.
- * Testé avec un vocab injecté (le vrai vient de assets/kokoro/vocab.json, 115 entrées).
- */
+/** Tokeniseur Kokoro */
 class KokoroTokenizerTest {
 
-    // vocab minimal ; 'e'=5 mais PAS le tilde combinant U+0303, ni l'accent U+0301
     private val vocab = mapOf('a' to 1, 'b' to 2, 'ɛ' to 3, 'e' to 5, ' ' to 9)
     private val tok = KokoroTokenizer(vocab)
 
@@ -22,12 +18,10 @@ class KokoroTokenizerTest {
     }
 
     @Test fun dropsCharsOutsideVocab() {
-        // 'z' absent → ignoré ; il reste a,b
         assertArrayEquals(longArrayOf(0, 1, 2, 0), tok.encode("azb"))
     }
 
     @Test fun appliesNfdBeforeLookup() {
-        // "é" composé (U+00E9) -> NFD "e"+U+0301 ; 'e'=5 dans le vocab, l'accent non -> seul 'e'
         assertArrayEquals(longArrayOf(0, 5, 0), tok.encode("é"))
     }
 

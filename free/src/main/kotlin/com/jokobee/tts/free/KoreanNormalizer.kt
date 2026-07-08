@@ -1,16 +1,6 @@
 package com.jokobee.tts.free
 
-/**
- * Normalisation coréenne (ko). Port de ko.py.
- *
- * Règle linguistique clé : DEUX systèmes de nombres selon le compteur.
- * - Heures (시)  → NATIF ATTRIBUTIF : 3시 → 세 시 (ruleset ICU
- *   %spellout-cardinal-native-attributive : 두/세/네…).
- * - Minutes (분), dates (년/월/일), argent (원), degrés (도) → SINO : 30분 → 삼십 분.
- *
- * - ₩1,234 → 천이백삼십사 원 ; -25°C → 영하 이십오 도 (영하 = sous zéro).
- * - Décimales : 3.14 → 삼 점 일 사 (점, chiffres un à un).
- */
+/** Normalisation coréenne (ko) */
 public class KoreanNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,

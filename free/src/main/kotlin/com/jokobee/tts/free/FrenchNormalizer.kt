@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation française (fr/fr_CA). Port de fr.py. */
+/** Normalisation française (fr/fr_CA). */
 public class FrenchNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -8,7 +8,6 @@ public class FrenchNormalizer(
 
     override val locale: String = "fr_CA"
 
-    // DEVISE : « 1 234,50 $ » — la subdivision suit la DEVISE : $ → sou/sous.
     private fun rCurrency(text: String): String = CURRENCY_RE.replace(text) { m ->
         val d = intOf(m.groupValues[1], TH_RE)
         val sb = StringBuilder(card(d) + (if (d == 1L) " dollar" else " dollars"))
@@ -20,7 +19,6 @@ public class FrenchNormalizer(
         sb.toString()
     }
 
-    // TEMP : « -25 °C », « 37,5 °C », « 350 °F »
     private fun rTemperature(text: String): String = TEMP_RE.replace(text) { m ->
         val neg = if (m.groupValues[1].isNotEmpty()) "moins " else ""
         val whole = m.groupValues[2].toLong()
@@ -32,7 +30,6 @@ public class FrenchNormalizer(
         "$sb $deg $unit"
     }
 
-    // HEURE : « 15 h 30 », « 8 h 05 », « 9 h »
     private fun rTime(text: String): String = TIME_RE.replace(text) { m ->
         val h = m.groupValues[1].toLong()
         val sb = StringBuilder(card(h) + (if (h == 1L) " heure" else " heures"))
@@ -41,7 +38,6 @@ public class FrenchNormalizer(
         sb.toString()
     }
 
-    // DATE numérique « 15/03/2024 » (JJ/MM/AAAA, usage fr_CA) → « quinze mars deux mille vingt-quatre ».
     private fun rDateNum(text: String): String = DATE_NUM_RE.replace(text) { m ->
         val d = m.groupValues[1].toInt(); val mo = m.groupValues[2].toInt(); val yr = m.groupValues[3]
         if (mo < 1 || mo > 12 || d < 1 || d > 31) return@replace m.value
@@ -49,7 +45,6 @@ public class FrenchNormalizer(
         "$dayW ${MONTHS_ARR[mo - 1]} ${card(yr.toLong())}"
     }
 
-    // DATE : « 6 juillet 2026 », « 1er mars »
     private fun rDate(text: String): String = DATE_RE.replace(text) { m ->
         val day = m.groupValues[1].lowercase()
         val dayW = if (day == "1er" || day == "1re" || day == "1") "premier" else card(day.toLong())
@@ -59,12 +54,10 @@ public class FrenchNormalizer(
         sb.toString()
     }
 
-    // ORDINAL : « 1er », « 1re », « 2e », « 3ème »
     private fun rOrdinal(text: String): String = ORDINAL_RE.replace(text) { m ->
         ordi(m.groupValues[1].toInt(), feminine = m.groupValues[2] == "re")
     }
 
-    // DÉCIMAL : « 3,14 » → « trois virgule quatorze »
     private fun rDecimal(text: String): String = DECIMAL_RE.replace(text) { m ->
         card(m.groupValues[1].toLong()) + " virgule " + card(m.groupValues[2].toLong())
     }
@@ -74,14 +67,12 @@ public class FrenchNormalizer(
         card(intOf(m.value, TH_RE))
     }
 
-    // B — titres/abréviations
     private fun rAbbreviations(text: String): String {
         var t = text
         for ((pat, rep) in ABBREV_FR) t = pat.replace(t) { rep }
         return t
     }
 
-    // A — cardinaux CONTEXTUELS (mot-clé navigation + numéro)
     private fun rCardinal(text: String): String = CARD_FR_RE.replace(text) { m ->
         m.groupValues[1] + " " + CARD_FR.getValue(m.groupValues[2].uppercase())
     }
@@ -94,7 +85,6 @@ public class FrenchNormalizer(
         return head + " " + base + (if (plural) "s" else "")
     }
 
-    // VITESSE (avant DISTANCE : km/h contient km)
     private fun rSpeed(text: String): String = SPEED_RE.replace(text) { m ->
         val sb = StringBuilder(card(m.groupValues[1].toLong()))
         val frac = m.groupValues[2]
@@ -103,12 +93,10 @@ public class FrenchNormalizer(
         sb.toString()
     }
 
-    // DISTANCE : « 5 km », « 250 m », « 10 miles »
     private fun rDistance(text: String): String = DISTANCE_RE.replace(text) { m ->
         measure(m.groupValues[1].toLong(), m.groupValues[2], DISTANCE_UN.getValue(m.groupValues[3].lowercase()))
     }
 
-    // POIDS : « 3 kg », « 2 t », « 5 lb »
     private fun rWeight(text: String): String = WEIGHT_RE.replace(text) { m ->
         val (base, fem) = WEIGHT_UN.getValue(m.groupValues[3].lowercase())
         measure(m.groupValues[1].toLong(), m.groupValues[2], base, fem)

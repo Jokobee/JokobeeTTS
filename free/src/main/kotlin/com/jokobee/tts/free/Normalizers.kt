@@ -2,11 +2,7 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.UnsupportedLanguageException
 
-/**
- * Fabrique de normaliseurs par locale. Route une des 10 locales supportées vers son
- * [BaseNormalizer]. Toutes les langues sont disponibles en Free (pas de paywall langue —
- * le split Free/Pro se fait sur les features, cf. charte produit).
- */
+/** Fabrique de normaliseurs par locale */
 public object Normalizers {
 
     /** Les 10 locales gérées (fr et fr_CA partagent [FrenchNormalizer]). */

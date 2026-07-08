@@ -1,13 +1,6 @@
 package com.jokobee.tts.free
 
-/**
- * Ajoute un silence de **tête** et de **queue** à une forme d'onde.
- *
- * Pourquoi (pratique standard TTS) : Kokoro attaque l'audio dès le 1er échantillon.
- * Or un player a une latence d'initialisation au premier `play()` → le début est
- * tronqué. Un silence de tête (~200 ms) absorbe cette latence ; un silence de queue
- * (~100 ms) évite un « pop » de fin. Les silences sont des zéros (f32 0.0).
- */
+/** Ajoute un silence de tête et de queue à une forme d'onde */
 public object AudioPad {
 
     /** Forme d'onde encadrée de `leadMs` ms de silence en tête et `trailMs` ms en queue. */

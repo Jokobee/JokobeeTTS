@@ -4,31 +4,19 @@ import android.content.Context
 import org.json.JSONObject
 import java.io.InputStream
 
-/**
- * Port Kotlin du **Lexicon** de misaki (G2P officiel anglais de Kokoro, MIT).
- * Étage lexique + morphologie + stress d'un mot → phonèmes (convention Kokoro).
- *
- * Fidélité : port direct de `misaki/en.py` (classe Lexicon + apply_stress). Couvert :
- * lookup gold→silver, entrées POS (dict), stemming `-s/-ed/-ing`, épellation NNP,
- * mots-outils contextuels (a/an/the/to/in…), placement du stress. **Non porté** (délégué) :
- * les NOMBRES (notre normaliseur les verbalise déjà en amont) et la devise.
- *
- * Données : `assets/misaki/us_gold.json` (90 201) + `us_silver.json` (93 361), MIT.
- * Testé contre un golden misaki (`misaki_golden_en.json`).
- */
+/** Étage lexique + morphologie + stress d'un mot anglais */
 public class MisakiEnLexicon private constructor(
     private val golds: Map<String, Entry>,
     private val silvers: Map<String, Entry>,
     private val british: Boolean,
 ) {
-    /** Entrée de lexique : phonèmes simples, ou table par tag POS ({DEFAULT, NOUN…}). */
+    /** Entrée de lexique */
     public sealed interface Entry
     @JvmInline public value class Str(public val ps: String) : Entry
     public class Dict(public val m: Map<String, String?>) : Entry
 
     private val capStresses = doubleArrayOf(0.5, 2.0)
 
-    // ----- épellation d'un mot inconnu lettre par lettre (NNP) --------------
     private fun getNNP(word: String): Pair<String?, Int> {
         val sb = StringBuilder()
         for (c in word) {
@@ -210,10 +198,7 @@ public class MisakiEnLexicon private constructor(
         return null to 0
     }
 
-    /**
-     * Point d'entrée mot → phonèmes. `tag` = POS (null = pas de POS → DEFAULT).
-     * `futureVowel` = le mot suivant commence-t-il par une voyelle (null si inconnu).
-     */
+    /** Convertit un mot en phonèmes. */
     public fun phonemize(word0: String, tag: String? = null, futureVowel: Boolean? = null): Pair<String?, Int> {
         var word = java.text.Normalizer.normalize(word0.replace('‘', '\'').replace('’', '\''), java.text.Normalizer.Form.NFKC)
         val stress = if (word == word.lowercase()) null else capStresses[if (word == word.uppercase()) 1 else 0]
@@ -234,7 +219,7 @@ public class MisakiEnLexicon private constructor(
         private val ADD_SYMBOLS = mapOf("." to "dot", "/" to "slash")
         private val SYMBOLS = mapOf("%" to "percent", "&" to "and", "+" to "plus", "@" to "at")
 
-        /** Ajuste/place le stress (port de `apply_stress`). `stress` : null, -2, -1, -0.5, 0, .5, 1, 2. */
+        /** Ajuste/place le stress */
         public fun applyStress(ps0: String?, stress: Double?): String? {
             val ps = ps0 ?: return null
             fun hasVowel() = ps.any { it in VOWELS }

@@ -2,36 +2,19 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.G2p
 
-/**
- * Orchestrateur de phonémisation (étages 2→4). Transforme du texte NORMALISÉ en
- * chaîne IPA prête pour la tokenisation Kokoro.
- *
- * (Nommé `PhonemePipeline` et non « Phonemi*r » pour éviter toute confusion — et le
- * faux positif de la garde anti-GPL — avec la lib GPL du même nom, jamais embarquée.)
- *
- * Chaîne :
- *   1. annotations mot-à-mot (homographes/mots-outils fr → IPA forcée, sinon null) ;
- *   2. pour chaque token : override IPA s'il existe, sinon [G2p] mot-à-mot si c'est
- *      un mot, sinon le token littéral (ponctuation conservée) ;
- *   3. jointure (espace entre mots, ponctuation recollée) ;
- *   4. [PhonemePost] (NFD + OOV) sur le résultat.
- *
- * Le G2P est injecté ([G2p]) → testable avec un stub, et remplaçable (CharsiuG2P
- * Free, autre moteur Pro). Le grain « un mot » est compatible avec CharsiuG2P et
- * avec le bypass des overrides (une IPA forcée court-circuite le modèle).
- */
+/** Transforme un texte normalisé en chaîne IPA. */
 public class PhonemePipeline(
     private val g2p: G2p,
     private val post: (String, String) -> String = PhonemePost::apply,
 ) {
-    /** Texte normalisé → IPA. `annotate` = fournisseur d'annotations (défaut : fr). */
+    /** Phonémise un texte normalisé. */
     public fun phonemize(
         text: String,
         lang: String,
         annotate: (String) -> List<HomographAnnotator.Ann> = HomographAnnotator::annotate,
     ): String = phonemizeAnnotations(annotate(text), lang)
 
-    /** Variante à partir d'annotations déjà calculées (langues sans homographes : ipa=null). */
+    /** Phonémise à partir d'annotations déjà calculées. */
     public fun phonemizeAnnotations(anns: List<HomographAnnotator.Ann>, lang: String): String {
         val sb = StringBuilder()
         for (ann in anns) {

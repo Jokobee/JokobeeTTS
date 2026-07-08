@@ -3,7 +3,7 @@ package com.jokobee.tts.core
 /** Base de toutes les exceptions JokobeeTTS. */
 public open class JokobeeTtsException(message: String) : RuntimeException(message)
 
-/** Voix invalide au chargement (shape/dtype/lang/troncature) — jamais silencieux. */
+/** Voix invalide au chargement (shape/dtype/lang/troncature) */
 public class VoiceError(message: String) : JokobeeTtsException(message)
 
 /** Une capacité demandée (pipeline d'une locale, moteur) n'est pas disponible. */

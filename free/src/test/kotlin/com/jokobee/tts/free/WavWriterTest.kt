@@ -5,7 +5,7 @@ import org.junit.Test
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/** WavWriter : en-tête RIFF/WAVE 44 octets + PCM 16 bits LE, mono 24 kHz. */
+/** WavWriter */
 class WavWriterTest {
 
     private fun ascii(b: ByteArray, off: Int, len: Int) = String(b, off, len, Charsets.US_ASCII)

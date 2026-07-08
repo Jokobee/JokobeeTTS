@@ -9,11 +9,7 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * BLOC A — crochet StyleResolver (SynthesisContext + StyleOutput). Vérifie que le pipeline
- * passe TOUJOURS par le StyleResolver (jamais d'accès direct au vecteur de style), et que le
- * DefaultStyleResolver (v1.0) retourne exactement la voix demandée, sans modification.
- */
+/** BLOC A */
 class StyleResolverTest {
 
     private class StubG2p : G2p {

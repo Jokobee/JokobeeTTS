@@ -1,15 +1,11 @@
 package com.jokobee.tts.core
 
-/**
- * Résout la locale à utiliser pour un segment de texte.
- * - Free : [ExplicitLangRouter] — le développeur fournit la locale.
- * - Pro  : AutoLangRouter (module :pro) — détection automatique.
- */
+/** Résout la locale à utiliser pour un segment de texte */
 public interface LangRouter {
     public fun resolve(segment: String): String
 }
 
-/** Free : retourne toujours la locale fournie par le développeur (pas de détection). */
+/** Routeur renvoyant toujours une locale fixe. */
 public class ExplicitLangRouter(private val lang: String) : LangRouter {
     override fun resolve(segment: String): String = lang
 }

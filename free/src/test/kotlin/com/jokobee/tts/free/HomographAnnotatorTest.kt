@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Désambiguïsation des homographes français. Port de l'auto-test de homographs_fr.py (19 cas). */
+/** Désambiguïsation des */
 class HomographAnnotatorTest {
 
     private data class Case(val sentence: String, val target: String, val expected: String)

@@ -4,15 +4,10 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * Tokeniseur ByT5 (byte-level) — spec google/byt5 : octet b → id b+3.
- * CharsiuG2P encode SANS eos (add_special_tokens=False, validé au banc d'export) :
- * `encode` n'ajoute donc PAS d'eos par défaut. Déterministe, sans fichier de vocab.
- */
+/** Tokeniseur */
 class ByT5TokenizerTest {
 
     @Test fun asciiBytesOffsetPlusThree() {
-        // 'A'=0x41=65 → 68 ; 'B'=66 → 69 ; 'C'=67 → 70 ; pas d'eos par défaut
         assertArrayEquals(longArrayOf(68, 69, 70), ByT5Tokenizer.encode("ABC"))
     }
 
@@ -26,7 +21,6 @@ class ByT5TokenizerTest {
     }
 
     @Test fun multibyteUtf8CountsPerByte() {
-        // 'é' = C3 A9 (2 octets) → 195+3=198, 169+3=172 (sans eos)
         assertArrayEquals(longArrayOf(198, 172), ByT5Tokenizer.encode("é"))
     }
 
@@ -40,13 +34,11 @@ class ByT5TokenizerTest {
     }
 
     @Test fun decodeIgnoresSpecialsAndSentinels() {
-        // pad(0), eos(1), unk(2) et une sentinelle (300) sont ignorés ; 'A'=68 conservé
         assertEquals("A", ByT5Tokenizer.decode(longArrayOf(0, 1, 2, 68, 300)))
     }
 
     @Test fun promptFormatMatchesHfBench() {
-        // "<fra>: bonjour" doit s'encoder octet à octet, comme le banc d'export HF
-        // (ids bruts validés : [63,105,117,100,65,61,35,101,114,113,109,114,...])
+        // "<fra>: bonjour" doit s'encoder octet à octet, comme la référence
         val ids = ByT5Tokenizer.encode(G2pLangTag.prompt("fr", "bonjour"))
         assertArrayEquals(longArrayOf(63, 105, 117, 100, 65, 61, 35), ids.copyOfRange(0, 7))
         val expected = "<fra>: bonjour".toByteArray(Charsets.UTF_8)

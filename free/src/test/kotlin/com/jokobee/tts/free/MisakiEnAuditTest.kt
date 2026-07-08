@@ -7,11 +7,7 @@ import org.junit.Test
 import java.io.File
 import java.text.Normalizer
 
-/**
- * AUDIT QUALITÉ anglais : garantit que le pipeline G2P anglais (MisakiEnG2p) n'émet
- * **jamais** de phonème hors du vocab Kokoro — la classe de bug « drop silencieux »
- * (comme g→ɡ trouvé en fr/es). Couvre le chemin misaki ET le clamp du fallback.
- */
+/** AUDIT QUALITÉ anglais */
 class MisakiEnAuditTest {
 
     private val misakiDir = File(System.getProperty("user.dir"), "src/main/assets/misaki")
@@ -47,7 +43,6 @@ class MisakiEnAuditTest {
     }
 
     @Test fun fallbackIsClampedToVocab() {
-        // Un fallback style CharsiuG2P brut (ɫ, ɝ, g ASCII) DOIT être clampé par PhonemePost.
         val rawFallback = object : G2p {
             override fun phonemize(word: String, lang: String) = when (word.lowercase()) {
                 "paul" -> "pˈɔɫ"          // ɫ hors-vocab
@@ -56,7 +51,6 @@ class MisakiEnAuditTest {
             }
         }
         val g2p = g2p(fallback = rawFallback)
-        // mots absents du lexique misaki -> passent par le fallback clampé
         for (w in listOf("Paul", "Kubernetes", "zzqx")) {
             val oov = oovChars(g2p.phonemize(w))
             assertTrue("fallback non clampé pour '$w' : $oov", oov.isEmpty())

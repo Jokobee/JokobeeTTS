@@ -9,16 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Validation ON-DEVICE (arm64) du G2P CharsiuG2P tiny int8 embarqué.
- *
- * Mesure : (1) latence modèle PURE (sans cache) en ms/mot sur les mots uniques
- * normalisés des 62 cas fr ; (2) end-to-end 62 cas via [Frontend] + [CachingG2p].
- * Les chiffres sont journalisés sous le tag `JOKO_G2P` (lire via `adb logcat`).
- *
- * Cible : <50 ms/mot (sinon le cache LRU absorbe les répétitions). L'assertion reste
- * large — le but est la MESURE, pas un seuil dur qui casserait selon le device.
- */
+/** Validation ON-DEVICE (arm64) du G2P le G2P */
 @RunWith(AndroidJUnit4::class)
 class G2pDeviceTest {
 
@@ -42,7 +33,6 @@ class G2pDeviceTest {
         }
         Log.i(tag, "mots uniques normalisés : ${uniqueWords.size}")
 
-        // (1) COLD — latence modèle pure, sans cache
         val cold = CharsiuG2p.fromAssetsOrCache(ctx, env)
         cold.phonemize("bonjour", "fr")        // warmup graphe ORT
         var nanos = 0L
@@ -57,7 +47,6 @@ class G2pDeviceTest {
         Log.i(tag, "COLD (sans cache) : %.1f ms/mot | échantillon : %s".format(coldMsPerWord, sample))
         cold.close()
 
-        // (2) END-TO-END — 62 cas via Frontend + cache LRU
         val frontend = Frontend(CachingG2p(CharsiuG2p.fromAssetsOrCache(ctx, env)))
         frontend.toPhonemes("bonjour le monde", "fr")   // warmup
         val t0 = System.nanoTime()

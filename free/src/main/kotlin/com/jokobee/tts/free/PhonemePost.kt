@@ -2,66 +2,30 @@ package com.jokobee.tts.free
 
 import java.text.Normalizer
 
-/**
- * Étage 4 — qualité fine de phonémisation (cf. ARCHITECTURE §4).
- *
- * 1. **NFD imposé** : le tokeniseur du modèle Kokoro v1.0 attend les IPA en forme
- *    décomposée (ex. nasales = voyelle + U+0303). C'est l'équivalent Kotlin du
- *    `unicodedata.normalize("NFD", …)` du banc Python — sans NFD, les caractères
- *    composés tombent hors vocab et sont silencieusement perdus à la tokenisation.
- * 2. **Mapping OOV par traits** : certains symboles IPA produits par le G2P ne sont
- *    pas dans le vocab Kokoro → table statique par langue (ex. `ʏ→y`). Jamais de
- *    drop silencieux : un OOV mappé est remplacé, pas supprimé. La table est
- *    volontairement minimale ici ; elle s'étoffe par la boucle WER (mesurer avant
- *    d'ajouter).
- *
- * Les suprasegmentaux (stress ˈ ˌ, tons) sont **conservés** : aucun stripping.
- */
+/** Filtre post-G2P pour la compatibilité du vocabulaire de phonèmes. */
 public object PhonemePost {
 
-    /**
-     * Mapping GLOBAL (toutes langues) : tics de sortie de CharsiuG2P hors vocab Kokoro.
-     * `g` (U+0067, g ASCII) → `ɡ` (U+0261, g IPA) : le vocab Kokoro n'a QUE le ɡ IPA ;
-     * sans ce mapping, le g ASCII est droppé silencieusement (audit : 64 mots fr + 42 es,
-     * ex. « grand→gʁɑ̃ », « tengo→teŋgo »). Vérifié par audit OOV sur top-2000 mots fr/es.
-     */
+    /** Substitutions globales (toutes langues). */
     private val GLOBAL: Map<Char, String> = mapOf(
         'g' to "ɡ",
-        // ʼ (U+02BC) : marqueur de h muet/liaison de CharsiuG2P, non phonémique dans nos
-        // langues (fr/es/romanes) → suppression EXPLICITE (« hommes→ʼɔm » donne « ɔm »,
-        // la bonne prononciation du h français muet). Audit OOV : 16 mots fr.
         'ʼ' to "",
-        // Chars IPA de CharsiuG2P (anglais) absents du vocab Kokoro → convention Kokoro.
-        // Nécessaires quand CharsiuG2P sert de FALLBACK OOV anglais (Paul→pˈɔɫ, world→wˈɝld) ;
-        // sans eux, ɫ/ɝ sont droppés (« world »→« wd »). N'apparaissent pas en fr/es.
-        'ɫ' to "l",     // L vélarisé (dark L) → l
-        'ɝ' to "ɜɹ",    // schwa rhotique accentué → ɜɹ
-        'ɚ' to "əɹ",    // schwa rhotique → əɹ
-        // ͡ (U+0361, tie-bar) : CharsiuG2P lie les affriquées (d͡ʒ, t͡ʃ) ; hors vocab. Les
-        // séquences affriquées sont converties en ligatures AVANT (voir TIE_BAR) ; ici on
-        // retire tout tie-bar résiduel. Audit pt/it : U+0361 = seul OOV avant ce fix.
+        'ɫ' to "l",
+        'ɝ' to "ɜɹ",
+        'ɚ' to "əɹ",
         '͡' to "",
     )
 
-    /**
-     * Affriquées liées par tie-bar (CharsiuG2P) → **ligatures** du vocab Kokoro. Séquences
-     * multi-char, donc remplacées AVANT la boucle char-par-char. `ʤ ʧ ʣ ʦ` sont dans le vocab.
-     */
+    /** Séquences à substituer. */
     private val TIE_BAR: List<Pair<String, String>> = listOf(
         "d͡ʒ" to "ʤ", "t͡ʃ" to "ʧ", "d͡z" to "ʣ", "t͡s" to "ʦ",
     )
 
-    /** Mapping OOV par langue : symbole IPA hors vocab Kokoro → substitut le plus proche. */
+    /** Substitutions par langue. */
     private val OOV: Map<String, Map<Char, String>> = mapOf(
-        // Italien : le h n'est JAMAIS phonémique (h muet — ho/ha/hai/hanno, digraphes ch/gh).
-        // CharsiuG2P sort « ho » pour « ho » (avec le h) → prononcé à tort. Suppression du /h/.
         "it" to mapOf('h' to ""),
     )
 
-    /**
-     * Applique NFD + conversion tie-bar + mapping GLOBAL + mapping OOV de `lang`. Idempotent
-     * modulo NFD. Ne strippe jamais un phonème valide.
-     */
+    /** Normalise et remplace les symboles hors vocabulaire. */
     public fun apply(ipa: String, lang: String): String {
         var nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD)
         for ((seq, lig) in TIE_BAR) if (nfd.contains('͡')) nfd = nfd.replace(seq, lig)

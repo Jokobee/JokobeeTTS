@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Variante britannique (en_GB). Hérite de [EnglishNormalizer]. Port de en_gb.py. */
+/** Variante britannique (en_GB) */
 public class BritishEnglishNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -8,7 +8,6 @@ public class BritishEnglishNormalizer(
 
     override val locale: String = "en_GB"
 
-    // £ : « £1,234.50 » → « … pounds and fifty pence » (1p → « one penny »)
     private fun rCurrencyGbp(text: String): String = CURRENCY_GBP_RE.replace(text) { m ->
         val d = m.groupValues[1].replace(",", "").toLong()
         val sb = StringBuilder(card(d) + (if (d == 1L) " pound" else " pounds"))
@@ -20,14 +19,12 @@ public class BritishEnglishNormalizer(
         sb.toString()
     }
 
-    // Date numérique GB « 15/03/2024 » (DD/MM/YYYY) → « the fifteenth of March … »
     override fun rDateNum(text: String): String = DATE_NUM_GB_RE.replace(text) { m ->
         val d = m.groupValues[1].toInt(); val mo = m.groupValues[2].toInt(); val yr = m.groupValues[3]
         if (mo < 1 || mo > 12 || d < 1 || d > 31) return@replace m.value
         "the ${ordi(d)} of ${MONTHS_ARR[mo - 1]} ${year(yr.toLong())}"
     }
 
-    // Date GB : « 6 July 2026 » → « the sixth of July … »
     private fun rDateGb(text: String): String = DATE_GB_RE.replace(text) { m ->
         val sb = StringBuilder("the " + ordi(m.groupValues[1].toInt()) + " of " + m.groupValues[2])
         val yr = m.groupValues[3]

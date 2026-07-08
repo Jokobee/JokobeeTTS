@@ -3,13 +3,13 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Sous-classe stub sans règle de locale : teste le squelette universel. */
+/** Sous-classe stub sans règle de locale */
 private class StubNormalizer(v: Verbalizer) : BaseNormalizer(v) {
     override val locale: String = "fr_CA"
     override fun rules(): List<(String) -> String> = emptyList()
 }
 
-/** Bloc 2 : le squelette (protect + whitelist + punctuation + fallback) tourne sans locale. */
+/** Bloc 2 */
 class BaseNormalizerTest {
 
     private val n = StubNormalizer(IcuVerbalizer())

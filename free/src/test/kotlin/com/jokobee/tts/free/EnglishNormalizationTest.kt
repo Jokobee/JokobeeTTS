@@ -3,11 +3,7 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * BLOC 2 — le normaliseur EN règle les acronymes/abréviations/contractions/nombres EN
- * AMONT, pour qu'ils n'arrivent jamais bruts à misaki (les cas « non résolus » de l'audit
- * se traitent ici, pas dans le G2P). Formes attendues avant G2P.
- */
+/** BLOC 2 */
 class EnglishNormalizationTest {
 
     private val norm = EnglishNormalizer(IcuVerbalizer())
@@ -25,7 +21,6 @@ class EnglishNormalizationTest {
     }
 
     @Test fun contractionsKeptForMisaki() {
-        // « don't » reste tel quel — misaki a la contraction dans son lexique.
         assertEquals("I don't know", n("I don't know"))
     }
 

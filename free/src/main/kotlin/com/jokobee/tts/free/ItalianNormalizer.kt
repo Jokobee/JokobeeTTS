@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation italienne (it). Port de it.py. euro invariable ; milliers = point. */
+/** Normalisation italienne (it) */
 public class ItalianNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -10,7 +10,6 @@ public class ItalianNormalizer(
 
     private fun intIt(s: String): Long = s.replace(".", "").toLong()
 
-    // VALUTA : €/$/£ (avant ou après). « 5,50 € »→« cinque euro e cinquanta centesimi ».
     private fun money(sym: String, intStr: String, centStr: String): String {
         val d = intIt(intStr); val c = CUR.getValue(sym)
         val sb = StringBuilder(card(d) + " " + if (d == 1L) c[0] else c[1])

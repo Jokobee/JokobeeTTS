@@ -3,12 +3,7 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/**
- * RÉGRESSION — couverture des normaliseurs fr/en_US/en_GB/es/pt_BR/it sur les catégories
- * devises (symbole avant/après, par locale), heures, points cardinaux, ordinaux, abréviations,
- * dates (mois nommé) et dates numériques (JJ/MM ou MM/JJ selon la locale).
- * Chaque cas = (label, entrée, sortie attendue) ; toute dérive casse le test.
- */
+/** RÉGRESSION */
 class NormalizationInventoryTest {
 
     private data class Case(val label: String, val input: String, val expected: String)

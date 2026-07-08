@@ -6,11 +6,7 @@ import org.junit.Test
 import java.io.File
 import java.text.Normalizer
 
-/**
- * en_GB — le moteur misaki british était déjà porté (flag + branches suffixes) ; il ne
- * manquait que les DONNÉES (gb_gold/gb_silver, maintenant embarquées). Ce test valide la
- * fidélité GB (lexique + phrases) contre un golden misaki british, et l'absence d'OOV.
- */
+/** en_GB */
 class MisakiEnGbTest {
 
     private val dir = File(System.getProperty("user.dir"), "src/main/assets/misaki")

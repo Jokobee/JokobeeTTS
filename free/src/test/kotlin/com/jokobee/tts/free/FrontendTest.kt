@@ -6,11 +6,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Frontend (normalisation → G2P) — teste le CÂBLAGE avec un G2P stub (le vrai
- * CharsiuG2p exige le modèle exporté). Prouve que la normalisation s'exécute AVANT
- * le G2P, et que les locales non-fr délèguent chaque token au G2P.
- */
 class FrontendTest {
 
     private class StubG2p : G2p {
@@ -47,7 +42,6 @@ class FrontendTest {
     }
 
     @Test fun englishRoutesToEnPhonemizer() {
-        // en_US -> le phonémiseur misaki (niveau phrase), PAS le G2P mot-à-mot
         val stub = StubG2p()
         val out = Frontend(stub, enG2p = { t, _ -> "MISAKI:$t" }).toPhonemes("hello world", "en_US")
         assertTrue(out.startsWith("MISAKI:"))

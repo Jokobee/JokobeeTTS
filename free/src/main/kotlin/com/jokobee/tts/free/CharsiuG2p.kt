@@ -9,13 +9,7 @@ import com.jokobee.tts.core.UnsupportedLanguageException
 import java.io.Closeable
 import java.io.File
 
-/**
- * Correspondance locale JokobeeTTS → étiquette de langue CharsiuG2P (préfixe `<tag>`).
- *
- * CharsiuG2P multilingue attend une entrée de la forme `"<tag>: mot"` (codes ~ISO 639-3
- * + région). ⚠ Les valeurs exactes doivent être VALIDÉES contre le vocab du modèle
- * exporté (banc d'export) ; la structure et le format `"<tag>: "` sont, eux, stables.
- */
+/** Correspondance locale JokobeeTTS */
 public object G2pLangTag {
     private val TAGS: Map<String, String> = mapOf(
         "fr" to "fra", "fr_CA" to "fra",
@@ -27,29 +21,11 @@ public object G2pLangTag {
     public fun of(lang: String): String =
         TAGS[lang] ?: throw UnsupportedLanguageException(lang)
 
-    /** Construit l'entrée graphémique attendue par le modèle : `"<tag>: mot"`. */
+    /** Construit l'entrée graphémique attendue par le modèle */
     public fun prompt(lang: String, word: String): String = "<${of(lang)}>: $word"
 }
 
-/**
- * Implémentation Free du [G2p] : modèle **CharsiuG2P** (ByT5 seq2seq, licence MIT)
- * exécuté via onnxruntime, décodage glouton (argmax) mot par mot.
- *
- * Contrat d'export (optimum, `use_cache=False`) — VALIDÉ au banc : deux modèles ONNX.
- *   encoder_model.onnx : `input_ids` i64 [1,S], `attention_mask` i64 [1,S]
- *                        → `last_hidden_state` f32 [1,S,256]
- *   decoder_model.onnx : `input_ids` i64 [1,T], `encoder_attention_mask` i64 [1,S],
- *                        `encoder_hidden_states` f32 [1,S,256] → `logits` f32 [1,T,384]
- * L'encodeur tourne une fois ; le décodeur est ré-alimenté avec toute la séquence
- * générée à chaque pas (O(n²), mais les mots sont courts — pas de cache KV côté Kotlin).
- *
- * Prétraitement VALIDÉ : entrée encodeur SANS `eos` (`ByT5Tokenizer.encode`, addEos=false)
- * → décodage identique à PyTorch HF (6/6). `decoder_start_token_id = pad(0)`.
- *
- * ⚠ Nécessite les assets exportés + validation on-device ; aucun test unitaire ne
- * l'instancie (la logique testable — ByT5Tokenizer / PhonemePipeline / PhonemePost —
- * l'est séparément).
- */
+/** Implémentation Free de [G2p]. */
 public class CharsiuG2p(
     private val env: OrtEnvironment,
     private val encoder: OrtSession,
@@ -96,7 +72,7 @@ public class CharsiuG2p(
         }
     }
 
-    /** logits [1,T,384] → argmax du dernier pas T-1. */
+    /** Sortie du modèle pour un mot. */
     @Suppress("UNCHECKED_CAST")
     private fun argmaxLastStep(value: Any?): Long {
         val logits = value as Array<Array<FloatArray>>   // [1][T][V]
@@ -118,15 +94,7 @@ public class CharsiuG2p(
         /** Nom du sous-dossier assets ET du dossier de cache téléchargé. */
         public const val G2P_DIR: String = "g2p"
 
-        /**
-         * Charge CharsiuG2p, avec **priorité au modèle TÉLÉCHARGÉ** (upgrade Pro tiny→small)
-         * sur l'asset embarqué. Sessions construites une fois ici, réutilisées ensuite.
-         *
-         * Ordre : `getExternalFilesDir("g2p")/<name>` (déposé par le Model Manager Pro)
-         * s'il existe, sinon l'asset `assets/g2p/<name>` (tiny int8, Free — offline direct).
-         * Zéro migration : déposer le small dans le cache le fait prendre le pas sur le tiny,
-         * sans changement de code.
-         */
+        /** Charge le modèle depuis les assets ou le cache. */
         public fun fromAssetsOrCache(
             context: Context,
             env: OrtEnvironment,

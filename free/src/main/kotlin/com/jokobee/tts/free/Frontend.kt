@@ -4,49 +4,25 @@ import com.jokobee.tts.core.G2p
 import com.jokobee.tts.core.MapLexiconSource
 import com.jokobee.tts.free.HomographAnnotator.Ann
 
-/**
- * Frontend texte → IPA (étages 1→4 du pipeline TTS). Compose :
- *   normalisation (locale) → annotations (homographes fr / tokenisation) →
- *   G2P mot-à-mot ([PhonemePipeline]) → post-traitement (NFD).
- *
- * L'étage aval (tokenisation Kokoro + inférence ONNX → audio) est branché plus tard ;
- * ce frontend s'arrête à la chaîne IPA prête à tokeniser.
- *
- * Le [G2p] est injecté : en production `CharsiuG2p.fromAssetsOrCache(context, env)` ;
- * en test un stub. Le [Verbalizer] par défaut est [IcuVerbalizer] (icu4j embarqué).
- *
- * **Anglais** : si un [enG2p] (misaki, niveau phrase) est fourni, `en_US`/`en_GB` y sont
- * routés — l'`enG2p` reçoit `(texte, lang)` et dispatche lui-même vers le misaki américain
- * ou britannique. misaki gère le contexte de phrase et son jeu de phonèmes = le vocab Kokoro
- * (aucun PhonemePost). Sinon (autres locales) : [PhonemePipeline] mot-à-mot + PhonemePost.
- */
 public class Frontend(
     private val g2p: G2p,
     private val enG2p: ((String, String) -> String)? = null,
     private val verbalizer: Verbalizer = IcuVerbalizer(),
-    /**
-     * Lexique custom (couche #1), **universel** : consulté avant le G2P pour fr/es (via
-     * [LexiconG2p]). Pour l'anglais, partager le MÊME objet avec `MisakiEnG2p(customLexicon=…)`.
-     * Exposé par `Tts.lexicon` pour `load(...)`/`add(...)` à chaud.
-     */
+    /** Lexique custom (couche #1), universel */
     public val lexicon: MapLexiconSource = MapLexiconSource(),
 ) {
     private val pipeline = PhonemePipeline(LexiconG2p(lexicon, g2p))
 
-    /** Texte brut → IPA, pour une des 10 locales supportées. */
+    /** Phonémise un texte. */
     public fun toPhonemes(text: String, lang: String): String {
         val normalized = Normalizers.forLang(lang, verbalizer).normalize(text)
         if ((lang == "en_US" || lang == "en_GB") && enG2p != null) {
-            return enG2p.invoke(normalized, lang)   // misaki (us/gb selon lang), pas de PhonemePost
+            return enG2p.invoke(normalized, lang)   // G2P anglais (us/gb selon lang), pas de PhonemePost
         }
         return pipeline.phonemizeAnnotations(annotate(normalized, lang), lang)
     }
 
-    /**
-     * Annotations mot-à-mot. Le français passe par [HomographAnnotator] (overrides IPA
-     * des homographes/mots-outils) ; les autres locales par une tokenisation simple
-     * (chaque token délégué au G2P, aucun override — ipa=null).
-     */
+    /** Annotations mot-à-mot */
     private fun annotate(text: String, lang: String): List<Ann> =
         if (lang == "fr" || lang == "fr_CA") HomographAnnotator.annotate(text)
         else TOKEN_RE.findall(text).map { Ann(it, null) }

@@ -4,15 +4,12 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/**
- * Écrit une forme d'onde f32 [-1,1] en **WAV PCM 16 bits mono** (24 kHz par défaut,
- * la sortie native de Kokoro). En-tête RIFF canonique de 44 octets + données little-endian.
- */
+/** Écrit une forme d'onde f32 [-1,1] en WAV PCM 16 bits mono (24 kHz par défaut, la sortie native de Kokoro) */
 public object WavWriter {
 
     private const val HEADER_SIZE = 44
 
-    /** Forme d'onde → octets WAV complets (en-tête + PCM 16 bits). */
+    /** Forme d'onde */
     public fun toWav(samples: FloatArray, sampleRate: Int = 24000): ByteArray {
         val dataLen = samples.size * 2
         val buf = ByteBuffer.allocate(HEADER_SIZE + dataLen).order(ByteOrder.LITTLE_ENDIAN)

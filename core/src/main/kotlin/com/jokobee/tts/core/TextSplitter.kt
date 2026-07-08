@@ -1,15 +1,6 @@
 package com.jokobee.tts.core
 
-/**
- * Découpe un texte NORMALISÉ en segments <= [maxChars], pour tenir dans le
- * contexte de 510 tokens utiles de Kokoro. Port de `text_splitter.py`.
- *
- * Cascade : phrase (. ! ? 。！？) → ponctuation faible (, ; : 、；：) → dernier
- * espace, jamais au milieu d'un mot. Vide/null → liste vide (fallback gracieux).
- *
- * Seuil en CARACTÈRES (proxy ; ratio tokens/char mesuré ≈ 1.01, défaut 400). Le
- * comptage RÉEL post-tokenisation viendra quand le G2P sera branché.
- */
+/** Découpe un texte normalisé en segments d'au plus [maxChars] caractères. */
 public class TextSplitter(private val maxChars: Int = DEFAULT_MAX_CHARS) {
 
     public fun split(text: String?): List<String> {

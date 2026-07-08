@@ -2,14 +2,7 @@ package com.jokobee.tts.free
 
 import java.text.Normalizer
 
-/**
- * Base des normaliseurs. Port de core.py : pipeline + protecteur (placeholders PUA)
- * + fallback gracieux + règles UNIVERSELLES (whitelist, ponctuation, %, symboles,
- * fractions, plages, romains, pièces, sigles). Les règles spécifiques (devise, heure,
- * date…) sont définies par les sous-classes de locale, qui ordonnent [rules].
- *
- * Perf : toutes les regex sont dans le companion object (compilées une fois).
- */
+/** Base des normaliseurs */
 public abstract class BaseNormalizer(
     protected val v: Verbalizer,
     private val onWarning: ((String) -> Unit)? = null,
@@ -120,7 +113,6 @@ public abstract class BaseNormalizer(
                 t = ROMAN_SECTION_EN.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
             }
             locale == "es" -> {
-                // Souverains/papes → ordinal ; siècle/chapitre → cardinal (usage moderne « siglo veintiuno »).
                 t = ROMAN_MONARCH_ES.replace(t) { mr -> mr.groupValues[1] + " " + ordi(romanToInt(mr.groupValues[2])) }
                 t = ROMAN_UNIT_ES.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
             }
@@ -129,7 +121,6 @@ public abstract class BaseNormalizer(
                 t = ROMAN_UNIT_PT.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
             }
             locale == "it" -> {
-                // Souverains/papes → ordinal ; siècle → ordinal (« ventunesimo secolo ») ; chapitre → cardinal.
                 t = ROMAN_MONARCH_IT.replace(t) { mr -> mr.groupValues[1] + " " + ordi(romanToInt(mr.groupValues[2])) }
                 t = ROMAN_SECOLO_IT.replace(t) { mr -> ordi(romanToInt(mr.groupValues[1])) + " " + mr.groupValues[2] }
                 t = ROMAN_UNIT_IT.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
@@ -155,7 +146,6 @@ public abstract class BaseNormalizer(
         return ACR_RE.replace(text) { mr -> if (mr.value in keep) mr.value else mr.value.toCharArray().joinToString(" ") }
     }
 
-    // --- pipeline (fallback gracieux : jamais d'exception) --------------
     public fun normalize(text: String?): String {
         warnings.clear()
         if (text.isNullOrEmpty()) return ""
@@ -282,8 +272,6 @@ public abstract class BaseNormalizer(
         )
 
         private fun symRules(mapping: Map<String, String>) = mapping.map { (s, w) ->
-            // ⚠ Classes Unicode EXPLICITES [\p{L}\p{N}_] au lieu de (?U)\w : le flag inline
-            //   (?U) et `\w` Unicode sont rejetés par le moteur regex ICU d'Android
             //   (crash au chargement) alors qu'ils passent sur la JVM. Vérifié on-device.
             val wc = "[\\p{L}\\p{N}_]"
             Regex("(?<=$wc)\\s*" + Regex.escape(s) + "\\s*(?=$wc)") to " $w "
@@ -356,17 +344,14 @@ public abstract class BaseNormalizer(
         private val ROMAN_MONARCH_EN = Regex("\\b(King|Queen|Pope|Louis|Charles|Henry|George|Edward|William|Elizabeth)\\s+($RN)\\b")
         private val ROMAN_SECTION_EN = Regex("\\b(Chapter|Part|Act|Volume|Book|Section)\\s+($RN)\\b")
 
-        // Espagnol : souverains/papes → ordinal ; siglo/capítulo → cardinal.
         private val ROMAN_MONARCH_ES = Regex(
             "\\b(rey|reina|papa|Felipe|Carlos|Juan|Alfonso|Fernando|Isabel|Luis|Pío|Benedicto|Pablo|Enrique)\\s+($RN)\\b")
         private val ROMAN_UNIT_ES = Regex(
             "\\b(siglo|capítulo|tomo|volumen|acto|parte|artículo)\\s+($RN)\\b", CI)
-        // Portugais : souverains/papes → ordinal ; século/capítulo → cardinal.
         private val ROMAN_MONARCH_PT = Regex(
             "\\b(rei|rainha|papa|Pedro|João|Henrique|Carlos|Luís|Afonso|Manuel|Fernando|Bento)\\s+($RN)\\b")
         private val ROMAN_UNIT_PT = Regex(
             "\\b(século|capítulo|tomo|volume|ato|parte|artigo)\\s+($RN)\\b", CI)
-        // Italien : souverains/papes → ordinal ; secolo → ordinal (2 ordres) ; capitolo → cardinal.
         private val ROMAN_MONARCH_IT = Regex(
             "\\b(re|regina|papa|Luigi|Enrico|Carlo|Giovanni|Pio|Benedetto|Paolo|Vittorio|Umberto|Federico)\\s+($RN)\\b")
         private val ROMAN_SECOLO_IT = Regex("\\b($RN)\\s+(secolo)\\b")

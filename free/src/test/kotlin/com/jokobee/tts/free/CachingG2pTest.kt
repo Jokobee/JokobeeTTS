@@ -4,7 +4,7 @@ import com.jokobee.tts.core.G2p
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Cache LRU du G2P : mémoïse (mot,lang), distingue la langue, borne la taille. */
+/** Cache */
 class CachingG2pTest {
 
     /** Compte les appels réels au modèle (délégué). */

@@ -5,27 +5,14 @@ import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
 import java.io.Closeable
 
-/**
- * Synthèse **Kokoro-82M v1.0** : phonèmes IPA + voix → forme d'onde 24 kHz mono.
- *
- * Contrat ONNX (validé au banc) :
- *   entrées : `input_ids` i64 [1,N], `style` f32 [1,256], `speed` f32 [1]
- *   sortie  : `waveform` f32 [1, num_samples]
- * `style` = `Voice.styleFor(nTokens)` (banque de styles indexée par longueur d'énoncé —
- * le registre de voix déjà porté s'emboîte directement).
- *
- * ⚠ Le modèle (~88 Mo, `model_quantized` int8 — q8f16 segfaulte ORT, écarté) n'est PAS
- * embarqué : il est TÉLÉCHARGÉ au 1er lancement puis mis en cache (voir la façade [Tts]
- * et le téléchargeur `:core`). Cette classe reçoit une session déjà ouverte → testable
- * par injection ; aucun test unitaire ne l'instancie avec un vrai modèle.
- */
+/** Synthèse Kokoro-82M v1.0 */
 public class KokoroSynth(
     private val env: OrtEnvironment,
     private val session: OrtSession,
     private val tokenizer: KokoroTokenizer,
 ) : Synthesizer, Closeable {
 
-    /** Phonèmes IPA + voix → forme d'onde f32 [-1,1] à 24 kHz. `speed` : 1.0 = normal. */
+    /** Synthétise une forme d'onde à partir de phonèmes et d'une voix. */
     override fun synth(phonemes: String, voice: Voice, speed: Float): FloatArray {
         val ids = tokenizer.encode(phonemes)
         val style = voice.styleFor(tokenizer.nTokens(ids))     // FloatArray[256]

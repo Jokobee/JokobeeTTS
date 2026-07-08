@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation anglaise (en_US). Port de en.py. */
+/** Normalisation anglaise (en_US). */
 public open class EnglishNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -10,7 +10,7 @@ public open class EnglishNormalizer(
 
     private fun intOfEn(s: String): Long = s.replace(",", "").toLong()
 
-    /** Années : 2000-2009 en toutes lettres ; 1100-9999 (≠ multiple de 100) en paires. */
+    /** Années */
     protected fun year(y: Long): String {
         if (y in 2000..2009) return card(y)
         if (y in 1100..9999 && y % 100 != 0L) {
@@ -21,7 +21,6 @@ public open class EnglishNormalizer(
         return card(y)
     }
 
-    // CURRENCY : « $1,234.50 » ($ avant, point décimal, virgule de milliers)
     protected open fun rCurrency(text: String): String = CURRENCY_RE.replace(text) { m ->
         val d = intOfEn(m.groupValues[1])
         val sb = StringBuilder(card(d) + (if (d == 1L) " dollar" else " dollars"))
@@ -33,7 +32,6 @@ public open class EnglishNormalizer(
         sb.toString()
     }
 
-    // TEMP : « -25°F », « 98.6 °F », « 20 °C »
     protected fun rTemperature(text: String): String = TEMP_RE.replace(text) { m ->
         val neg = if (m.groupValues[1].isNotEmpty()) "minus " else ""
         val whole = m.groupValues[2].toLong()
@@ -45,7 +43,6 @@ public open class EnglishNormalizer(
         "$sb $deg $unit"
     }
 
-    // TIME : « 3:30 PM », « 15:30 », « 3 PM », « 3:05 »
     protected fun rTime(text: String): String = TIME_RE.replace(text) { m ->
         val h: Long; val mn: Long; val ap: String?
         when {
@@ -59,7 +56,6 @@ public open class EnglishNormalizer(
         sb.toString()
     }
 
-    // DATE : « July 6, 2026 », « March 1st », « July 6 »
     protected fun rDate(text: String): String = DATE_RE.replace(text) { m ->
         val sb = StringBuilder(m.groupValues[1] + " " + ordi(m.groupValues[2].toInt()))
         val yr = m.groupValues[3]
@@ -67,17 +63,14 @@ public open class EnglishNormalizer(
         sb.toString()
     }
 
-    // DATE numérique US « 03/15/2024 » (MM/DD/YYYY) → « March fifteenth twenty twenty-four ».
     protected open fun rDateNum(text: String): String = DATE_NUM_RE.replace(text) { m ->
         val mo = m.groupValues[1].toInt(); val d = m.groupValues[2].toInt(); val yr = m.groupValues[3]
         if (mo < 1 || mo > 12 || d < 1 || d > 31) return@replace m.value
         "${MONTHS_ARR[mo - 1]} ${ordi(d)} ${year(yr.toLong())}"
     }
 
-    // ORDINAL : « 21st », « 2nd », « 3rd », « 4th »
     protected fun rOrdinal(text: String): String = ORDINAL_RE.replace(text) { m -> ordi(m.groupValues[1].toInt()) }
 
-    // DECIMAL : « 3.14 » → « three point one four »
     protected fun rDecimal(text: String): String = DECIMAL_RE.replace(text) { m ->
         card(m.groupValues[1].toLong()) + " point " + m.groupValues[2].map { card(it.toString().toLong()) }.joinToString(" ")
     }
@@ -95,7 +88,6 @@ public open class EnglishNormalizer(
         m.groupValues[1] + " " + CARD_EN.getValue(m.groupValues[2].uppercase())
     }
 
-    // MEASURE : « 5 km », « 60 mph », « 2.5 kg » → unités développées (table NeMo measure).
     protected fun rUnit(text: String): String = UNIT_RE.replace(text) { m ->
         val whole = m.groupValues[1].toLong(); val frac = m.groupValues[2]
         val (sing, plur) = UNIT_EN.getValue(m.groupValues[3].let { if (it == "L") it else it.lowercase() })
@@ -130,7 +122,6 @@ public open class EnglishNormalizer(
         private val DECIMAL_RE = Regex("\\b(\\d+)\\.(\\d+)\\b")
         private val INTEGER_RE = Regex("\\b\\d{1,3}(?:,\\d{3})+\\b|\\b\\d+\\b")
 
-        // Unités peu ambiguës (chiffre requis avant) ; km/h avant km, lbs avant lb.
         private val UNIT_EN = mapOf(
             "km/h" to ("kilometer per hour" to "kilometers per hour"),
             "kph" to ("kilometer per hour" to "kilometers per hour"),

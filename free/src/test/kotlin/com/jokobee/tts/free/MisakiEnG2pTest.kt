@@ -5,11 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-/**
- * Port misaki EN — Phase 2 (orchestration phrase). Fidélité de [MisakiEnG2p] contre un
- * golden misaki de phrases : tokenisation + contexte future_vowel + jointure. Sans
- * fallback (les phrases n'ont que des mots du lexique). Mesure phrase-exacte + mot-à-mot.
- */
+/** Port */
 class MisakiEnG2pTest {
 
     private val g2p: MisakiEnG2p by lazy {
@@ -44,9 +40,6 @@ class MisakiEnG2pTest {
             sentMatch, sentTotal, sRate, wordMatch, wordTotal, wRate))
         diffs.forEach { println("  DIFF $it") }
 
-        // Phase 3 (POS heuristique léger) : 99,3% sur un golden SATURÉ d'homographes.
-        // Résidus documentés (2/289) = adj+nom sans déterminant (« fresh produce ») et
-        // nom-sujet+verbe (« friends live ») → nécessiteraient un vrai tagger (hors scope).
         assertTrue("fidélité mot-à-mot trop basse : %.1f%%".format(wRate), wRate >= 99.0)
     }
 }

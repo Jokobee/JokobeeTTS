@@ -1,14 +1,6 @@
 package com.jokobee.tts.free
 
-/**
- * Normalisation hindi (hi). Port de hi.py.
- *
- * - Chiffres devanagari ०-९ → occidentaux avant traitement.
- * - Groupement indien lakh/crore accepté : « 12,34,567 » (motif 2,2,3).
- * - Heures « 15:30 » → « पंद्रह बजकर तीस मिनट » ; minutes nulles → « पंद्रह बजे ».
- * - ₹ AVANT le montant : « ₹500 » → « पाँच सौ रुपये » (1 → रुपया).
- * - Verbalisation : ICU hi (num2words ne couvre pas le hindi).
- */
+/** Normalisation hindi (hi) */
 public class HindiNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -19,7 +11,6 @@ public class HindiNormalizer(
     private fun intHi(s: String): Long = s.replace(",", "").toLong()
     private fun digits(s: String): String = s.map { card(it.toString().toLong()) }.joinToString(" ")
 
-    // Chiffres devanagari → occidentaux (première règle)
     private fun rDigits(text: String): String {
         val sb = StringBuilder(text.length)
         for (c in text) {

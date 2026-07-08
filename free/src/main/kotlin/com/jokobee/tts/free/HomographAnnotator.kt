@@ -1,25 +1,12 @@
 package com.jokobee.tts.free
 
-/**
- * Désambiguïsation des homographes français + lexique des mots-outils, en amont
- * d'un G2P mot-à-mot (CharsiuG2P). Port de homographs_fr.py.
- *
- * Fondement : la plupart des homographes français se désambiguïsent par la
- * grammaire de la phrase → approche POS/contextuelle « légère » (règles sur
- * fenêtre locale, sans dépendance lourde — portable tel quel).
- *
- * Interface : [annotate] → liste de [Ann]. IPA fournie = override forcé ;
- * `ipa == null` = déléguer au G2P.
- *
- * Hors scope documenté : liaisons (prosodie) et homographes sémantiques purs
- * (« plus » traité par la règle négation, précision ~90 %).
- */
+/** Désambiguïsation contextuelle française + lexique des mots-outils, en amont d'un G2P mot-à-mot */
 public object HomographAnnotator {
 
-    /** Un token annoté. [ipa] non nul = prononciation forcée ; null = déléguer au G2P. */
+    /** Un token annoté */
     public data class Ann(val token: String, val ipa: String?)
 
-    /** Règle contextuelle : (test sur (mots, index)) → IPA à forcer si le test passe. */
+    /** Règle contextuelle */
     private class Rule(val test: (List<String>, Int) -> Boolean, val ipa: String)
 
     private class Entry(val default: String, val rules: List<Rule>)
@@ -35,7 +22,6 @@ public object HomographAnnotator {
         return (lo until i).any { w[it].lowercase() in NE_WORDS }
     }
 
-    /** → liste [Ann] : IPA fournie = override, null = déléguer au G2P. */
     public fun annotate(text: String): List<Ann> {
         val words = tokenize(text)
         return words.mapIndexed { i, w ->
@@ -78,7 +64,7 @@ public object HomographAnnotator {
     private val WORD_RE = Regex("[a-zA-ZÀ-ÿ']+|[^\\sa-zA-ZÀ-ÿ']+")
     private val CLITIC_RE = Regex("^([cdjlnst]'|qu')(.+)$", RegexOption.IGNORE_CASE)
 
-    /** Mots-outils — IPA fixe, court-circuite le G2P neural. */
+    /** Mots-outils */
     private val FUNCTION_WORDS: Map<String, String> = mapOf(
         "le" to "lə", "la" to "la", "les" to "le", "l'" to "l",
         "de" to "də", "des" to "de", "du" to "dy", "d'" to "d",
@@ -97,40 +83,29 @@ public object HomographAnnotator {
         "très" to "tʁɛ", "chez" to "ʃe", "vers" to "vɛʁ",
     )
 
-    /** Homographes contextuels — (défaut, règles ordonnées, première qui passe gagne). */
     private val HOMOGRAPHS: Map<String, Entry> = mapOf(
-        // « est » : verbe /ɛ/ (défaut) vs point cardinal /ɛst/
         "est" to Entry("ɛ", listOf(
             Rule({ w, i -> prev(w, i) in setOf("l'", "d'") }, "ɛst"),
             Rule({ w, i -> prev(w, i) == "vent" || prev(w, i, 2) == "vent" }, "ɛst"),
             Rule({ w, i -> prev(w, i) in setOf("nord", "sud", "grand") }, "ɛst"),
         )),
-        // « es » : verbe /ɛ/ (tu es) — défaut sûr
         "es" to Entry("ɛ", emptyList()),
-        // « plus » : négation /ply/ vs comparatif-addition /plys/ (~90 %)
         "plus" to Entry("plys", listOf(Rule(::hasNeBefore, "ply"))),
-        // « fils » : /fis/ (le fils) — défaut
         "fils" to Entry("fis", emptyList()),
-        // « os » : sing. /ɔs/ vs plur. /o/ (les os)
         "os" to Entry("ɔs", listOf(
             Rule({ w, i -> prev(w, i) in setOf("les", "des", "ses", "mes", "tes", "ces", "aux") }, "o"),
         )),
-        // « tous » : déterminant /tu/ (tous les jours) vs pronom /tus/
         "tous" to Entry("tus", listOf(Rule({ w, i -> next(w, i) in DET }, "tu"))),
-        // « couvent » : nom /kuvɑ̃/ (le couvent) vs verbe /kuv/ (elles couvent)
         "couvent" to Entry("kuvɑ̃", listOf(
             Rule({ w, i ->
                 prev(w, i) in setOf("elles", "ils") ||
                     (prev(w, i) !in DET && prev(w, i).endsWith("s"))
             }, "kuv"),
         )),
-        // « président » : nom /pʁezidɑ̃/ vs verbe /pʁezid/ (ils président)
         "président" to Entry("pʁezidɑ̃", listOf(
             Rule({ w, i -> prev(w, i) in setOf("ils", "elles") }, "pʁezid"),
         )),
-        // « portions » : nom /pɔʁsjɔ̃/ vs verbe /pɔʁtjɔ̃/ (nous portions)
         "portions" to Entry("pɔʁsjɔ̃", listOf(Rule({ w, i -> prev(w, i) == "nous" }, "pɔʁtjɔ̃"))),
-        // « sens » : /sɑ̃s/ (le sens) vs verbe /sɑ̃/ (je sens, tu sens)
         "sens" to Entry("sɑ̃s", listOf(Rule({ w, i -> prev(w, i) in setOf("je", "tu") }, "sɑ̃"))),
     )
 }
