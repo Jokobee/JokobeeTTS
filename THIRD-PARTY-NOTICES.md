@@ -11,7 +11,8 @@ les marques des projets sources ne sont pas utilisées comme marque du produit).
 |---|---|---|---|
 | **Kokoro-82M** | hexgrad | **Apache-2.0** | modèle de synthèse (poids ONNX). JokobeeTTS est « **based on Kokoro-82M** ». |
 | **ONNX Runtime** | Microsoft | **MIT** | moteur d'inférence |
-| **CharsiuG2P** | CharsiuNLP | **MIT** | phonémisation (grapheme→phoneme). **Modèle embarqué** : poids ByT5 *tiny* int8 (~20 Mo, encoder+decoder ONNX) dans `free/src/main/assets/g2p/`, versionnés via Git LFS. MIT → redistribuable. Le tier Pro peut télécharger le variant *small* (meilleure qualité) dans le cache local, qui prend alors le pas sur le tiny. |
+| **CharsiuG2P** | CharsiuNLP | **MIT** | phonémisation (grapheme→phoneme, fr/es + fallback en). **Modèle embarqué** : poids ByT5 *tiny* int8 (~20 Mo, encoder+decoder ONNX) dans `free/src/main/assets/g2p/`, versionnés via Git LFS. MIT → redistribuable. Le tier Pro peut télécharger le variant *small* (meilleure qualité) dans le cache local, qui prend alors le pas sur le tiny. |
+| **misaki** | hexgrad (Kokoro) | **MIT** | G2P anglais (le G2P officiel de Kokoro), porté en Kotlin. **Lexiques embarqués** : `us_gold.json` + `us_silver.json` (~6 Mo) dans `free/src/main/assets/misaki/`, versionnés via Git LFS. MIT → redistribuable. |
 | **ICU4J** (`com.ibm.icu:icu4j`) | Unicode, Inc. | **Unicode/ICU License** (permissive) | verbalisation des nombres (RBNF spellout). **Embarqué** car `android.icu` n'expose PAS `RuleBasedNumberFormat` dans l'API publique. |
 | Code JokobeeTTS | Jokobee | propriétaire (Free = Apache-2.0 côté public) | frontend, registre de voix, orchestration |
 
