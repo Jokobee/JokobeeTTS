@@ -57,12 +57,19 @@ public class Tts(
             modelPath: String,
             styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
         ): Tts {
+            val adapters = AdapterRegistry()
             val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(context, env))
-            val en = MisakiEnG2p.fromAssets(context, fallback = g2p, british = false)
-            val enGb = MisakiEnG2p.fromAssets(context, fallback = g2p, british = true)
+            val en = MisakiEnG2p.fromAssets(
+                context, fallback = g2p, british = false,
+                dictionary = adapters.dictionary, accent = adapters.accent,
+            )
+            val enGb = MisakiEnG2p.fromAssets(
+                context, fallback = g2p, british = true,
+                dictionary = adapters.dictionary, accent = adapters.accent,
+            )
             val frontend = Frontend(g2p, enG2p = { text, lang ->
                 (if (lang == "en_GB") enGb else en).phonemize(text)
-            })
+            }, adapters = adapters)
             val synth = KokoroSynth.fromModelFile(env, modelPath, KokoroTokenizer.fromAsset(context))
             return Tts(frontend, synth, styleResolver)
         }

@@ -11,6 +11,8 @@ public class MisakiEnG2p(
     private val customLexicon: LexiconSource = EmptyLexiconSource,
     private val lang: String = "en_US",
     private val unk: String = "❓",
+    private val dictionary: DictionaryRegistry? = null,
+    private val accent: AccentRegistry? = null,
 ) {
     private class Tok(val text: String, val ws: String, val isWord: Boolean) {
         var ph: String = ""
@@ -23,11 +25,13 @@ public class MisakiEnG2p(
         for (i in toks.indices.reversed()) {
             val t = toks[i]
             t.ph = if (t.isWord) {
-                customLexicon.lookup(t.text, lang)                        // #1 lexique custom (EN TÊTE)
-                    ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #2 lexique (tag)
+                val resolved = customLexicon.lookup(t.text, lang)         // #1 tts.lexicon (EN TÊTE)
+                    ?: dictionary?.lookup(t.text, lang)?.let { PhonemePost.apply(it, lang) }  // #2 tts.dictionary
+                    ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #3 lexique (tag)
                     ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
-                        ?.let { PhonemePost.apply(it, "en_US") }          // #3 fallback CLAMPÉ
+                        ?.let { PhonemePost.apply(it, "en_US") }          // #4 fallback CLAMPÉ
                     ?: unk
+                if (accent?.current != null) PhonemePost.apply(accent.apply(resolved, t.text, lang), lang) else resolved
             } else {
                 t.text.filter { it in NON_QUOTE_PUNCTS }
             }
@@ -113,9 +117,12 @@ public class MisakiEnG2p(
             fallback: G2p? = null,
             customLexicon: LexiconSource = EmptyLexiconSource,
             british: Boolean = false,
+            dictionary: DictionaryRegistry? = null,
+            accent: AccentRegistry? = null,
         ): MisakiEnG2p = MisakiEnG2p(
             MisakiEnLexicon.fromAssets(context, british), fallback, customLexicon,
             lang = if (british) "en_GB" else "en_US",
+            dictionary = dictionary, accent = accent,
         )
     }
 }

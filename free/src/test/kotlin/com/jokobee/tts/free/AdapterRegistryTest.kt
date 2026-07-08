@@ -14,6 +14,7 @@ import com.jokobee.tts.core.ProRequiredException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.File
 
 private inline fun <reified E : Throwable> expect(block: () -> Unit) {
     val t = try { block(); null } catch (e: Throwable) { e }
@@ -155,6 +156,68 @@ class AdapterRegistryTest {
         reg.installLoader(FakeLoader(accents = mapOf("q" to StubAccent("q", "fr", "fr_CA") { it })))
         reg.accent.load("q")
         expect<AdapterIncompatibleException> { AccentG2p(reg.accent, G2P).phonemize("x", "es") }
+    }
+
+    // ----- CharsiuG2P (fr/es/it/pt) : lexicon/dict AVANT le modèle -----
+    @Test fun charsiuLexiconDictBeforeModel() {
+        val reg = AdapterRegistry()
+        reg.installLoader(FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("es"), mapOf("mesa" to "MESA")))))
+        reg.dictionary.load("d")
+        val calls = ArrayList<String>()
+        val spy = object : com.jokobee.tts.core.G2p {
+            override fun phonemize(word: String, lang: String): String { calls += word; return "SPY" }
+        }
+        val chain = AccentG2p(reg.accent, LexiconG2p(MapLexiconSource(), DictionaryG2p(reg.dictionary, spy)))
+        assertEquals("MESA", chain.phonemize("mesa", "es"))
+        assertEquals(0, calls.size)                    // mot du dico → modèle NON appelé
+        chain.phonemize("otro", "es")
+        assertEquals(listOf("otro"), calls)            // mot absent → modèle appelé
+    }
+
+    // ----- chemin misaki EN : dict/accent dans la chaîne -----
+    private fun misakiLex(): MisakiEnLexicon {
+        val dir = File(System.getProperty("user.dir"), "src/main/assets/misaki")
+        return MisakiEnLexicon.fromStreams(
+            File(dir, "us_gold.json").inputStream(), File(dir, "us_silver.json").inputStream(),
+        )
+    }
+
+    @Test fun dictResolvesInMisakiChain() {
+        val reg = AdapterRegistry()
+        reg.installLoader(FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("en_US"), mapOf("hello" to "zzz")))))
+        reg.dictionary.load("d")
+        val out = MisakiEnG2p(misakiLex(), dictionary = reg.dictionary).phonemize("hello world")
+        assertTrue("dict doit résoudre hello", out.startsWith("zzz"))
+    }
+
+    @Test fun lexiconBeforeDictInMisaki() {
+        val reg = AdapterRegistry()
+        reg.installLoader(FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("en_US"), mapOf("hello" to "zzz")))))
+        reg.dictionary.load("d")
+        val custom = MapLexiconSource(mapOf("hello" to "LEX"), "en_US")
+        val out = MisakiEnG2p(misakiLex(), customLexicon = custom, dictionary = reg.dictionary).phonemize("hello world")
+        assertTrue("tts.lexicon prime sur tts.dictionary", out.startsWith("LEX"))
+    }
+
+    @Test fun accentAppliedInMisaki() {
+        val reg = AdapterRegistry()
+        reg.installLoader(FakeLoader(accents = mapOf("a" to StubAccent("a", "en", "en_US") { "z$it" })))
+        reg.accent.load("a")
+        val withAccent = MisakiEnG2p(misakiLex(), accent = reg.accent).phonemize("hello world")
+        val plain = MisakiEnG2p(misakiLex()).phonemize("hello world")
+        assertTrue("accent préfixe chaque mot", withAccent.startsWith("z"))
+        assertTrue("sans accent : inchangé", !plain.startsWith("z"))
+    }
+
+    @Test fun neighborsUnaffectedByOverride() {
+        val reg = AdapterRegistry()
+        reg.installLoader(FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("en_US"), mapOf("cat" to "zzz")))))
+        reg.dictionary.load("d")
+        val overridden = MisakiEnG2p(misakiLex(), dictionary = reg.dictionary).phonemize("the cat")
+        val plain = MisakiEnG2p(misakiLex()).phonemize("the cat")
+        val theGold = plain.substringBefore(' ')
+        assertTrue("le voisin 'the' garde sa résolution contextuelle", overridden.startsWith(theGold))
+        assertTrue(overridden.endsWith("zzz"))
     }
 
     // ----- indépendance des trois systèmes -----
