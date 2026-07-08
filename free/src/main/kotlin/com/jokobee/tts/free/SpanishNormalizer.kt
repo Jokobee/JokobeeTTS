@@ -110,6 +110,10 @@ public class SpanishNormalizer(
             Regex("\\bSrta\\b\\.?") to "Señorita", Regex("\\bSra\\b\\.?") to "Señora",
             Regex("\\bSr\\b\\.?") to "Señor", Regex("\\bDra\\b\\.?") to "Doctora",
             Regex("\\bDr\\b\\.?") to "Doctor", Regex("\\bProf\\b\\.?") to "Profesor",
+            // adresses
+            Regex("\\bAvda\\b\\.?") to "Avenida", Regex("\\bAv\\b\\.?") to "Avenida",
+            Regex("\\bPza\\b\\.?") to "Plaza", Regex("\\bDepto\\b\\.?") to "Departamento",
+            Regex("\\bDpto\\b\\.?") to "Departamento", Regex("\\bnúm\\b\\.?", RegexOption.IGNORE_CASE) to "número",
         )
 
         private val CARD = mapOf(

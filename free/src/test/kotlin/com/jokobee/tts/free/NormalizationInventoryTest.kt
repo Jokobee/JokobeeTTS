@@ -75,6 +75,8 @@ class NormalizationInventoryTest {
             Case("range", "Páginas 10-15.", "Páginas diez a quince."),
             Case("symbole", "I+D y M&A.", "I más D y M y A."),
             Case("letters", "El DNI y la ONU.", "El D N I y la ONU."),
+            Case("adresse", "Vivo en la Av. Colón, Depto. 3.",
+                "Vivo en la Avenida Colón, Departamento tres."),
         )),
         "pt_BR" to (BrazilianPortugueseNormalizer(IcuVerbalizer()) to listOf(
             Case("devise R\$", "Custa R\$ 5,50 no total.", "Custa cinco reais e cinquenta centavos no total."),
@@ -94,6 +96,7 @@ class NormalizationInventoryTest {
             Case("range", "Páginas 10-15.", "Páginas dez a quinze."),
             Case("symbole", "P&D e M&A.", "P e D e M e A."),
             Case("letters", "O IBGE e a ONU.", "O I B G E e a ONU."),
+            Case("adresse", "Moro na Av. Paulista.", "Moro na Avenida Paulista."),
         )),
         "it" to (ItalianNormalizer(IcuVerbalizer()) to listOf(
             Case("devise €", "Costa €5,50 in tutto.", "Costa cinque euro e cinquanta centesimi in tutto."),
@@ -112,6 +115,7 @@ class NormalizationInventoryTest {
             Case("range", "Pagine 10-15.", "Pagine dieci a quindici."),
             Case("symbole", "R&S e Q&A.", "R e S e Q e A."),
             Case("letters", "L'FBI e la NATO.", "L'F B I e la NATO."),
+            Case("adresse", "Abito in P.za Duomo.", "Abito in piazza Duomo."),
         )),
     )
 

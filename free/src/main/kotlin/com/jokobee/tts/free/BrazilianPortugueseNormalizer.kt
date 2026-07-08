@@ -111,6 +111,9 @@ public class BrazilianPortugueseNormalizer(
             Regex("\\bSrta\\b\\.?") to "Senhorita", Regex("\\bSra\\b\\.?") to "Senhora",
             Regex("\\bSr\\b\\.?") to "Senhor", Regex("\\bDra\\b\\.?") to "Doutora",
             Regex("\\bDr\\b\\.?") to "Doutor", Regex("\\bProf\\b\\.?") to "Professor",
+            // adresses
+            Regex("\\bAv\\b\\.?") to "Avenida", Regex("\\bPça\\b\\.?") to "Praça",
+            Regex("\\bPca\\b\\.?") to "Praça", Regex("\\bTrav\\b\\.?") to "Travessa",
         )
 
         private val CARD = mapOf(

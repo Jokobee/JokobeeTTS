@@ -105,6 +105,9 @@ public class ItalianNormalizer(
             Regex("\\bSig\\b\\.?") to "Signor", Regex("\\bDott\\.?ssa\\b\\.?") to "Dottoressa",
             Regex("\\bDott\\b\\.?") to "Dottor", Regex("\\bProf\\.?ssa\\b\\.?") to "Professoressa",
             Regex("\\bProf\\b\\.?") to "Professor", Regex("\\bDr\\b\\.?") to "Dottor",
+            // adresses
+            Regex("\\bV\\.le\\b") to "viale", Regex("\\bP\\.?zza\\b") to "piazza",
+            Regex("\\bP\\.za\\b") to "piazza", Regex("\\bC\\.so\\b") to "corso",
         )
 
         private val CARD = mapOf(
