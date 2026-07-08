@@ -1,8 +1,11 @@
 package com.jokobee.tts.free
 
+import com.jokobee.tts.core.AudioStitcher
 import com.jokobee.tts.core.DefaultStyleResolver
+import com.jokobee.tts.core.StitchConfig
 import com.jokobee.tts.core.StyleResolver
 import com.jokobee.tts.core.SynthesisContext
+import com.jokobee.tts.core.TextSplitter
 
 /** Façade TTS complète */
 public class Tts(
@@ -22,6 +25,9 @@ public class Tts(
     public fun installProLoader(loader: com.jokobee.tts.core.AdapterLoader) {
         frontend.adapters.installLoader(loader)
     }
+    /** Assemblage des segments (silence entre phrases, fondu, normalisation). Configurable par le dev. */
+    public var stitchConfig: StitchConfig = StitchConfig(sampleRate = SAMPLE_RATE)
+
     /** Synthétise une forme d'onde à partir d'un texte. */
     public fun synthesize(
         text: String,
@@ -32,9 +38,10 @@ public class Tts(
         trailMs: Int = 100,
     ): FloatArray {
         val resolved = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
-        val ipa = frontend.toPhonemes(text, lang)
-        val wave = synth.synth(ipa, resolved, speed)
-        return AudioPad.pad(wave, SAMPLE_RATE, leadMs, trailMs)
+        val segments = TextSplitter().split(text)
+        val waves = segments.map { synth.synth(frontend.toPhonemes(it, lang), resolved, speed) }
+        val stitched = AudioStitcher.stitch(waves, stitchConfig)   // silence de tête = 1 seule fois via AudioPad
+        return AudioPad.pad(stitched, SAMPLE_RATE, leadMs, trailMs)
     }
 
     /** Idem, exporté en octets WAV PCM 16 bits mono 24 kHz (avec silence de tête/queue). */
