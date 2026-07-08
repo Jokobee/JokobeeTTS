@@ -12,6 +12,19 @@ public class TextSplitter(private val maxChars: Int = DEFAULT_MAX_CHARS) {
         return out
     }
 
+    /**
+     * Découpe TOUJOURS par phrase (ponctuation forte), avec repli [maxChars] par phrase.
+     * Destiné au streaming : livrer chaque phrase dès qu'elle est prête (latence perçue minimale),
+     * contrairement à [split] qui ne segmente qu'au-delà de [maxChars].
+     */
+    public fun splitSentences(text: String?): List<String> {
+        val t = text?.trim().orEmpty()
+        if (t.isEmpty()) return emptyList()
+        val out = ArrayList<String>()
+        for (sent in by(t, SENT_RE)) out += fit(sent)
+        return out
+    }
+
     private fun fit(segIn: String): List<String> {
         val seg = segIn.trim()
         if (seg.isEmpty()) return emptyList()

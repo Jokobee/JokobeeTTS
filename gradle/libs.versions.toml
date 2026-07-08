@@ -8,6 +8,7 @@ icu4j = "76.1"
 orgJson = "20240303"
 androidxTestExtJunit = "1.2.1"
 androidxTestRunner = "1.6.2"
+kotlinxCoroutines = "1.9.0"
 
 [libraries]
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
@@ -18,6 +19,8 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 # icu4j = android.icu (même lib) — TEST SCOPE uniquement pour exécuter la
 # verbalisation RBNF sur la JVM (android.icu n'est pas mockée en test unitaire).
 icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
+# kotlinx-coroutines — API publique : Flow<StreamChunk> pour le streaming (F2).
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 # org.json — TEST scope : lit les fichiers de cas JSON (test_cases_XX.json).
 org-json = { module = "org.json:json", version.ref = "orgJson" }
 

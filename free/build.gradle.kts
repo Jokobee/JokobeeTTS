@@ -36,6 +36,7 @@ dependencies {
     //   interface → remplaçable par une impl maison compacte plus tard (~13 Mo à
     //   optimiser vs cible AAR <5 Mo). Licence : voir THIRD-PARTY-NOTICES.md.
     api(libs.icu4j)
+    api(libs.kotlinx.coroutines.core)      // API publique Flow<StreamChunk> (streaming F2)
     testImplementation(libs.junit)
     testImplementation(libs.org.json)      // lecture des cas JSON (test-scope)
     // Instrumented (device arm64) : validation latence G2P réelle. org.json = plateforme.

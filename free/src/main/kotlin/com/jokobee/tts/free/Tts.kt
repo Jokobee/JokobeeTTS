@@ -2,10 +2,16 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.AudioStitcher
 import com.jokobee.tts.core.DefaultStyleResolver
+import com.jokobee.tts.core.ProRequiredException
 import com.jokobee.tts.core.StitchConfig
+import com.jokobee.tts.core.StreamChunk
+import com.jokobee.tts.core.StreamingEngine
 import com.jokobee.tts.core.StyleResolver
 import com.jokobee.tts.core.SynthesisContext
 import com.jokobee.tts.core.TextSplitter
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 
 /** Façade TTS complète */
 public class Tts(
@@ -27,6 +33,64 @@ public class Tts(
     }
     /** Assemblage des segments (silence entre phrases, fondu, normalisation). Configurable par le dev. */
     public var stitchConfig: StitchConfig = StitchConfig(sampleRate = SAMPLE_RATE)
+
+    /** Moteur de synthèse streaming (Pro). Installé par [installStreamingEngine]. */
+    private var streamer: StreamingEngine? = null
+    /** Installe le moteur streaming Pro (appelé par le tier Pro). */
+    public fun installStreamingEngine(engine: StreamingEngine) { streamer = engine }
+
+    // Synthèse d'un segment isolé (phonèmes → onde), sans assemblage ni padding.
+    private fun synthSegmentRaw(segment: String, lang: String, style: Voice, speed: Float): FloatArray =
+        synth.synth(frontend.toPhonemes(segment, lang), style, speed)
+
+    /**
+     * Synthèse streaming phrase par phrase, chaque segment livré à [onChunk] dès qu'il est prêt.
+     * Retourner `false` depuis [onChunk] interrompt la synthèse. Fonctionnalité Pro.
+     */
+    public fun synthesizeStreaming(
+        text: String,
+        lang: String,
+        voice: Voice,
+        speed: Float = 1.0f,
+        onChunk: (StreamChunk) -> Boolean,
+    ) {
+        val engine = streamer ?: throw ProRequiredException(
+            "Streaming requires JokobeeTTS Pro — jokobee.com/pro",
+        )
+        val style = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
+        engine.stream(
+            text = text,
+            lang = lang,
+            config = stitchConfig,
+            synthSegment = { seg, l -> synthSegmentRaw(seg, l, style, speed) },
+            onChunk = onChunk,
+        )
+    }
+
+    /**
+     * Idem [synthesizeStreaming], exposé comme [Flow] coroutine (backpressure + annulation).
+     * Fonctionnalité Pro : lève [ProRequiredException] à l'appel si le moteur Pro n'est pas installé.
+     */
+    public fun synthesizeFlow(
+        text: String,
+        lang: String,
+        voice: Voice,
+        speed: Float = 1.0f,
+    ): Flow<StreamChunk> {
+        val engine = streamer ?: throw ProRequiredException(
+            "Streaming requires JokobeeTTS Pro — jokobee.com/pro",
+        )
+        val style = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
+        return channelFlow {
+            engine.stream(
+                text = text,
+                lang = lang,
+                config = stitchConfig,
+                synthSegment = { seg, l -> synthSegmentRaw(seg, l, style, speed) },
+                onChunk = { chunk -> !isClosedForSend && trySendBlocking(chunk).isSuccess },
+            )
+        }
+    }
 
     /** Synthétise une forme d'onde à partir d'un texte. */
     public fun synthesize(

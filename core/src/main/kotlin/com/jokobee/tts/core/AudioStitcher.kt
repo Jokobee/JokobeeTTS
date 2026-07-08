@@ -32,8 +32,8 @@ public object AudioStitcher {
         return if (config.peakNormalize) normalizePeak(out, config.peakTarget) else out
     }
 
-    // Fondu linéaire vers zéro sur les [fade] échantillons de bord (jointures propres).
-    private fun fadeEdges(seg: FloatArray, fade: Int): FloatArray {
+    /** Fondu linéaire vers zéro sur les [fade] échantillons de bord (jointures propres). Exposé pour le streaming (fondu par chunk). */
+    public fun fadeEdges(seg: FloatArray, fade: Int): FloatArray {
         if (fade <= 0 || seg.size < 2 * fade) return seg
         val out = seg.copyOf()
         for (i in 0 until fade) {
