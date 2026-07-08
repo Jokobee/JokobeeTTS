@@ -45,4 +45,11 @@ class PhonemePostTest {
         // ʼ (U+02BC) marqueur de h muet -> supprimé explicitement (« hommes→ʼɔm » -> « ɔm »)
         assertEquals("ɔm", PhonemePost.apply("ʼɔm", "fr"))
     }
+
+    @Test fun mapsEnglishRhoticAndDarkL() {
+        // fallback anglais CharsiuG2P : ɫ→l, ɝ→ɜɹ, ɚ→əɹ (sinon droppés hors vocab Kokoro)
+        assertEquals("pˈɔl", PhonemePost.apply("pˈɔɫ", "en_US"))       // Paul
+        assertEquals("wˈɜɹld", PhonemePost.apply("wˈɝld", "en_US"))    // world
+        assertEquals("bˈɛtəɹ", PhonemePost.apply("bˈɛtɚ", "en_US"))    // better
+    }
 }

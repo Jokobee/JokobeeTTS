@@ -31,6 +31,12 @@ public object PhonemePost {
         // langues (fr/es/romanes) → suppression EXPLICITE (« hommes→ʼɔm » donne « ɔm »,
         // la bonne prononciation du h français muet). Audit OOV : 16 mots fr.
         'ʼ' to "",
+        // Chars IPA de CharsiuG2P (anglais) absents du vocab Kokoro → convention Kokoro.
+        // Nécessaires quand CharsiuG2P sert de FALLBACK OOV anglais (Paul→pˈɔɫ, world→wˈɝld) ;
+        // sans eux, ɫ/ɝ sont droppés (« world »→« wd »). N'apparaissent pas en fr/es.
+        'ɫ' to "l",     // L vélarisé (dark L) → l
+        'ɝ' to "ɜɹ",    // schwa rhotique accentué → ɜɹ
+        'ɚ' to "əɹ",    // schwa rhotique → əɹ
     )
 
     /** Mapping OOV par langue : symbole IPA hors vocab Kokoro → substitut le plus proche. */
