@@ -84,8 +84,10 @@ public class BrazilianPortugueseNormalizer(
     private fun rInteger(text: String): String = INTEGER_RE.replace(text) { m -> card(intPt(m.value)) }
 
     override fun rules(): List<(String) -> String> = listOf(
-        this::rPercent, this::rCurrency, this::rAbbreviations, this::rCardinal, this::rTemperature,
-        this::rTime, this::rDateNum, this::rDate, this::rOrdinal, this::rDecimal, this::rInteger,
+        this::rPercent, this::rSymbols, this::rAbbreviations, this::rRoman, this::rCardinal,
+        this::rCurrency, this::rTemperature, this::rTime, this::rDateNum, this::rDate,
+        this::rRoom, this::rFraction, this::rRange, this::rLetters,
+        this::rOrdinal, this::rDecimal, this::rInteger,
     )
 
     private companion object {

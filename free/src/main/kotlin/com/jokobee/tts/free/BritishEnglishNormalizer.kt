@@ -37,7 +37,7 @@ public class BritishEnglishNormalizer(
 
     override fun rules(): List<(String) -> String> = listOf(
         this::rPercent, this::rSymbols, this::rAbbreviations, this::rRoman, this::rCardinal,
-        this::rCurrencyGbp, this::rCurrency, this::rTemperature, this::rTime,
+        this::rCurrencyGbp, this::rCurrency, this::rUnit, this::rTemperature, this::rTime,
         this::rDateNum, this::rDateGb, this::rDate,
         this::rRoom, this::rFraction, this::rRange, this::rLetters, this::rOrdinal, this::rDecimal, this::rInteger,
     )

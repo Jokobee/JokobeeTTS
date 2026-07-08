@@ -95,9 +95,20 @@ public open class EnglishNormalizer(
         m.groupValues[1] + " " + CARD_EN.getValue(m.groupValues[2].uppercase())
     }
 
+    // MEASURE : « 5 km », « 60 mph », « 2.5 kg » → unités développées (table NeMo measure).
+    protected fun rUnit(text: String): String = UNIT_RE.replace(text) { m ->
+        val whole = m.groupValues[1].toLong(); val frac = m.groupValues[2]
+        val (sing, plur) = UNIT_EN.getValue(m.groupValues[3].let { if (it == "L") it else it.lowercase() })
+        val sb = StringBuilder(card(whole))
+        if (frac.isNotEmpty()) sb.append(" point ").append(frac.map { card(it.toString().toLong()) }.joinToString(" "))
+        val plural = whole != 1L || frac.isNotEmpty()
+        sb.append(" ").append(if (plural) plur else sing)
+        sb.toString()
+    }
+
     override fun rules(): List<(String) -> String> = listOf(
         this::rPercent, this::rSymbols, this::rAbbreviations, this::rRoman, this::rCardinal,
-        this::rCurrency, this::rTemperature, this::rTime, this::rDateNum, this::rDate,
+        this::rCurrency, this::rUnit, this::rTemperature, this::rTime, this::rDateNum, this::rDate,
         this::rRoom, this::rFraction, this::rRange, this::rLetters,
         this::rOrdinal, this::rDecimal, this::rInteger,
     )
@@ -118,6 +129,22 @@ public open class EnglishNormalizer(
         private val ORDINAL_RE = Regex("\\b(\\d+)(st|nd|rd|th)\\b")
         private val DECIMAL_RE = Regex("\\b(\\d+)\\.(\\d+)\\b")
         private val INTEGER_RE = Regex("\\b\\d{1,3}(?:,\\d{3})+\\b|\\b\\d+\\b")
+
+        // Unités peu ambiguës (chiffre requis avant) ; km/h avant km, lbs avant lb.
+        private val UNIT_EN = mapOf(
+            "km/h" to ("kilometer per hour" to "kilometers per hour"),
+            "kph" to ("kilometer per hour" to "kilometers per hour"),
+            "mph" to ("mile per hour" to "miles per hour"),
+            "m/s" to ("meter per second" to "meters per second"),
+            "km" to ("kilometer" to "kilometers"), "cm" to ("centimeter" to "centimeters"),
+            "mm" to ("millimeter" to "millimeters"), "kg" to ("kilogram" to "kilograms"),
+            "mg" to ("milligram" to "milligrams"), "ml" to ("milliliter" to "milliliters"),
+            "mi" to ("mile" to "miles"), "ft" to ("foot" to "feet"), "yd" to ("yard" to "yards"),
+            "lbs" to ("pound" to "pounds"), "lb" to ("pound" to "pounds"), "oz" to ("ounce" to "ounces"),
+            "g" to ("gram" to "grams"), "m" to ("meter" to "meters"), "L" to ("liter" to "liters"),
+        )
+        private val UNIT_RE = Regex(
+            "\\b(\\d+)(?:\\.(\\d+))?\\s*(km/h|kph|mph|m/s|km|cm|mm|kg|mg|ml|mi|ft|yd|lbs|lb|oz|g|m|L)\\b")
 
         private val CARD_EN = mapOf(
             "NE" to "Northeast", "NW" to "Northwest", "SE" to "Southeast", "SW" to "Southwest",

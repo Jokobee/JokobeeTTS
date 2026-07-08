@@ -108,21 +108,39 @@ public abstract class BaseNormalizer(
 
     protected fun rRoman(text: String): String {
         var t = text
-        if (locale.startsWith("fr")) {
-            t = ROMAN_KW_FR.replace(t) { mr ->
-                val n = romanToInt(mr.groupValues[2]); mr.groupValues[1] + " " + (if (n == 1) "premier" else card(n))
+        when {
+            locale.startsWith("fr") -> {
+                t = ROMAN_KW_FR.replace(t) { mr ->
+                    val n = romanToInt(mr.groupValues[2]); mr.groupValues[1] + " " + (if (n == 1) "premier" else card(n))
+                }
+                t = ROMAN_SIECLE_FR.replace(t) { mr -> ordi(romanToInt(mr.groupValues[1])) + " " + mr.groupValues[2] }
             }
-            t = ROMAN_SIECLE_FR.replace(t) { mr -> ordi(romanToInt(mr.groupValues[1])) + " " + mr.groupValues[2] }
-        } else if (locale.startsWith("en")) {
-            t = ROMAN_MONARCH_EN.replace(t) { mr -> mr.groupValues[1] + " the " + ordi(romanToInt(mr.groupValues[2])) }
-            t = ROMAN_SECTION_EN.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
+            locale.startsWith("en") -> {
+                t = ROMAN_MONARCH_EN.replace(t) { mr -> mr.groupValues[1] + " the " + ordi(romanToInt(mr.groupValues[2])) }
+                t = ROMAN_SECTION_EN.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
+            }
+            locale == "es" -> {
+                // Souverains/papes → ordinal ; siècle/chapitre → cardinal (usage moderne « siglo veintiuno »).
+                t = ROMAN_MONARCH_ES.replace(t) { mr -> mr.groupValues[1] + " " + ordi(romanToInt(mr.groupValues[2])) }
+                t = ROMAN_UNIT_ES.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
+            }
+            locale == "pt_BR" -> {
+                t = ROMAN_MONARCH_PT.replace(t) { mr -> mr.groupValues[1] + " " + ordi(romanToInt(mr.groupValues[2])) }
+                t = ROMAN_UNIT_PT.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
+            }
+            locale == "it" -> {
+                // Souverains/papes → ordinal ; siècle → ordinal (« ventunesimo secolo ») ; chapitre → cardinal.
+                t = ROMAN_MONARCH_IT.replace(t) { mr -> mr.groupValues[1] + " " + ordi(romanToInt(mr.groupValues[2])) }
+                t = ROMAN_SECOLO_IT.replace(t) { mr -> ordi(romanToInt(mr.groupValues[1])) + " " + mr.groupValues[2] }
+                t = ROMAN_UNIT_IT.replace(t) { mr -> mr.groupValues[1] + " " + card(romanToInt(mr.groupValues[2])) }
+            }
         }
         return t
     }
 
     protected fun rRoom(text: String): String {
         val kw = ROOM_KW[locale] ?: return text
-        val oh = if (locale.startsWith("fr")) "zéro" else "oh"
+        val oh = ROOM_OH[locale] ?: "oh"
         fun chunk(c: String) = if (c.length == 2 && c[0] == '0') "$oh " + card(c[1].toString().toLong()) else card(c.toLong())
         return Regex("\\b($kw)\\s+(\\d{3,4})\\b", RegexOption.IGNORE_CASE).replace(text) { mr ->
             val digits = mr.groupValues[2]
@@ -235,7 +253,26 @@ public abstract class BaseNormalizer(
             Regex("\\bapprox\\.?", CI) to "approximately",
             Regex("\\bdept\\.?", CI) to "department",
         )
-        private val WHITELIST_WORDS = mapOf("fr_CA" to WL_FR, "fr" to WL_FR, "en_US" to WL_EN, "en_GB" to WL_EN)
+        private val WL_ES = listOf(
+            Regex("\\betc\\.?", CI) to "etcétera",
+            Regex("\\bp\\.\\s?ej\\.?", CI) to "por ejemplo",
+            Regex("\\bEE\\.?\\s?UU\\.?") to "Estados Unidos",
+            Regex("\\bUd\\b\\.?", CI) to "usted", Regex("\\bVd\\b\\.?", CI) to "usted",
+        )
+        private val WL_PT = listOf(
+            Regex("\\betc\\.?", CI) to "et cetera",
+            Regex("\\bp\\.\\s?ex\\.?", CI) to "por exemplo",
+            Regex("\\bEUA\\b") to "Estados Unidos",
+        )
+        private val WL_IT = listOf(
+            Regex("\\becc\\.?", CI) to "eccetera",
+            Regex("\\bp\\.\\s?es\\.?", CI) to "per esempio",
+            Regex("\\becc\\b\\.?", CI) to "eccetera",
+        )
+        private val WHITELIST_WORDS = mapOf(
+            "fr_CA" to WL_FR, "fr" to WL_FR, "en_US" to WL_EN, "en_GB" to WL_EN,
+            "es" to WL_ES, "pt_BR" to WL_PT, "it" to WL_IT,
+        )
 
         private val PUNCT_RULES = listOf(
             Regex("…|\\.{3,}") to "…",
@@ -253,7 +290,13 @@ public abstract class BaseNormalizer(
         }
         private val SYM_FR = symRules(mapOf("&" to "et", "=" to "égale", "+" to "plus", "×" to "fois", "→" to "vers", "@" to "arobase"))
         private val SYM_EN = symRules(mapOf("&" to "and", "=" to "equals", "+" to "plus", "×" to "times", "→" to "to", "@" to "at"))
-        private val SYMBOL_WORDS = mapOf("fr_CA" to SYM_FR, "fr" to SYM_FR, "en_US" to SYM_EN, "en_GB" to SYM_EN)
+        private val SYM_ES = symRules(mapOf("&" to "y", "=" to "igual", "+" to "más", "×" to "por", "→" to "a", "@" to "arroba"))
+        private val SYM_PT = symRules(mapOf("&" to "e", "=" to "igual", "+" to "mais", "×" to "vezes", "→" to "para", "@" to "arroba"))
+        private val SYM_IT = symRules(mapOf("&" to "e", "=" to "uguale", "+" to "più", "×" to "per", "→" to "a", "@" to "chiocciola"))
+        private val SYMBOL_WORDS = mapOf(
+            "fr_CA" to SYM_FR, "fr" to SYM_FR, "en_US" to SYM_EN, "en_GB" to SYM_EN,
+            "es" to SYM_ES, "pt_BR" to SYM_PT, "it" to SYM_IT,
+        )
 
         private val FRAC_FR = mapOf(
             (1 to 2) to "un demi", (1 to 3) to "un tiers", (1 to 4) to "un quart",
@@ -263,18 +306,47 @@ public abstract class BaseNormalizer(
             (1 to 2) to "one half", (1 to 3) to "one third", (1 to 4) to "one quarter",
             (3 to 4) to "three quarters", (2 to 3) to "two thirds", (1 to 5) to "one fifth",
         )
+        private val FRAC_ES = mapOf(
+            (1 to 2) to "un medio", (1 to 3) to "un tercio", (1 to 4) to "un cuarto",
+            (3 to 4) to "tres cuartos", (2 to 3) to "dos tercios", (1 to 5) to "un quinto",
+        )
+        private val FRAC_PT = mapOf(
+            (1 to 2) to "um meio", (1 to 3) to "um terço", (1 to 4) to "um quarto",
+            (3 to 4) to "três quartos", (2 to 3) to "dois terços", (1 to 5) to "um quinto",
+        )
+        private val FRAC_IT = mapOf(
+            (1 to 2) to "un mezzo", (1 to 3) to "un terzo", (1 to 4) to "un quarto",
+            (3 to 4) to "tre quarti", (2 to 3) to "due terzi", (1 to 5) to "un quinto",
+        )
         private val FRACTION_DATA = mapOf(
             "fr_CA" to FracData(FRAC_FR, "sur", "et", "demi"), "fr" to FracData(FRAC_FR, "sur", "et", "demi"),
             "en_US" to FracData(FRAC_EN, "over", "and", "a half"), "en_GB" to FracData(FRAC_EN, "over", "and", "a half"),
+            "es" to FracData(FRAC_ES, "sobre", "y", "medio"),
+            "pt_BR" to FracData(FRAC_PT, "sobre", "e", "meio"),
+            "it" to FracData(FRAC_IT, "fratto", "e", "mezzo"),
         )
-        private val RANGE_WORD = mapOf("fr_CA" to "à", "fr" to "à", "en_US" to "to", "en_GB" to "to")
+        private val RANGE_WORD = mapOf(
+            "fr_CA" to "à", "fr" to "à", "en_US" to "to", "en_GB" to "to",
+            "es" to "a", "pt_BR" to "a", "it" to "a",
+        )
         private val ROOM_KW = mapOf(
             "fr_CA" to "chambre|salle|porte|suite|local|bureau", "fr" to "chambre|salle|porte|suite|local|bureau",
             "en_US" to "room|suite|gate|unit|office|apartment", "en_GB" to "room|suite|gate|unit|office|flat",
+            "es" to "habitación|sala|puerta|suite|oficina|cuarto", "pt_BR" to "quarto|sala|porta|suíte|escritório",
+            "it" to "camera|sala|porta|suite|ufficio|stanza",
+        )
+        private val ROOM_OH = mapOf(
+            "fr_CA" to "zéro", "fr" to "zéro", "es" to "cero", "pt_BR" to "zero", "it" to "zero",
         )
         private val ACR_FR = setOf("NASA", "OTAN", "UNESCO", "REER", "CELI", "CLSC", "ONU", "OVNI", "SIDA", "OK", "RADAR", "LASER", "PME")
         private val ACR_EN = setOf("NASA", "NATO", "UNESCO", "NAFTA", "ASAP", "PIN", "SIM", "GUI", "OK", "RADAR", "LASER", "SCUBA", "AM", "PM")
-        private val ACRONYM_KEEP = mapOf("fr_CA" to ACR_FR, "fr" to ACR_FR, "en_US" to ACR_EN, "en_GB" to ACR_EN)
+        private val ACR_ES = setOf("NASA", "OTAN", "UNESCO", "ONU", "OVNI", "SIDA", "OK", "RADAR", "LASER", "PYME", "UE", "OTI")
+        private val ACR_PT = setOf("NASA", "OTAN", "UNESCO", "ONU", "OVNI", "AIDS", "OK", "RADAR", "LASER", "PIB")
+        private val ACR_IT = setOf("NASA", "NATO", "UNESCO", "ONU", "UFO", "AIDS", "OK", "RADAR", "LASER", "PIL")
+        private val ACRONYM_KEEP = mapOf(
+            "fr_CA" to ACR_FR, "fr" to ACR_FR, "en_US" to ACR_EN, "en_GB" to ACR_EN,
+            "es" to ACR_ES, "pt_BR" to ACR_PT, "it" to ACR_IT,
+        )
 
         private const val RN = "(?:[IVXLCDM]{2,8}|I)"
         private val ROMAN_KW_FR = Regex(
@@ -283,5 +355,21 @@ public abstract class BaseNormalizer(
         private val ROMAN_SIECLE_FR = Regex("\\b($RN)(?:e|ᵉ|er)?\\s+(siècle|arrondissement|République|guerre mondiale|guerre)\\b")
         private val ROMAN_MONARCH_EN = Regex("\\b(King|Queen|Pope|Louis|Charles|Henry|George|Edward|William|Elizabeth)\\s+($RN)\\b")
         private val ROMAN_SECTION_EN = Regex("\\b(Chapter|Part|Act|Volume|Book|Section)\\s+($RN)\\b")
+
+        // Espagnol : souverains/papes → ordinal ; siglo/capítulo → cardinal.
+        private val ROMAN_MONARCH_ES = Regex(
+            "\\b(rey|reina|papa|Felipe|Carlos|Juan|Alfonso|Fernando|Isabel|Luis|Pío|Benedicto|Pablo|Enrique)\\s+($RN)\\b")
+        private val ROMAN_UNIT_ES = Regex(
+            "\\b(siglo|capítulo|tomo|volumen|acto|parte|artículo)\\s+($RN)\\b", CI)
+        // Portugais : souverains/papes → ordinal ; século/capítulo → cardinal.
+        private val ROMAN_MONARCH_PT = Regex(
+            "\\b(rei|rainha|papa|Pedro|João|Henrique|Carlos|Luís|Afonso|Manuel|Fernando|Bento)\\s+($RN)\\b")
+        private val ROMAN_UNIT_PT = Regex(
+            "\\b(século|capítulo|tomo|volume|ato|parte|artigo)\\s+($RN)\\b", CI)
+        // Italien : souverains/papes → ordinal ; secolo → ordinal (2 ordres) ; capitolo → cardinal.
+        private val ROMAN_MONARCH_IT = Regex(
+            "\\b(re|regina|papa|Luigi|Enrico|Carlo|Giovanni|Pio|Benedetto|Paolo|Vittorio|Umberto|Federico)\\s+($RN)\\b")
+        private val ROMAN_SECOLO_IT = Regex("\\b($RN)\\s+(secolo)\\b")
+        private val ROMAN_UNIT_IT = Regex("\\b(capitolo|tomo|volume|atto|parte|articolo)\\s+($RN)\\b", CI)
     }
 }
