@@ -26,9 +26,9 @@ Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commerc
 
 | Tier | Contenu | Distribution |
 |---|---|---|
-| **`:core`** | contrats (`G2p`, `LexiconSource`, `StyleResolver`), `TextSplitter`, `LangRouter`, exceptions | Maven Central — `com.jokobee:jokobeetts-core` *(à venir)* |
-| **`:free`** | normalisation 6 langues, G2P embarqué, synthèse Kokoro, registre de voix, API `Tts` | Maven Central — `com.jokobee:jokobeetts` *(à venir)* |
-| **`:pro`** | import de voix, **blending**, streaming temps réel, GPU Vulkan, x86_64, `lang="auto"`, SSML, timestamps, **Model Manager** | **jokobee.com** (licence commerciale) — repo privé |
+| **`:core`** | contrats (`G2p`, `LexiconSource`, `StyleResolver`, `LanguageDetector`, `StreamingEngine`), `TextSplitter`, `AudioStitcher`, **`ModelManager`** (téléchargeur), exceptions | Maven Central — `com.jokobee:jokobeetts-core` *(à venir)* |
+| **`:free`** | normalisation 6 langues, G2P embarqué, synthèse Kokoro, registre de voix, **assemblage multi-phrases**, API `Tts` | Maven Central — `com.jokobee:jokobeetts` *(à venir)* |
+| **`:pro`** | import de voix, **blending**, **streaming temps réel**, **`lang="auto"`** (détection), GPU Vulkan, x86_64, SSML, timestamps | **jokobee.com** (licence commerciale) — repo privé |
 | **JokobeeSDK** *(futur)* | SDK IA complet : modules par langue (`:lang-*`), **moteur de style contextuel** (`StyleResolver`), création de voix, pipelines multimodaux | — |
 
 **Free = 100 % gratuit, aucune langue derrière un paywall.** Le split Free/Pro porte sur les
@@ -44,12 +44,15 @@ Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commerc
 
 - **G2P** : **embarqué** dans l'AAR (assets, Git LFS) → offline direct, aucune configuration.
 - **Modèle de synthèse Kokoro** (~88 Mo) : **téléchargé au 1er lancement** (trop gros pour
-  l'AAR), mis en cache local ensuite. *(Téléchargeur `:core` + hébergement : voir Roadmap.)*
+  l'AAR) via **`ModelManager`** (`:core`) — priorité cache > assets > téléchargement, reprise +
+  vérification SHA-256, puis mis en cache local. *(Hébergement du modèle : voir Roadmap.)*
 
 ## Roadmap
 
 **Reste pour la première publication** (le moteur v1.0 est prêt ; il manque la distribution)
-- Téléchargeur `:core` (URL épinglée + SHA256) + hébergement du modèle Kokoro (release GitHub).
+- **Hébergement** du modèle Kokoro (Cloudflare) + remplissage du `manifest.json`
+  (`sha256`/`size` — le téléchargeur `ModelManager` `:core` est **prêt**, cf.
+  [`docs/model-manifest.template.json`](docs/model-manifest.template.json)).
 - Voix officielles des 6 langues embarquées dans `:free`.
 - Publication Maven Central (`:core` + `:free`), bump de la coordinate `0.1.0` → `1.0.0`.
 

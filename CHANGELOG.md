@@ -25,9 +25,21 @@ leur propre suivi (voir [README](README.md#modules--tiers)).
   (texte → audio), silence de tête/queue configurable.
 - **Registre de voix** : catalogue de voix officielles en lecture (Free).
 
+### Ajouté — Assemblage & téléchargement
+- **`AudioStitcher`** (`:core`) : assemblage multi-phrases — fondu anti-clic aux jointures,
+  silence inter-phrase configurable, normalisation de crête. Câblé dans `Tts.synthesize`
+  (`stitchConfig`).
+- **`ModelManager`** (`:core`) : téléchargement du modèle Kokoro / des voix —
+  priorité **cache > assets > téléchargement**, reprise (`.part` + `Range`), progression,
+  vérification **SHA-256**, crochet `Authorizer` (licence). Manifeste `manifest.json`.
+
 ### Ajouté — Extensibilité (crochets réservés)
 - **`LexiconSource`** (`:core`) : lexique custom prioritaire (couche avant le G2P). Stub vide.
 - **`StyleResolver`** (`:core`) : résolution du style/voix avant synthèse. Pass-through v1.0.
+- **`StreamingEngine`** / **`StreamChunk`** (`:core`) : contrat de synthèse streaming
+  (implémentation dans le tier **Pro** ; `ProRequiredException` en Free).
+- **`LanguageDetector`** + `lang="auto"` (`:core`) : contrat de détection de langue
+  (implémentation **Pro** ; `ProRequiredException` en Free).
 
 ### Validé
 - **Bout-en-bout on-device** (Pixel 7 Pro, arm64) : texte → WAV audible.
@@ -35,8 +47,9 @@ leur propre suivi (voir [README](README.md#modules--tiers)).
 
 ### Notes de version
 - **Free** = 100 % gratuit, toutes les langues (pas de paywall langue). Zéro GPL/LGPL.
-- **Pro** (streaming, blending, import de voix, GPU, Model Manager…) : licence commerciale,
-  jokobee.com.
+- **Pro** (streaming temps réel, `lang="auto"`, blending, import de voix, GPU…) : licence
+  commerciale, jokobee.com. *(Le téléchargeur `ModelManager` est en `:core`/Free ; le crochet
+  `Authorizer` permet d'y adosser une licence Pro.)*
 - **SDK** (modules par langue, style contextuel, création de voix) : évolution future.
 
 ## [0.1.0]
