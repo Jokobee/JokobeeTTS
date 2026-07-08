@@ -8,6 +8,7 @@ Texte → audio 24 kHz on-device. Ce guide couvre le tier **Free** (`:core` + `:
 - [Voix](#voix)
 - [Langues](#langues)
 - [Crochets d'extension](#crochets-dextension)
+- [Téléchargement du modèle (ModelManager)](#téléchargement-du-modèle-modelmanager)
 - [Perf & threading](#perf--threading)
 
 ---
@@ -118,6 +119,35 @@ tts.lexicon.load(BrandLexicon())             // enregistré au pipeline
 val tts2 = Tts.create(context, env, modelPath,
     styleResolver = com.jokobee.tts.core.DefaultStyleResolver())
 ```
+
+---
+
+## Téléchargement du modèle (ModelManager)
+
+`ModelManager` (`:core`) résout le modèle ONNX et les voix vers des fichiers locaux.
+Priorité : **cache** (déjà téléchargé et vérifié) → **assets** embarqués → **téléchargement**
+(Cloudflare). Téléchargement repris (`.part` + `Range`), progression, vérification SHA-256.
+
+```kotlin
+val manifest = com.jokobee.tts.core.ModelManifest.fromJson(
+    context.assets.open("model-manifest.json").bufferedReader().readText(),
+)
+val mgr = com.jokobee.tts.core.ModelManager(
+    cacheDir = java.io.File(context.filesDir, "kokoro"),
+    assets = com.jokobee.tts.core.AssetProvider { name ->
+        runCatching { context.assets.open(name) }.getOrNull()   // voix/modèle embarqués éventuels
+    },
+)
+val files = mgr.ensureAll(manifest) { name, done, total ->
+    // maj UI de progression (total = -1 si inconnu)
+}
+val tts = Tts.create(context, env, modelPath = files.getValue("kokoro.onnx").absolutePath)
+```
+
+Le manifeste (`docs/model-manifest.template.json`) liste chaque artefact
+(`name`, `url`, `sha256`, `size`). Un `sha256` valant `"TODO"` ou vide **saute** la
+vérification (artefact pas encore uploadé). Le crochet `Authorizer` (stub `{ true }`)
+permet de conditionner le téléchargement à une licence (Pro) plus tard.
 
 ---
 

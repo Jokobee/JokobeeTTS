@@ -24,6 +24,7 @@ kotlin {
 
 dependencies {
     testImplementation(libs.junit)
+    testImplementation(libs.org.json)   // manifest.json parsé en test JVM (org.json fourni par Android au runtime)
 }
 
 mavenPublishing {

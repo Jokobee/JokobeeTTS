@@ -1,0 +1,18 @@
+{
+  "_comment": "Template du manifeste des artefacts JokobeeTTS. Hébergé sur Cloudflare. Remplir 'sha256' (SHA-256 hex minuscule) et 'size' (octets) au moment de l'upload — les placeholders 'TODO' font sauter la vérification côté client (ModelManager).",
+  "version": "1.0",
+  "files": [
+    {
+      "name": "kokoro.onnx",
+      "url": "https://models.jokobee.com/tts/1.0/kokoro.onnx",
+      "sha256": "TODO",
+      "size": 0
+    },
+    {
+      "name": "voices.bin",
+      "url": "https://models.jokobee.com/tts/1.0/voices.bin",
+      "sha256": "TODO",
+      "size": 0
+    }
+  ]
+}
