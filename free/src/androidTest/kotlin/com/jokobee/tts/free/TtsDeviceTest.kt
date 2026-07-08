@@ -66,11 +66,10 @@ class TtsDeviceTest {
 
         // Pipeline ANGLAIS : misaki (lexique embarqué) + fallback CharsiuG2P + lexique marque.
         val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(ctx, env))
-        val misakiEn = MisakiEnG2p.fromAssets(
-            ctx, fallback = g2p,
-            customLexicon = com.jokobee.tts.core.MapLexiconSource(mapOf("jokobee" to "dʒoʊkoʊbi"), "en_US"),
-        )
-        val frontend = Frontend(g2p, enG2p = { misakiEn.phonemize(it) })
+        val brands = com.jokobee.tts.core.MapLexiconSource(mapOf("jokobee" to "dʒoʊkoʊbi"), "en_US")
+        val misakiUs = MisakiEnG2p.fromAssets(ctx, fallback = g2p, customLexicon = brands)
+        val misakiGb = MisakiEnG2p.fromAssets(ctx, fallback = g2p, british = true)
+        val frontend = Frontend(g2p, enG2p = { t, l -> if (l == "en_GB") misakiGb.phonemize(t) else misakiUs.phonemize(t) })
         val synth = KokoroSynth.fromModelFile(env, modelFile.absolutePath, KokoroTokenizer.fromAsset(ctx))
         val tts = Tts(frontend, synth)
 

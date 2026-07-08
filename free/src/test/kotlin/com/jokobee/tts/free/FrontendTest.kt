@@ -49,7 +49,7 @@ class FrontendTest {
     @Test fun englishRoutesToEnPhonemizer() {
         // en_US -> le phonémiseur misaki (niveau phrase), PAS le G2P mot-à-mot
         val stub = StubG2p()
-        val out = Frontend(stub, enG2p = { "MISAKI:$it" }).toPhonemes("hello world", "en_US")
+        val out = Frontend(stub, enG2p = { t, _ -> "MISAKI:$t" }).toPhonemes("hello world", "en_US")
         assertTrue(out.startsWith("MISAKI:"))
         assertTrue("le G2P mot-à-mot ne doit pas être utilisé en anglais misaki", stub.seen.isEmpty())
     }
