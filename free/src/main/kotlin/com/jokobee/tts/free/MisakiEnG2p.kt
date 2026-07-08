@@ -37,7 +37,7 @@ public class MisakiEnG2p(
             val t = toks[i]
             t.ph = if (t.isWord) {
                 brandLexicon[t.text.lowercase()]                          // #1 lexique custom
-                    ?: lexicon.phonemize(t.text, FUNCTION_TAGS[t.text.lowercase()], fv).first  // #2 misaki
+                    ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #2 misaki (tag heuristique)
                     ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
                         ?.let { PhonemePost.apply(it, "en_US") }          // #3 CharsiuG2P CLAMPÉ
                     ?: unk
@@ -59,6 +59,36 @@ public class MisakiEnG2p(
             toks.add(Tok(m.value, ws, m.value.any { it.isLetter() }))
         }
         return toks
+    }
+
+    /**
+     * Tag POS **heuristique** (Phase 3, sans tagger neural). Résout les homographes du
+     * lexique (close/live/object/use…) par le contexte local : mot-outil fixe, sinon
+     * déterminant/préposition avant → nom (NN), pronom-sujet/modal/impératif → verbe (VB).
+     * Le lexique misaki n'utilise le tag QUE pour ses ~790 entrées-dict ; inoffensif ailleurs.
+     */
+    private fun tagOf(toks: List<Tok>, i: Int): String? {
+        FUNCTION_TAGS[toks[i].text.lowercase()]?.let { return it }
+        // Remonte jusqu'à 3 mots : le 1er déclencheur gagne (pronom/modal→VB, dét/prép→NN).
+        // Le lookback saute les adjectifs (« a clever use », « a new record » → NN).
+        var p = i - 1; var steps = 0
+        while (p >= 0 && steps < 3) {
+            if (toks[p].isWord) {
+                val w = toks[p].text.lowercase()
+                if (w in VERB_TRIGGERS) return "VB"
+                if (w in DETERMINERS || w in PREPOSITIONS) return "NN"
+                steps++
+            }
+            p--
+        }
+        if (nextWord(toks, i) in DETERMINERS) return "VB"   // « close the door » (impératif) → verbe
+        return null
+    }
+
+    private fun nextWord(toks: List<Tok>, i: Int): String? {
+        var p = i + 1
+        while (p < toks.size && !toks[p].isWord) p++
+        return if (p < toks.size) toks[p].text.lowercase() else null
     }
 
     /** Le mot courant (ps) commence-t-il par une voyelle ? (null si ponctuation/inconnu). */
@@ -85,6 +115,20 @@ public class MisakiEnG2p(
          */
         private val FUNCTION_TAGS: Map<String, String> = mapOf(
             "a" to "DT", "an" to "DT", "the" to "DT", "i" to "PRP", "in" to "IN",
+        )
+
+        // Contexte pour le POS heuristique (Phase 3).
+        private val DETERMINERS = setOf(
+            "the", "a", "an", "this", "that", "these", "those", "my", "your", "his", "her",
+            "its", "our", "their", "no", "some", "any", "each", "every", "another", "such",
+        )
+        private val PREPOSITIONS = setOf(
+            "of", "in", "on", "at", "for", "with", "from", "by", "about", "into", "over",
+            "under", "through", "between", "against", "without", "upon", "onto",
+        )
+        private val VERB_TRIGGERS = setOf(
+            "to", "will", "would", "can", "could", "shall", "should", "may", "might", "must",
+            "do", "does", "did", "let", "please", "not", "we", "they", "i", "you", "he", "she", "it",
         )
 
         /** Fabrique depuis les assets misaki + un fallback (CharsiuG2P en prod) + lexique custom. */

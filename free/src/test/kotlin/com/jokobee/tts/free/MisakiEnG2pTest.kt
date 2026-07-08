@@ -44,7 +44,9 @@ class MisakiEnG2pTest {
             sentMatch, sentTotal, sRate, wordMatch, wordTotal, wRate))
         diffs.forEach { println("  DIFF $it") }
 
-        // 99,0% atteint ; le résidu = homographes POS de contenu (close/live) → Phase 3.
-        assertTrue("fidélité mot-à-mot trop basse : %.1f%%".format(wRate), wRate >= 98.0)
+        // Phase 3 (POS heuristique léger) : 99,3% sur un golden SATURÉ d'homographes.
+        // Résidus documentés (2/289) = adj+nom sans déterminant (« fresh produce ») et
+        // nom-sujet+verbe (« friends live ») → nécessiteraient un vrai tagger (hors scope).
+        assertTrue("fidélité mot-à-mot trop basse : %.1f%%".format(wRate), wRate >= 99.0)
     }
 }
