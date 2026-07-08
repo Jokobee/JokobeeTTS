@@ -20,6 +20,13 @@ public class BritishEnglishNormalizer(
         sb.toString()
     }
 
+    // Date numérique GB « 15/03/2024 » (DD/MM/YYYY) → « the fifteenth of March … »
+    override fun rDateNum(text: String): String = DATE_NUM_GB_RE.replace(text) { m ->
+        val d = m.groupValues[1].toInt(); val mo = m.groupValues[2].toInt(); val yr = m.groupValues[3]
+        if (mo < 1 || mo > 12 || d < 1 || d > 31) return@replace m.value
+        "the ${ordi(d)} of ${MONTHS_ARR[mo - 1]} ${year(yr.toLong())}"
+    }
+
     // Date GB : « 6 July 2026 » → « the sixth of July … »
     private fun rDateGb(text: String): String = DATE_GB_RE.replace(text) { m ->
         val sb = StringBuilder("the " + ordi(m.groupValues[1].toInt()) + " of " + m.groupValues[2])
@@ -30,7 +37,8 @@ public class BritishEnglishNormalizer(
 
     override fun rules(): List<(String) -> String> = listOf(
         this::rPercent, this::rSymbols, this::rAbbreviations, this::rRoman, this::rCardinal,
-        this::rCurrencyGbp, this::rCurrency, this::rTemperature, this::rTime, this::rDateGb, this::rDate,
+        this::rCurrencyGbp, this::rCurrency, this::rTemperature, this::rTime,
+        this::rDateNum, this::rDateGb, this::rDate,
         this::rRoom, this::rFraction, this::rRange, this::rLetters, this::rOrdinal, this::rDecimal, this::rInteger,
     )
 
@@ -39,5 +47,6 @@ public class BritishEnglishNormalizer(
             "September|October|November|December"
         private val CURRENCY_GBP_RE = Regex("£\\s*(\\d{1,3}(?:,\\d{3})*|\\d+)(?:\\.(\\d{1,2}))?")
         private val DATE_GB_RE = Regex("\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+($MONTHS)(?:\\s+(\\d{4}))?\\b")
+        private val DATE_NUM_GB_RE = Regex("\\b(\\d{1,2})/(\\d{1,2})/(\\d{4})\\b")
     }
 }

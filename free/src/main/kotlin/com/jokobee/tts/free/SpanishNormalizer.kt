@@ -10,17 +10,33 @@ public class SpanishNormalizer(
 
     private fun intEs(s: String): Long = s.replace(".", "").toLong()
 
-    private fun rCurrency(text: String): String = CURRENCY_RE.replace(text) { m ->
-        val d = intEs(m.groupValues[1])
-        val unit = if (m.groupValues[3] == "€") (if (d == 1L) "euro" else "euros")
-                   else (if (d == 1L) "dólar" else "dólares")
-        val sb = StringBuilder(card(d) + " " + unit)
-        val cg = m.groupValues[2]
-        if (cg.isNotEmpty()) {
-            val c = cg.padEnd(2, '0').toLong()
-            sb.append(" con ").append(card(c)).append(if (c == 1L) " céntimo" else " céntimos")
+    // DEVISE : symbole AVANT (« $5,50 ») OU APRÈS (« 5,50 € »), €/$/£ parlés par locale.
+    private fun money(sym: String, intStr: String, centStr: String): String {
+        val d = intEs(intStr); val c = CUR.getValue(sym)
+        val sb = StringBuilder(card(d) + " " + if (d == 1L) c[0] else c[1])
+        if (centStr.isNotEmpty()) {
+            val cc = centStr.padEnd(2, '0').toLong()
+            sb.append(" con ").append(card(cc)).append(" ").append(if (cc == 1L) c[2] else c[3])
         }
-        sb.toString()
+        return sb.toString()
+    }
+
+    private fun rCurrency(text: String): String {
+        var t = CURRENCY_BEFORE.replace(text) { m -> money(m.groupValues[1], m.groupValues[2], m.groupValues[3]) }
+        t = CURRENCY_AFTER.replace(t) { m -> money(m.groupValues[3], m.groupValues[1], m.groupValues[2]) }
+        return t
+    }
+
+    // ABRÉVIATIONS : Sr./Sra./Dr.… (plus spécifiques d'abord).
+    private fun rAbbreviations(text: String): String {
+        var t = text
+        for ((pat, rep) in ABBREV) t = pat.replace(t) { rep }
+        return t
+    }
+
+    // POINTS CARDINAUX : en contexte de direction (hacia/al/…), sans lookbehind (ICU-safe).
+    private fun rCardinal(text: String): String = CARDINAL_RE.replace(text) { m ->
+        m.groupValues[1] + m.groupValues[2] + CARD.getValue(m.groupValues[3].uppercase())
     }
 
     private fun rTemperature(text: String): String = TEMP_RE.replace(text) { m ->
@@ -39,6 +55,14 @@ public class SpanishNormalizer(
         val sb = StringBuilder(card(h))
         if (mn > 0) sb.append(" ").append(if (mn < 10) "cero " + card(mn) else card(mn))
         sb.toString()
+    }
+
+    // DATE numérique « 15/03/2024 » → « quince de marzo de dos mil veinticuatro ».
+    private fun rDateNum(text: String): String = DATE_NUM_RE.replace(text) { m ->
+        val d = m.groupValues[1].toInt(); val mo = m.groupValues[2].toInt(); val yr = m.groupValues[3]
+        if (mo < 1 || mo > 12) return@replace m.value
+        val dayW = if (d == 1) "primero" else card(d.toLong())
+        "$dayW de ${MONTHS_ARR[mo - 1]} de ${card(yr.toLong())}"
     }
 
     private fun rDate(text: String): String = DATE_RE.replace(text) { m ->
@@ -61,16 +85,42 @@ public class SpanishNormalizer(
     private fun rInteger(text: String): String = INTEGER_RE.replace(text) { m -> card(intEs(m.value)) }
 
     override fun rules(): List<(String) -> String> = listOf(
-        this::rPercent, this::rCurrency, this::rTemperature, this::rTime,
-        this::rDate, this::rOrdinal, this::rDecimal, this::rInteger,
+        this::rPercent, this::rCurrency, this::rAbbreviations, this::rCardinal, this::rTemperature,
+        this::rTime, this::rDateNum, this::rDate, this::rOrdinal, this::rDecimal, this::rInteger,
     )
 
     private companion object {
         private const val MONTHS = "enero|febrero|marzo|abril|mayo|junio|julio|agosto|" +
             "septiembre|octubre|noviembre|diciembre"
-        private val CURRENCY_RE = Regex("(\\d{1,3}(?:\\.\\d{3})*|\\d+)(?:,(\\d{1,2}))?\\s*(€|\\\$)")
+        private val MONTHS_ARR = MONTHS.split("|")
+
+        // symbole → [unité sing, unité plur, sous-unité sing, sous-unité plur]
+        private val CUR = mapOf(
+            "€" to listOf("euro", "euros", "céntimo", "céntimos"),
+            "$" to listOf("dólar", "dólares", "centavo", "centavos"),
+            "£" to listOf("libra", "libras", "penique", "peniques"),
+        )
+        private val NUM = "\\d{1,3}(?:\\.\\d{3})*|\\d+"
+        private val CURRENCY_BEFORE = Regex("([€\\\$£])\\s*($NUM)(?:,(\\d{1,2}))?")
+        private val CURRENCY_AFTER = Regex("($NUM)(?:,(\\d{1,2}))?\\s*([€\\\$£])")
+
+        private val ABBREV: List<Pair<Regex, String>> = listOf(
+            Regex("\\bSrta\\b\\.?") to "Señorita", Regex("\\bSra\\b\\.?") to "Señora",
+            Regex("\\bSr\\b\\.?") to "Señor", Regex("\\bDra\\b\\.?") to "Doctora",
+            Regex("\\bDr\\b\\.?") to "Doctor", Regex("\\bProf\\b\\.?") to "Profesor",
+        )
+
+        private val CARD = mapOf(
+            "N" to "Norte", "S" to "Sur", "E" to "Este", "O" to "Oeste",
+            "NE" to "Noreste", "NO" to "Noroeste", "SE" to "Sureste", "SO" to "Suroeste",
+        )
+        // (prep)(article optionnel + espace)(cardinal) — pas de lookbehind.
+        private val CARDINAL_RE = Regex(
+            "\\b(hacia|hasta|desde|rumbo|al)((?:\\s+(?:el|la|los|las))?\\s+)(NO|NE|SO|SE|N|S|E|O)\\b")
+
         private val TEMP_RE = Regex("(?:(-|−)\\s*)?(\\d+)(?:,(\\d+))?\\s*°\\s*([CF])")
         private val TIME_RE = Regex("\\b(\\d{1,2}):(\\d{2})\\b")
+        private val DATE_NUM_RE = Regex("\\b(\\d{1,2})/(\\d{1,2})/(\\d{4})\\b")
         private val DATE_RE = Regex("\\b(1º|1o|1er|\\d{1,2})\\s+de\\s+($MONTHS)(?:\\s+de\\s+(\\d{4}))?\\b", RegexOption.IGNORE_CASE)
         private val ORDINAL_RE = Regex("\\b(\\d+)(º|ª|er|do|ro|to|va|ma)\\b")
         private val DECIMAL_RE = Regex("\\b(\\d+),(\\d+)\\b")

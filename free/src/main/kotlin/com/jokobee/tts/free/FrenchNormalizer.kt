@@ -41,6 +41,14 @@ public class FrenchNormalizer(
         sb.toString()
     }
 
+    // DATE numérique « 15/03/2024 » (JJ/MM/AAAA, usage fr_CA) → « quinze mars deux mille vingt-quatre ».
+    private fun rDateNum(text: String): String = DATE_NUM_RE.replace(text) { m ->
+        val d = m.groupValues[1].toInt(); val mo = m.groupValues[2].toInt(); val yr = m.groupValues[3]
+        if (mo < 1 || mo > 12 || d < 1 || d > 31) return@replace m.value
+        val dayW = if (d == 1) "premier" else card(d.toLong())
+        "$dayW ${MONTHS_ARR[mo - 1]} ${card(yr.toLong())}"
+    }
+
     // DATE : « 6 juillet 2026 », « 1er mars »
     private fun rDate(text: String): String = DATE_RE.replace(text) { m ->
         val day = m.groupValues[1].lowercase()
@@ -109,7 +117,7 @@ public class FrenchNormalizer(
     override fun rules(): List<(String) -> String> = listOf(
         this::rPercent, this::rSymbols, this::rAbbreviations, this::rRoman, this::rCardinal,
         this::rCurrency, this::rSpeed, this::rDistance, this::rWeight, this::rTemperature,
-        this::rTime, this::rDate, this::rRoom, this::rFraction, this::rRange, this::rLetters,
+        this::rTime, this::rDateNum, this::rDate, this::rRoom, this::rFraction, this::rRange, this::rLetters,
         this::rOrdinal, this::rDecimal, this::rInteger,
     )
 
@@ -118,11 +126,14 @@ public class FrenchNormalizer(
         private val TH_RE = Regex(TH)
         private const val MONTHS = "janvier|février|fevrier|mars|avril|mai|juin|juillet|août|aout|" +
             "septembre|octobre|novembre|décembre|decembre"
+        private val MONTHS_ARR = listOf("janvier", "février", "mars", "avril", "mai", "juin",
+            "juillet", "août", "septembre", "octobre", "novembre", "décembre")
 
         private val CURRENCY_RE = Regex("(\\d{1,3}(?:$TH?\\d{3})*)(?:,(\\d{1,2}))?\\s*\\$")
         private val TEMP_RE = Regex("(?:(-|−)\\s*)?(\\d+)(?:,(\\d+))?\\s*°\\s*([CF])")
         private val TIME_RE = Regex("\\b(\\d{1,2})\\s*h\\s*(\\d{1,2})?\\b(?!\\w)")
         private val DATE_RE = Regex("\\b(1er|1re|\\d{1,2})\\s+($MONTHS)(?:\\s+(\\d{4}))?\\b", RegexOption.IGNORE_CASE)
+        private val DATE_NUM_RE = Regex("\\b(\\d{1,2})/(\\d{1,2})/(\\d{4})\\b")
         private val ORDINAL_RE = Regex("\\b(\\d+)(er|re|e|ème|eme)\\b")
         private val DECIMAL_RE = Regex("\\b(\\d+),(\\d+)\\b")
         private val INTEGER_RE = Regex("\\b\\d{1,3}(?:$TH\\d{3})+\\b|\\b\\d+\\b")

@@ -67,6 +67,13 @@ public open class EnglishNormalizer(
         sb.toString()
     }
 
+    // DATE numérique US « 03/15/2024 » (MM/DD/YYYY) → « March fifteenth twenty twenty-four ».
+    protected open fun rDateNum(text: String): String = DATE_NUM_RE.replace(text) { m ->
+        val mo = m.groupValues[1].toInt(); val d = m.groupValues[2].toInt(); val yr = m.groupValues[3]
+        if (mo < 1 || mo > 12 || d < 1 || d > 31) return@replace m.value
+        "${MONTHS_ARR[mo - 1]} ${ordi(d)} ${year(yr.toLong())}"
+    }
+
     // ORDINAL : « 21st », « 2nd », « 3rd », « 4th »
     protected fun rOrdinal(text: String): String = ORDINAL_RE.replace(text) { m -> ordi(m.groupValues[1].toInt()) }
 
@@ -90,7 +97,7 @@ public open class EnglishNormalizer(
 
     override fun rules(): List<(String) -> String> = listOf(
         this::rPercent, this::rSymbols, this::rAbbreviations, this::rRoman, this::rCardinal,
-        this::rCurrency, this::rTemperature, this::rTime, this::rDate,
+        this::rCurrency, this::rTemperature, this::rTime, this::rDateNum, this::rDate,
         this::rRoom, this::rFraction, this::rRange, this::rLetters,
         this::rOrdinal, this::rDecimal, this::rInteger,
     )
@@ -98,6 +105,7 @@ public open class EnglishNormalizer(
     protected companion object {
         private const val MONTHS = "January|February|March|April|May|June|July|August|" +
             "September|October|November|December"
+        @JvmStatic protected val MONTHS_ARR: List<String> = MONTHS.split("|")
 
         private val CURRENCY_RE = Regex("\\\$\\s*(\\d{1,3}(?:,\\d{3})*|\\d+)(?:\\.(\\d{1,2}))?")
         private val TEMP_RE = Regex("(?:(-|−)\\s*)?(\\d+)(?:\\.(\\d+))?\\s*°\\s*([CF])")
@@ -106,6 +114,7 @@ public open class EnglishNormalizer(
                 "|\\b(\\d{1,2})\\s+(AM|PM|am|pm|a\\.m\\.|p\\.m\\.)\\b" +
                 "|\\b(\\d{1,2}):(\\d{2})(?!\\d)")
         private val DATE_RE = Regex("\\b($MONTHS)\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?\\b")
+        private val DATE_NUM_RE = Regex("\\b(\\d{1,2})/(\\d{1,2})/(\\d{4})\\b")
         private val ORDINAL_RE = Regex("\\b(\\d+)(st|nd|rd|th)\\b")
         private val DECIMAL_RE = Regex("\\b(\\d+)\\.(\\d+)\\b")
         private val INTEGER_RE = Regex("\\b\\d{1,3}(?:,\\d{3})+\\b|\\b\\d+\\b")
