@@ -1,0 +1,52 @@
+name: CI
+
+# Build + test du tier Free (:core + :free). AUCUNE publication (Maven Central / JitPack) :
+# la distribution se fera séparément, après validation. Artifacts éphémères (rétention courte).
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (avec LFS pour les assets G2P)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Tests unitaires (:core + :free)
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :core:test :free:test --stacktrace
+
+      - name: Build AAR Free (release)
+        run: ./gradlew :free:assembleRelease --stacktrace
+
+      - name: Upload AAR (validation seulement — éphémère)
+        uses: actions/upload-artifact@v4
+        with:
+          name: jokobeetts-free-aar
+          path: free/build/outputs/aar/*.aar
+          retention-days: 7
+          if-no-files-found: error
