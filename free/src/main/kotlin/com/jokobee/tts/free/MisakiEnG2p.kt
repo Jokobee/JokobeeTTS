@@ -1,6 +1,8 @@
 package com.jokobee.tts.free
 
+import com.jokobee.tts.core.EmptyLexiconSource
 import com.jokobee.tts.core.G2p
+import com.jokobee.tts.core.LexiconSource
 
 /**
  * Orchestration phrase de misaki EN (port de `G2P.__call__`) : texte normalisé anglais
@@ -13,16 +15,19 @@ import com.jokobee.tts.core.G2p
  * Les nombres/devise sont déjà verbalisés par le normaliseur en amont.
  *
  * Trois couches de résolution d'un mot :
- *   #1 [brandLexicon] — lexique custom (marques, ex. Jokobee). Point d'insertion prioritaire.
- *   #2 [MisakiEnLexicon] — le lexique misaki (99,6% des mots courants). AUCUN post-traitement.
+ *   #1 [customLexicon] — [LexiconSource] custom (marques/corrections), consulté EN TÊTE.
+ *      Stub vide par défaut ([EmptyLexiconSource]) : la couche est appelée mais inerte tant
+ *      qu'aucune source n'est branchée (point d'insertion pour un futur loader TSV).
+ *   #2 [MisakiEnLexicon] — le lexique misaki (99,6% des mots courants). AUCUN post-traitement
+ *      (jeu de phonèmes = vocab Kokoro par construction).
  *   #3 [fallback] — CharsiuG2P mot-à-mot (mots hors-lexique). **CLAMPÉ par [PhonemePost]** :
- *      contrairement à misaki (jeu de phonèmes = vocab Kokoro par construction), CharsiuG2P
- *      peut produire des phonèmes hors-vocab (cf. fix ɫ→l/ɝ→ɜɹ/g→ɡ) → doit passer le clamp.
+ *      contrairement à misaki, CharsiuG2P peut produire des phonèmes hors-vocab (ɫ→l/ɝ→ɜɹ/g→ɡ).
+ *      Le clamp ne touche QUE le fallback, jamais misaki.
  */
 public class MisakiEnG2p(
     private val lexicon: MisakiEnLexicon,
     private val fallback: G2p? = null,
-    private val brandLexicon: Map<String, String> = emptyMap(),
+    private val customLexicon: LexiconSource = EmptyLexiconSource,
     private val unk: String = "❓",
 ) {
     private class Tok(val text: String, val ws: String, val isWord: Boolean) {
@@ -36,7 +41,7 @@ public class MisakiEnG2p(
         for (i in toks.indices.reversed()) {
             val t = toks[i]
             t.ph = if (t.isWord) {
-                brandLexicon[t.text.lowercase()]                          // #1 lexique custom
+                customLexicon.lookup(t.text)                              // #1 lexique custom (EN TÊTE)
                     ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #2 misaki (tag heuristique)
                     ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
                         ?.let { PhonemePost.apply(it, "en_US") }          // #3 CharsiuG2P CLAMPÉ
@@ -135,8 +140,8 @@ public class MisakiEnG2p(
         public fun fromAssets(
             context: android.content.Context,
             fallback: G2p? = null,
-            brandLexicon: Map<String, String> = emptyMap(),
+            customLexicon: LexiconSource = EmptyLexiconSource,
             british: Boolean = false,
-        ): MisakiEnG2p = MisakiEnG2p(MisakiEnLexicon.fromAssets(context, british), fallback, brandLexicon)
+        ): MisakiEnG2p = MisakiEnG2p(MisakiEnLexicon.fromAssets(context, british), fallback, customLexicon)
     }
 }
