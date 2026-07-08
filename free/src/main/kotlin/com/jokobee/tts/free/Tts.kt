@@ -1,7 +1,9 @@
 package com.jokobee.tts.free
 
+import com.jokobee.tts.core.AUTO
 import com.jokobee.tts.core.AudioStitcher
 import com.jokobee.tts.core.DefaultStyleResolver
+import com.jokobee.tts.core.LanguageDetector
 import com.jokobee.tts.core.ProRequiredException
 import com.jokobee.tts.core.StitchConfig
 import com.jokobee.tts.core.StreamChunk
@@ -9,6 +11,7 @@ import com.jokobee.tts.core.StreamingEngine
 import com.jokobee.tts.core.StyleResolver
 import com.jokobee.tts.core.SynthesisContext
 import com.jokobee.tts.core.TextSplitter
+import com.jokobee.tts.core.UnsupportedLanguageException
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -39,6 +42,20 @@ public class Tts(
     /** Installe le moteur streaming Pro (appelé par le tier Pro). */
     public fun installStreamingEngine(engine: StreamingEngine) { streamer = engine }
 
+    /** Détecteur de langue (Pro). Installé par [installLanguageDetector]. */
+    private var detector: LanguageDetector? = null
+    /** Installe le détecteur de langue Pro (appelé par le tier Pro). */
+    public fun installLanguageDetector(d: LanguageDetector) { detector = d }
+
+    // Résout lang="auto" via le détecteur Pro ; sinon renvoie lang tel quel.
+    private fun resolveLang(text: String, lang: String): String {
+        if (lang != AUTO) return lang
+        val d = detector ?: throw ProRequiredException(
+            "Auto language detection requires JokobeeTTS Pro — jokobee.com/pro",
+        )
+        return d.detect(text) ?: throw UnsupportedLanguageException(AUTO)
+    }
+
     // Synthèse d'un segment isolé (phonèmes → onde), sans assemblage ni padding.
     private fun synthSegmentRaw(segment: String, lang: String, style: Voice, speed: Float): FloatArray =
         synth.synth(frontend.toPhonemes(segment, lang), style, speed)
@@ -57,10 +74,11 @@ public class Tts(
         val engine = streamer ?: throw ProRequiredException(
             "Streaming requires JokobeeTTS Pro — jokobee.com/pro",
         )
-        val style = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
+        val actualLang = resolveLang(text, lang)
+        val style = styleResolver.resolve(SynthesisContext(text, actualLang, voice)).style
         engine.stream(
             text = text,
-            lang = lang,
+            lang = actualLang,
             config = stitchConfig,
             synthSegment = { seg, l -> synthSegmentRaw(seg, l, style, speed) },
             onChunk = onChunk,
@@ -80,14 +98,16 @@ public class Tts(
         val engine = streamer ?: throw ProRequiredException(
             "Streaming requires JokobeeTTS Pro — jokobee.com/pro",
         )
-        val style = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
+        val actualLang = resolveLang(text, lang)
+        val style = styleResolver.resolve(SynthesisContext(text, actualLang, voice)).style
         return channelFlow {
             engine.stream(
                 text = text,
-                lang = lang,
+                lang = actualLang,
                 config = stitchConfig,
                 synthSegment = { seg, l -> synthSegmentRaw(seg, l, style, speed) },
-                onChunk = { chunk -> !isClosedForSend && trySendBlocking(chunk).isSuccess },
+                // trySendBlocking échoue si le collecteur a annulé (canal fermé) -> onChunk=false -> arrêt du moteur.
+                onChunk = { chunk -> trySendBlocking(chunk).isSuccess },
             )
         }
     }
@@ -101,9 +121,10 @@ public class Tts(
         leadMs: Int = 200,
         trailMs: Int = 100,
     ): FloatArray {
-        val resolved = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
+        val actualLang = resolveLang(text, lang)
+        val resolved = styleResolver.resolve(SynthesisContext(text, actualLang, voice)).style
         val segments = TextSplitter().split(text)
-        val waves = segments.map { synth.synth(frontend.toPhonemes(it, lang), resolved, speed) }
+        val waves = segments.map { synth.synth(frontend.toPhonemes(it, actualLang), resolved, speed) }
         val stitched = AudioStitcher.stitch(waves, stitchConfig)   // silence de tête = 1 seule fois via AudioPad
         return AudioPad.pad(stitched, SAMPLE_RATE, leadMs, trailMs)
     }
