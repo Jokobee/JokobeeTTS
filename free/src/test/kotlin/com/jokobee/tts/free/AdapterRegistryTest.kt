@@ -209,6 +209,19 @@ class AdapterRegistryTest {
         assertTrue("sans accent : inchangé", !plain.startsWith("z"))
     }
 
+    @Test fun multiWordDictInMisaki() {
+        val reg = AdapterRegistry()
+        reg.installLoader(
+            FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("en_US"), mapOf("habeas corpus" to "zzz")))),
+        )
+        reg.dictionary.load("d")
+        val out = MisakiEnG2p(misakiLex(), dictionary = reg.dictionary).phonemize("the habeas corpus writ")
+        assertTrue("séquence multi-mots résolue", out.contains("zzz"))
+        assertEquals("greedy : une seule fusion", 1, Regex("zzz").findAll(out).count())
+        val writ = MisakiEnG2p(misakiLex()).phonemize("writ").trim()
+        assertTrue("mot suivant résolu normalement", out.trim().endsWith(writ))
+    }
+
     @Test fun neighborsUnaffectedByOverride() {
         val reg = AdapterRegistry()
         reg.installLoader(FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("en_US"), mapOf("cat" to "zzz")))))

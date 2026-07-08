@@ -14,31 +14,68 @@ public class MisakiEnG2p(
     private val dictionary: DictionaryRegistry? = null,
     private val accent: AccentRegistry? = null,
 ) {
-    private class Tok(val text: String, val ws: String, val isWord: Boolean) {
+    private class Tok(val text: String, var ws: String, val isWord: Boolean) {
         var ph: String = ""
     }
 
     /** Texte normalisé anglais */
     public fun phonemize(text: String): String {
         val toks = tokenize(text)
+        val pre = multiWord(toks)   // séquences multi-mots du dico (greedy) résolues d'avance
         var fv: Boolean? = null
         for (i in toks.indices.reversed()) {
             val t = toks[i]
-            t.ph = if (t.isWord) {
-                val resolved = customLexicon.lookup(t.text, lang)         // #1 tts.lexicon (EN TÊTE)
-                    ?: dictionary?.lookup(t.text, lang)?.let { PhonemePost.apply(it, lang) }  // #2 tts.dictionary
-                    ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #3 lexique (tag)
-                    ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
-                        ?.let { PhonemePost.apply(it, "en_US") }          // #4 fallback CLAMPÉ
-                    ?: unk
-                if (accent?.current != null) PhonemePost.apply(accent.apply(resolved, t.text, lang), lang) else resolved
-            } else {
-                t.text.filter { it in NON_QUOTE_PUNCTS }
+            t.ph = when {
+                pre[i] != null -> withAccent(pre[i]!!, t)      // tête multi-mots ("" pour les consommés)
+                t.isWord -> {
+                    val resolved = customLexicon.lookup(t.text, lang)     // #1 tts.lexicon (EN TÊTE)
+                        ?: dictionary?.lookup(t.text, lang)?.let { PhonemePost.apply(it, lang) }  // #2 tts.dictionary
+                        ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #3 lexique (tag)
+                        ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
+                            ?.let { PhonemePost.apply(it, "en_US") }      // #4 fallback CLAMPÉ
+                        ?: unk
+                    withAccent(resolved, t)
+                }
+                else -> t.text.filter { it in NON_QUOTE_PUNCTS }
             }
             fv = tokenContext(fv, t.ph)
         }
         val out = buildString { for (t in toks) { append(t.ph); append(t.ws) } }
         return out.replace('ɾ', 'T').replace('ʔ', 't').trim()   // finalisation
+    }
+
+    private fun withAccent(ipa: String, t: Tok): String =
+        if (t.isWord && accent?.current != null && ipa.isNotEmpty())
+            PhonemePost.apply(accent.apply(ipa, t.text, lang), lang) else ipa
+
+    // Fenêtre glissante greedy (séquences les plus longues d'abord) sur les mots consécutifs.
+    private fun multiWord(toks: List<Tok>): Array<String?> {
+        val pre = arrayOfNulls<String>(toks.size)
+        val dict = dictionary ?: return pre
+        var i = 0
+        while (i < toks.size) {
+            if (toks[i].isWord) {
+                var j = i
+                while (j + 1 < toks.size && toks[j + 1].isWord) j++
+                var end = j
+                var hit: String? = null
+                while (end > i) {
+                    val phrase = (i..end).joinToString(" ") { toks[it].text }.lowercase()
+                    hit = dict.lookup(phrase, lang)
+                    if (hit != null) break
+                    end--
+                }
+                if (hit != null) {
+                    pre[i] = PhonemePost.apply(hit, lang)
+                    for (k in i + 1..end) { pre[k] = ""; toks[k].ws = "" }
+                    toks[i].ws = toks[end].ws
+                    i = end + 1
+                    continue
+                }
+            }
+            i++
+        }
+        return pre
     }
 
     private fun tokenize(text: String): List<Tok> {
