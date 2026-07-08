@@ -1,0 +1,62 @@
+================================================================================
+THIRD-PARTY NOTICES — JokobeeTTS (Free)
+================================================================================
+Include this file in your application's "Open Source Licenses" or "About" screen.
+It is bundled into the AAR assets at build time (assets/THIRD-PARTY-NOTICES.txt).
+
+JokobeeTTS is a Jokobee product (jokobee.com). It packages and extends the
+third-party components below. JokobeeTTS is not affiliated with or endorsed by
+the upstream projects.
+
+--------------------------------------------------------------------------------
+JokobeeTTS (Free tier)
+--------------------------------------------------------------------------------
+Copyright 2026 Jokobee (jokobee.com).
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+--------------------------------------------------------------------------------
+Kokoro-82M
+--------------------------------------------------------------------------------
+Copyright (c) hexgrad.
+Licensed under the Apache License, Version 2.0.
+Speech synthesis model (ONNX weights). JokobeeTTS is "based on Kokoro-82M".
+Repository: https://github.com/hexgrad/kokoro
+
+--------------------------------------------------------------------------------
+misaki
+--------------------------------------------------------------------------------
+Copyright (c) hexgrad.
+Licensed under the MIT License.
+English G2P (Kokoro's official grapheme-to-phoneme), ported to Kotlin; lexicons
+embedded (us_gold.json, us_silver.json).
+Repository: https://github.com/hexgrad/misaki
+
+--------------------------------------------------------------------------------
+CharsiuG2P
+--------------------------------------------------------------------------------
+Copyright (c) CharsiuNLP.
+Licensed under the MIT License.
+Grapheme-to-phoneme (fr/es, and English OOV fallback). ByT5 tiny int8 model
+embedded.
+Repository: https://github.com/lingjzhu/CharsiuG2P
+
+--------------------------------------------------------------------------------
+ONNX Runtime
+--------------------------------------------------------------------------------
+Copyright (c) Microsoft Corporation.
+Licensed under the MIT License.
+Inference engine.
+Repository: https://github.com/microsoft/onnxruntime
+
+--------------------------------------------------------------------------------
+ICU4J (com.ibm.icu:icu4j)
+--------------------------------------------------------------------------------
+Copyright (c) Unicode, Inc.
+Licensed under the Unicode/ICU License (permissive).
+Number verbalization (RuleBasedNumberFormat / spellout).
+Website: https://icu.unicode.org/
+
+================================================================================
+No GPL/LGPL dependency is included in the distributed artifact.
+Full details: THIRD-PARTY-NOTICES.md in the JokobeeTTS repository.
+================================================================================

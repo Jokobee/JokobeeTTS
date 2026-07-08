@@ -70,12 +70,14 @@ Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commerc
 ./gradlew :free:test              # tests unitaires
 ```
 
-## Licence & attribution
+## Licences
 
-Basé sur **Kokoro-82M** (hexgrad, Apache-2.0). G2P : **CharsiuG2P** et **misaki** (MIT).
-JokobeeTTS n'est pas affilié aux projets sources. Voir [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+- **Free** (`:core` + `:free`, ce dépôt) : **Apache-2.0** — voir [LICENSE](LICENSE).
+- **Pro** : licence commerciale (jokobee.com). **SDK** : futur.
+- Composants tiers (Kokoro Apache-2.0, misaki/CharsiuG2P/ONNX Runtime MIT, ICU permissive) :
+  **zéro GPL/LGPL**. Détails dans [LICENSING.md](LICENSING.md) et
+  [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+- Basé sur **Kokoro-82M** (hexgrad) ; JokobeeTTS n'est pas affilié aux projets sources.
 
-## Third-Party Notices
-
-Les composants tiers et leurs licences sont listés dans
-[THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), copié aussi dans les assets de l'AAR au build.
+Le fichier [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt) est **embarqué dans les assets
+de l'AAR** au build (lisible au runtime via `context.assets.open("THIRD-PARTY-NOTICES.txt")`).

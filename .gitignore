@@ -6,3 +6,6 @@ local.properties
 .DS_Store
 captures/
 .cxx/
+
+# THIRD-PARTY-NOTICES.txt copié dans les assets au build (source = racine du repo)
+free/src/main/assets/THIRD-PARTY-NOTICES.txt

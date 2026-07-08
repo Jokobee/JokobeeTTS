@@ -46,3 +46,11 @@ dependencies {
 mavenPublishing {
     coordinates("com.jokobee", "jokobeetts", "0.1.0")
 }
+
+// THIRD-PARTY-NOTICES.txt embarqué dans les assets de l'AAR (accessible au runtime via
+// context.assets.open("THIRD-PARTY-NOTICES.txt") — écran « licences open source »).
+tasks.register<Copy>("copyThirdPartyNotices") {
+    from(rootProject.file("THIRD-PARTY-NOTICES.txt"))
+    into(layout.projectDirectory.dir("src/main/assets"))
+}
+tasks.named("preBuild") { dependsOn("copyThirdPartyNotices") }
