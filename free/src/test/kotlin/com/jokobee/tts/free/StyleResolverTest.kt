@@ -2,6 +2,7 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.DefaultStyleResolver
 import com.jokobee.tts.core.G2p
+import com.jokobee.tts.core.StyleOutput
 import com.jokobee.tts.core.StyleResolver
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
@@ -9,9 +10,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * BLOC 4 — crochet StyleResolver. Vérifie que le pipeline de synthèse passe TOUJOURS par
- * le StyleResolver (jamais de résolution directe du style), et que le DefaultStyleResolver
- * (v1.0) retourne exactement la voix demandée sans modification.
+ * BLOC A — crochet StyleResolver (SynthesisContext + StyleOutput). Vérifie que le pipeline
+ * passe TOUJOURS par le StyleResolver (jamais d'accès direct au vecteur de style), et que le
+ * DefaultStyleResolver (v1.0) retourne exactement la voix demandée, sans modification.
  */
 class StyleResolverTest {
 
@@ -21,16 +22,17 @@ class StyleResolverTest {
 
     private fun voice() = Voice.of("v", "es", FloatArray(VoiceFormat.N_ROWS * VoiceFormat.STYLE_DIM) { 0.1f })
 
-    @Test fun defaultResolverReturnsRequestedUnchanged() {
+    @Test fun defaultStyleResolverPassthrough() {
         val v = voice()
-        assertSame(v, DefaultStyleResolver<Voice>().resolve("hola mundo", "es", v))
+        val out = DefaultStyleResolver<Voice>().resolve(com.jokobee.tts.core.SynthesisContext("hola", "es", v))
+        assertSame(v, out.style)   // exactement la voix demandée, inchangée
     }
 
-    @Test fun pipelineAlwaysGoesThroughResolver() {
+    @Test fun styleResolverCalledInPipeline() {
         val v = voice()
         var resolverCalled = false
         var synthGot: Voice? = null
-        val resolver = StyleResolver<Voice> { _, _, req -> resolverCalled = true; req }
+        val resolver = StyleResolver<Voice> { ctx -> resolverCalled = true; StyleOutput(ctx.requestedStyle) }
         val stubSynth = object : Synthesizer {
             override fun synth(phonemes: String, voice: Voice, speed: Float): FloatArray {
                 synthGot = voice

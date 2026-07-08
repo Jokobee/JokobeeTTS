@@ -2,6 +2,7 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.DefaultStyleResolver
 import com.jokobee.tts.core.StyleResolver
+import com.jokobee.tts.core.SynthesisContext
 
 /**
  * Façade TTS complète : **texte → audio**. Assemble le [Frontend] (texte → IPA) et
@@ -37,7 +38,8 @@ public class Tts(
         leadMs: Int = 200,
         trailMs: Int = 100,
     ): FloatArray {
-        val resolved = styleResolver.resolve(text, lang, voice)   // couche obligatoire (v1.0 = identité)
+        // Couche obligatoire : le style passe TOUJOURS par le resolver (v1.0 = identité).
+        val resolved = styleResolver.resolve(SynthesisContext(text, lang, voice)).style
         val ipa = frontend.toPhonemes(text, lang)
         val wave = synth.synth(ipa, resolved, speed)
         return AudioPad.pad(wave, SAMPLE_RATE, leadMs, trailMs)
