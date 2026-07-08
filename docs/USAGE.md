@@ -6,7 +6,7 @@ Texte → audio 24 kHz on-device. Ce guide couvre le tier **Free** (`:core` + `:
 - [Démarrage rapide](#démarrage-rapide)
 - [Le modèle Kokoro](#le-modèle-kokoro)
 - [Voix](#voix)
-- [Langues & G2P](#langues--g2p)
+- [Langues](#langues)
 - [Crochets d'extension](#crochets-dextension)
 - [Perf & threading](#perf--threading)
 
@@ -24,38 +24,28 @@ dependencies {
 }
 ```
 
-L'AAR embarque le G2P (CharsiuG2P tiny, fr/es) et le lexique **misaki** (en). Le **modèle
-de synthèse Kokoro** (88 Mo) n'est pas embarqué — voir [Le modèle Kokoro](#le-modèle-kokoro).
+L'AAR embarque le G2P (offline). Le **modèle de synthèse Kokoro** n'est pas embarqué —
+voir [Le modèle Kokoro](#le-modèle-kokoro).
 
 ---
 
 ## Démarrage rapide
 
-Assembler le pipeline une fois (coûteux : charge les modèles), puis réutiliser.
+Assembler le pipeline **une fois** (coûteux : charge les modèles), puis réutiliser.
 
 ```kotlin
 import ai.onnxruntime.OrtEnvironment
-import com.jokobee.tts.free.*
+import com.jokobee.tts.free.Tts
+import com.jokobee.tts.free.Voice
 
 val env = OrtEnvironment.getEnvironment()
 
-// 1. G2P : CharsiuG2P embarqué (fr/es) + cache mémoire.
-val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(context, env))
+// Pipeline prêt à l'emploi (normalisation + G2P embarqué + synthèse).
+// `modelPath` = fichier modèle Kokoro local (voir « Le modèle Kokoro »).
+val tts = Tts.create(context, env, modelPath)
 
-// 2. Anglais : misaki (lexique embarqué) + fallback CharsiuG2P + lexique custom optionnel.
-val misakiEn = MisakiEnG2p.fromAssets(context, fallback = g2p)
-
-// 3. Frontend : normalisation + G2P (route en_US/en_GB vers misaki).
-val frontend = Frontend(g2p, enG2p = { misakiEn.phonemize(it) })
-
-// 4. Synthèse Kokoro (le fichier modèle doit être présent — voir plus bas).
-val synth = KokoroSynth.fromModelFile(env, modelPath, KokoroTokenizer.fromAsset(context))
-
-// 5. Façade TTS.
-val tts = Tts(frontend, synth)
-
-// 6. Charger une voix et synthétiser.
-val voice = Voice.of("ff_siwis", "fr", voiceBytes)          // .bin [510,256] f32
+// Charger une voix et synthétiser.
+val voice = Voice.of("ff_siwis", "fr", voiceBytes)
 val wav: ByteArray = tts.synthesizeToWav("Bonjour le monde", "fr", voice)   // WAV 24 kHz
 // -> écrire dans un fichier, ou lire via AudioTrack / MediaPlayer.
 ```
@@ -74,27 +64,23 @@ du 1er mot par la latence d'init du player). Ajuster via `leadMs` / `trailMs` (0
 
 ## Le modèle Kokoro
 
-Le modèle `model_quantized.onnx` (**88 Mo**, quantifié int8) est **téléchargé au 1er lancement**
-(trop gros pour l'AAR / Maven Central), puis mis en cache.
+Le modèle de synthèse (~88 Mo) est **téléchargé au 1er lancement** (trop gros pour l'AAR /
+Maven Central), puis mis en cache.
 
 - **v1.0** : un téléchargeur `:core` (URL épinglée + SHA256) le récupère dans
   `context.getExternalFilesDir("kokoro")` — *(en cours, voir Roadmap)*.
-- **Aujourd'hui** : fournir le chemin du fichier à `KokoroSynth.fromModelFile(env, path, tokenizer)`.
+- **Aujourd'hui** : fournir son chemin à `Tts.create(context, env, modelPath)`.
   Le dev peut le placer lui-même (ex. dans `getExternalFilesDir("kokoro")`).
 
-Le G2P suit le même principe de cache : `CharsiuG2p.fromAssetsOrCache(context, env)` lit un
-modèle **téléchargé** s'il existe, sinon l'**asset embarqué** — un modèle déposé dans le cache
-prend automatiquement le pas (chemin d'upgrade Pro), sans changement de code.
+Le G2P suit le même principe de cache : un modèle **déposé dans le cache** prend automatiquement
+le pas sur l'asset embarqué (chemin d'upgrade Pro), sans changement de code.
 
 ---
 
 ## Voix
 
-Format autoritaire (Kokoro v1.0) : `float32` little-endian, C-order, `[510, 256]` (522240 octets).
-
 ```kotlin
 val voice = Voice.of("af_heart", "en_US", bytes)     // depuis octets .bin
-voice.styleFor(nTokens)                              // vecteur de style [256]
 
 val catalog = VoiceCatalog()                         // catalogue en lecture (Free)
 catalog.get("af_heart"); catalog.list()
@@ -105,18 +91,15 @@ L'**import de voix custom** et le **blending** (« créer sa voix ») sont des f
 
 ---
 
-## Langues & G2P
+## Langues
 
-| Locale | G2P | État |
-|---|---|---|
-| `fr`, `fr_CA` | CharsiuG2P tiny (embarqué) | ✅ validé, audité |
-| `es` | CharsiuG2P tiny | ✅ validé, audité |
-| `en_US` | **misaki** (porté) + fallback CharsiuG2P | ✅ validé, audité |
-| `en_GB` | misaki (british) | routé, à valider |
-| `it`, `pt_BR`, `hi`, `ja`, `zh`, `ko` | normalisation OK ; G2P — roadmap | normalisation ✅ |
+10 locales normalisées **en amont** (nombres, dates, devises, acronymes, unités…) — passez du
+texte brut, pas besoin de pré-traiter.
 
-La normalisation gère les nombres/dates/devises/acronymes **en amont** — passez du texte brut,
-pas besoin de pré-traiter.
+| Locale | État |
+|---|---|
+| `fr`, `fr_CA`, `es`, `en_US`, `en_GB` | ✅ validé |
+| `it`, `pt_BR`, `hi`, `ja`, `zh`, `ko` | normalisation ✅ ; synthèse — roadmap |
 
 ---
 
@@ -127,21 +110,22 @@ Deux points d'insertion réservés (pass-through par défaut, brancher sans refa
 ```kotlin
 // Lexique custom (marques, corrections) — consulté AVANT le G2P.
 class BrandLexicon : com.jokobee.tts.core.LexiconSource {
-    override fun lookup(word: String) = if (word.equals("jokobee", true)) "dʒoʊkoʊbi" else null
+    override fun lookup(word: String, lang: String): String? =
+        if (word.equals("jokobee", true)) "dʒoʊkoʊbi" else null
 }
-val misakiEn = MisakiEnG2p.fromAssets(context, fallback = g2p, customLexicon = BrandLexicon())
+tts.lexicon.load(BrandLexicon())             // enregistré au pipeline
 
 // Résolution de style/voix — le pipeline passe TOUJOURS par le StyleResolver.
-val tts = Tts(frontend, synth, styleResolver = com.jokobee.tts.core.DefaultStyleResolver())
+val tts2 = Tts.create(context, env, modelPath,
+    styleResolver = com.jokobee.tts.core.DefaultStyleResolver())
 ```
 
 ---
 
 ## Perf & threading
 
-- Construire le pipeline (`fromAssets`/`fromModelFile`) est **coûteux** (chargement modèles) :
+- Construire le pipeline (`Tts.create(...)`) est **coûteux** (chargement modèles) :
   le faire **une fois**, hors du thread UI.
-- La synthèse est CPU-bound : l'exécuter sur un worker. G2P ≈ dizaines de ms/mot (cache LRU
-  intégré via `CachingG2p`).
-- `KokoroSynth` et les sessions ONNX sont réutilisables ; appeler `close()` à la fin de vie.
+- La synthèse est CPU-bound : l'exécuter sur un worker. Un cache G2P est intégré.
+- Le pipeline et les sessions ONNX sont réutilisables ; libérer les ressources en fin de vie.
 - ABI : Free = `arm64-v8a`. Le support `x86_64` (émulateur/Chromebook) est une feature Pro.

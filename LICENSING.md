@@ -20,12 +20,11 @@ Tous **permissifs** — aucune dépendance GPL/LGPL dans l'artefact livré.
 | Composant | Licence |
 |---|---|
 | Kokoro-82M (modèle) | Apache-2.0 |
-| misaki (G2P anglais, lexiques embarqués) | MIT |
-| CharsiuG2P (G2P fr/es, modèle embarqué) | MIT |
+| Moteurs de phonémisation (G2P) | MIT |
 | ONNX Runtime | MIT |
 | ICU4J (icu4j embarqué) | Unicode/ICU (permissive) |
 
-Détails, copyrights et dépôts : [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+Noms, auteurs, copyrights et dépôts des composants : [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 Version texte embarquée dans l'AAR (`assets/THIRD-PARTY-NOTICES.txt`, lisible au runtime
 via `context.assets.open(...)` pour un écran « licences open source »).
 
@@ -39,6 +38,5 @@ via `context.assets.open(...)` pour un écran « licences open source »).
 
 ## Garantie « zéro GPL »
 
-Le chemin shippable (`:core` + `:free`) ne référence **jamais** espeak-ng, phonemizer ni
-num2words (GPL/LGPL). Un test de garde (`NoGplImportsTest`) échoue à la moindre contamination.
-Le G2P GPL (espeak) n'existe que dans les **scripts d'évaluation** (banc), jamais dans l'artefact.
+Le chemin shippable (`:core` + `:free`) ne référence **aucune** dépendance GPL/LGPL. Un test
+de garde échoue à la moindre contamination.

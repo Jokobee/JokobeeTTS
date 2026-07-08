@@ -27,8 +27,7 @@ misaki
 --------------------------------------------------------------------------------
 Copyright (c) hexgrad.
 Licensed under the MIT License.
-English G2P (Kokoro's official grapheme-to-phoneme), ported to Kotlin; lexicons
-embedded (us_gold.json, us_silver.json).
+English grapheme-to-phoneme.
 Repository: https://github.com/hexgrad/misaki
 
 --------------------------------------------------------------------------------
@@ -36,8 +35,7 @@ CharsiuG2P
 --------------------------------------------------------------------------------
 Copyright (c) CharsiuNLP.
 Licensed under the MIT License.
-Grapheme-to-phoneme (fr/es, and English OOV fallback). ByT5 tiny int8 model
-embedded.
+Grapheme-to-phoneme.
 Repository: https://github.com/lingjzhu/CharsiuG2P
 
 --------------------------------------------------------------------------------
