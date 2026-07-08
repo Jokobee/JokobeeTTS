@@ -40,13 +40,7 @@ public fun interface HttpClient {
 /** Échec de résolution d'un artefact de modèle (téléchargement/vérification). */
 public class ModelResolutionException(message: String) : JokobeeTtsException(message)
 
-/**
- * Résout les artefacts de modèle (modèle ONNX + voix) vers des fichiers locaux.
- *
- * Priorité : **cache** (déjà téléchargé et vérifié) > **assets** (embarqués) > **téléchargement**
- * (Cloudflare). Téléchargement repris (`.part` + Range), progression, vérification SHA-256.
- * Aucun upload : les artefacts sont poussés manuellement côté serveur.
- */
+/** Résout les artefacts de modèle (ONNX + voix) vers des fichiers locaux : cache > assets > téléchargement. */
 public class ModelManager(
     private val cacheDir: File,
     private val http: HttpClient = HttpUrlConnectionClient(),

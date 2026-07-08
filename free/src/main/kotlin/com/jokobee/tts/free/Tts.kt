@@ -60,10 +60,7 @@ public class Tts(
     private fun synthSegmentRaw(segment: String, lang: String, style: Voice, speed: Float): FloatArray =
         synth.synth(frontend.toPhonemes(segment, lang), style, speed)
 
-    /**
-     * Synthèse streaming phrase par phrase, chaque segment livré à [onChunk] dès qu'il est prêt.
-     * Retourner `false` depuis [onChunk] interrompt la synthèse. Fonctionnalité Pro.
-     */
+    /** Synthèse streaming : chaque phrase livrée à [onChunk] dès qu'elle est prête (`false` interrompt). Pro. */
     public fun synthesizeStreaming(
         text: String,
         lang: String,
@@ -85,10 +82,7 @@ public class Tts(
         )
     }
 
-    /**
-     * Idem [synthesizeStreaming], exposé comme [Flow] coroutine (backpressure + annulation).
-     * Fonctionnalité Pro : lève [ProRequiredException] à l'appel si le moteur Pro n'est pas installé.
-     */
+    /** Streaming exposé comme [Flow] de [StreamChunk] (backpressure + annulation). Pro. */
     public fun synthesizeFlow(
         text: String,
         lang: String,
