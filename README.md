@@ -1,5 +1,7 @@
 # JokobeeTTS
 
+[![CI](https://github.com/Jokobee/JokobeeTTS/actions/workflows/ci.yml/badge.svg)](https://github.com/Jokobee/JokobeeTTS/actions/workflows/ci.yml)
+
 Synthèse vocale **on-device** pour Android, basée sur **Kokoro-82M** (Apache-2.0).
 Texte → audio 24 kHz, 100 % local, sans réseau après installation du modèle.
 Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commercial.
