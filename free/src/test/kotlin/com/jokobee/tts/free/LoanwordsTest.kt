@@ -31,7 +31,7 @@ class LoanwordsTest {
     @Test fun loanwordsAllInVocab() {
         val vocab = vocabChars()
         val loan = loanwords()
-        assertEquals("402 entrées attendues", 402, loan.size)
+        assertEquals("401 entrées attendues (chat retiré : collision fr)", 401, loan.size)
         val oov = LinkedHashMap<String, String>()
         for ((word, ipa) in loan.all) {
             val bad = PhonemePost.apply(ipa, "en_US").filter { it !in vocab && it != ' ' }
