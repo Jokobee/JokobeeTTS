@@ -28,6 +28,7 @@ public class MisakiEnG2p(
     private val lexicon: MisakiEnLexicon,
     private val fallback: G2p? = null,
     private val customLexicon: LexiconSource = EmptyLexiconSource,
+    private val lang: String = "en_US",
     private val unk: String = "❓",
 ) {
     private class Tok(val text: String, val ws: String, val isWord: Boolean) {
@@ -41,7 +42,7 @@ public class MisakiEnG2p(
         for (i in toks.indices.reversed()) {
             val t = toks[i]
             t.ph = if (t.isWord) {
-                customLexicon.lookup(t.text)                              // #1 lexique custom (EN TÊTE)
+                customLexicon.lookup(t.text, lang)                        // #1 lexique custom (EN TÊTE)
                     ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #2 misaki (tag heuristique)
                     ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
                         ?.let { PhonemePost.apply(it, "en_US") }          // #3 CharsiuG2P CLAMPÉ
@@ -142,6 +143,9 @@ public class MisakiEnG2p(
             fallback: G2p? = null,
             customLexicon: LexiconSource = EmptyLexiconSource,
             british: Boolean = false,
-        ): MisakiEnG2p = MisakiEnG2p(MisakiEnLexicon.fromAssets(context, british), fallback, customLexicon)
+        ): MisakiEnG2p = MisakiEnG2p(
+            MisakiEnLexicon.fromAssets(context, british), fallback, customLexicon,
+            lang = if (british) "en_GB" else "en_US",
+        )
     }
 }

@@ -33,7 +33,7 @@ class CustomLexiconHookTest {
     @Test fun customLayerCalledBeforeMisakiForEveryWord() {
         val seen = mutableListOf<String>()
         val spy = object : LexiconSource {
-            override fun lookup(word: String): String? { seen += word.lowercase(); return null }
+            override fun lookup(word: String, lang: String): String? { seen += word.lowercase(); return null }
         }
         val out = MisakiEnG2p(lexicon(), customLexicon = spy).phonemize("hello world")
         // la couche #1 a été consultée pour chaque mot (avant misaki), mais renvoie null -> misaki
@@ -42,7 +42,7 @@ class CustomLexiconHookTest {
     }
 
     @Test fun customEntryOverridesMisaki() {
-        val custom = MapLexiconSource(mapOf("hello" to "ZZZ"))
+        val custom = MapLexiconSource(mapOf("hello" to "ZZZ"), "en_US")
         val out = MisakiEnG2p(lexicon(), customLexicon = custom).phonemize("hello world")
         // « hello » vient du lexique custom (couche #1), pas de misaki
         assertTrue("l'entrée custom doit primer sur misaki", out.startsWith("ZZZ"))

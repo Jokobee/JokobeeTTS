@@ -25,6 +25,12 @@ public class Tts(
     private val styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
 ) {
     /**
+     * Lexique custom (couche #1) partagé du pipeline, pour `add(...)`/`load(...)` à chaud :
+     *   `tts.lexicon.load(TsvLexiconLoader.fromAsset(context, "custom.tsv", "en_US"))`
+     * S'applique à fr/es directement ; pour l'anglais, construire `MisakiEnG2p(customLexicon = tts.lexicon)`.
+     */
+    public val lexicon: com.jokobee.tts.core.MapLexiconSource get() = frontend.lexicon
+    /**
      * Texte → forme d'onde f32 [-1,1] à 24 kHz, avec la [voice] et la vitesse données.
      * Encadrée par défaut d'un silence de tête/queue ([AudioPad]) — évite la troncature
      * du 1er mot (latence d'init du player) et le pop de fin. Mettre `leadMs=0, trailMs=0`

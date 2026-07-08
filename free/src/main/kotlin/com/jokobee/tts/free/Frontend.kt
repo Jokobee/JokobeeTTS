@@ -1,6 +1,7 @@
 package com.jokobee.tts.free
 
 import com.jokobee.tts.core.G2p
+import com.jokobee.tts.core.MapLexiconSource
 import com.jokobee.tts.free.HomographAnnotator.Ann
 
 /**
@@ -23,8 +24,14 @@ public class Frontend(
     private val g2p: G2p,
     private val enG2p: ((String) -> String)? = null,
     private val verbalizer: Verbalizer = IcuVerbalizer(),
+    /**
+     * Lexique custom (couche #1), **universel** : consulté avant le G2P pour fr/es (via
+     * [LexiconG2p]). Pour l'anglais, partager le MÊME objet avec `MisakiEnG2p(customLexicon=…)`.
+     * Exposé par `Tts.lexicon` pour `load(...)`/`add(...)` à chaud.
+     */
+    public val lexicon: MapLexiconSource = MapLexiconSource(),
 ) {
-    private val pipeline = PhonemePipeline(g2p)
+    private val pipeline = PhonemePipeline(LexiconG2p(lexicon, g2p))
 
     /** Texte brut → IPA, pour une des 10 locales supportées. */
     public fun toPhonemes(text: String, lang: String): String {

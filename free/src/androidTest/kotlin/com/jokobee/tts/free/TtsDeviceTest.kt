@@ -68,7 +68,7 @@ class TtsDeviceTest {
         val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(ctx, env))
         val misakiEn = MisakiEnG2p.fromAssets(
             ctx, fallback = g2p,
-            customLexicon = com.jokobee.tts.core.MapLexiconSource(mapOf("jokobee" to "dʒoʊkoʊbi")),
+            customLexicon = com.jokobee.tts.core.MapLexiconSource(mapOf("jokobee" to "dʒoʊkoʊbi"), "en_US"),
         )
         val frontend = Frontend(g2p, enG2p = { misakiEn.phonemize(it) })
         val synth = KokoroSynth.fromModelFile(env, modelFile.absolutePath, KokoroTokenizer.fromAsset(ctx))
