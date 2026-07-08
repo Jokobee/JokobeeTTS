@@ -50,8 +50,7 @@ Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commerc
 
 **Reste pour la première publication** (le moteur v1.0 est prêt ; il manque la distribution)
 - Téléchargeur `:core` (URL épinglée + SHA256) + hébergement du modèle Kokoro (release GitHub).
-- 54 voix officielles embarquées.
-- G2P des langues secondaires (it, pt, ja, zh, ko, hi) — roadmap.
+- Voix officielles des 6 langues embarquées dans `:free`.
 - Publication Maven Central (`:core` + `:free`), bump de la coordinate `0.1.0` → `1.0.0`.
 
 **Au-delà (SDK)**
