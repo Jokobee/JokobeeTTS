@@ -52,4 +52,23 @@ class PhonemePostTest {
         assertEquals("wˈɜɹld", PhonemePost.apply("wˈɝld", "en_US"))    // world
         assertEquals("bˈɛtəɹ", PhonemePost.apply("bˈɛtɚ", "en_US"))    // better
     }
+
+    @Test fun tieBarAffricatesToLigatures() {
+        // CharsiuG2P (pt/it/es) lie les affriquées par tie-bar U+0361 -> ligatures du vocab
+        assertEquals("ʤiɐ", PhonemePost.apply("d͡ʒiɐ", "pt_BR"))   // dia (pt)
+        assertEquals("ʧao", PhonemePost.apply("t͡ʃao", "it"))       // ciao (it)
+        assertEquals("ʣ", PhonemePost.apply("d͡z", "it"))
+        assertEquals("ɡratʦje", PhonemePost.apply("ɡratt͡sje", "it")) // grazie (géminée tt + t͡s→ʦ)
+    }
+
+    @Test fun strayTieBarRemoved() {
+        assertEquals("ab", PhonemePost.apply("a͡b", "es"))          // tie-bar résiduel supprimé
+    }
+
+    @Test fun italianSilentH() {
+        // le h italien n'est jamais phonémique (h muet) -> supprimé pour "it" uniquement
+        assertEquals("o", PhonemePost.apply("ho", "it"))                 // ho -> o
+        assertEquals("anno", PhonemePost.apply("hanno", "it"))           // hanno -> anno
+        assertEquals("ho", PhonemePost.apply("ho", "es"))                // conservé ailleurs
+    }
 }

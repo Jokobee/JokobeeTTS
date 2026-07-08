@@ -37,22 +37,35 @@ public object PhonemePost {
         'ɫ' to "l",     // L vélarisé (dark L) → l
         'ɝ' to "ɜɹ",    // schwa rhotique accentué → ɜɹ
         'ɚ' to "əɹ",    // schwa rhotique → əɹ
+        // ͡ (U+0361, tie-bar) : CharsiuG2P lie les affriquées (d͡ʒ, t͡ʃ) ; hors vocab. Les
+        // séquences affriquées sont converties en ligatures AVANT (voir TIE_BAR) ; ici on
+        // retire tout tie-bar résiduel. Audit pt/it : U+0361 = seul OOV avant ce fix.
+        '͡' to "",
+    )
+
+    /**
+     * Affriquées liées par tie-bar (CharsiuG2P) → **ligatures** du vocab Kokoro. Séquences
+     * multi-char, donc remplacées AVANT la boucle char-par-char. `ʤ ʧ ʣ ʦ` sont dans le vocab.
+     */
+    private val TIE_BAR: List<Pair<String, String>> = listOf(
+        "d͡ʒ" to "ʤ", "t͡ʃ" to "ʧ", "d͡z" to "ʣ", "t͡s" to "ʦ",
     )
 
     /** Mapping OOV par langue : symbole IPA hors vocab Kokoro → substitut le plus proche. */
     private val OOV: Map<String, Map<Char, String>> = mapOf(
-        // À peupler par l'audit OOV / la boucle WER (chaque entrée justifiée par une mesure).
-        // Structure prête, ex. "de" to mapOf('ʏ' to "y").
+        // Italien : le h n'est JAMAIS phonémique (h muet — ho/ha/hai/hanno, digraphes ch/gh).
+        // CharsiuG2P sort « ho » pour « ho » (avec le h) → prononcé à tort. Suppression du /h/.
+        "it" to mapOf('h' to ""),
     )
 
     /**
-     * Applique NFD + le mapping GLOBAL + le mapping OOV de `lang`. Idempotent modulo NFD.
-     * Ne strippe jamais : un symbole non mappé est conservé tel quel.
+     * Applique NFD + conversion tie-bar + mapping GLOBAL + mapping OOV de `lang`. Idempotent
+     * modulo NFD. Ne strippe jamais un phonème valide.
      */
     public fun apply(ipa: String, lang: String): String {
-        val nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD)
+        var nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD)
+        for ((seq, lig) in TIE_BAR) if (nfd.contains('͡')) nfd = nfd.replace(seq, lig)
         val perLang = OOV[lang] ?: emptyMap()
-        if (GLOBAL.isEmpty() && perLang.isEmpty()) return nfd
         val sb = StringBuilder(nfd.length)
         for (ch in nfd) sb.append(GLOBAL[ch] ?: perLang[ch] ?: ch.toString())
         return sb.toString()
