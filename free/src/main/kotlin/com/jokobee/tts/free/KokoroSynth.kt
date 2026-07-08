@@ -23,10 +23,10 @@ public class KokoroSynth(
     private val env: OrtEnvironment,
     private val session: OrtSession,
     private val tokenizer: KokoroTokenizer,
-) : Closeable {
+) : Synthesizer, Closeable {
 
     /** Phonèmes IPA + voix → forme d'onde f32 [-1,1] à 24 kHz. `speed` : 1.0 = normal. */
-    public fun synth(phonemes: String, voice: Voice, speed: Float = 1.0f): FloatArray {
+    override fun synth(phonemes: String, voice: Voice, speed: Float): FloatArray {
         val ids = tokenizer.encode(phonemes)
         val style = voice.styleFor(tokenizer.nTokens(ids))     // FloatArray[256]
 

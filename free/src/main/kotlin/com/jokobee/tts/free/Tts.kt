@@ -1,10 +1,17 @@
 package com.jokobee.tts.free
 
+import com.jokobee.tts.core.DefaultStyleResolver
+import com.jokobee.tts.core.StyleResolver
+
 /**
  * Façade TTS complète : **texte → audio**. Assemble le [Frontend] (texte → IPA) et
- * [KokoroSynth] (IPA + voix → forme d'onde), plus l'export WAV.
+ * un [Synthesizer] (IPA + voix → forme d'onde), plus l'export WAV.
  *
- *   texte ─[Frontend]→ IPA ─[KokoroSynth(voix)]→ forme d'onde 24 kHz ─[WavWriter]→ WAV
+ *   texte ─[Frontend]→ IPA ─[Synthesizer(voix résolue)]→ forme d'onde 24 kHz ─[WavWriter]→ WAV
+ *
+ * La voix demandée passe TOUJOURS par le [styleResolver] (couche obligatoire) avant la
+ * synthèse — v1.0 = [DefaultStyleResolver] pass-through, mais le point d'insertion existe
+ * pour un futur moteur de style contextuel. Le pipeline ne résout JAMAIS le style en direct.
  *
  * En production : `Frontend(CachingG2p(CharsiuG2p.fromAssetsOrCache(ctx, env)))` +
  * `KokoroSynth.fromModelFile(env, modelPath, KokoroTokenizer.fromAsset(ctx))`, le
@@ -13,7 +20,8 @@ package com.jokobee.tts.free
  */
 public class Tts(
     private val frontend: Frontend,
-    private val synth: KokoroSynth,
+    private val synth: Synthesizer,
+    private val styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
 ) {
     /**
      * Texte → forme d'onde f32 [-1,1] à 24 kHz, avec la [voice] et la vitesse données.
@@ -29,8 +37,9 @@ public class Tts(
         leadMs: Int = 200,
         trailMs: Int = 100,
     ): FloatArray {
+        val resolved = styleResolver.resolve(text, lang, voice)   // couche obligatoire (v1.0 = identité)
         val ipa = frontend.toPhonemes(text, lang)
-        val wave = synth.synth(ipa, voice, speed)
+        val wave = synth.synth(ipa, resolved, speed)
         return AudioPad.pad(wave, SAMPLE_RATE, leadMs, trailMs)
     }
 
