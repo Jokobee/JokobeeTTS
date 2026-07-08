@@ -12,9 +12,14 @@ public class Frontend(
     public val lexicon: MapLexiconSource = MapLexiconSource(),
     /** Points d'insertion Pro (normalisation, dictionnaires, accent). */
     public val adapters: AdapterRegistry = AdapterRegistry(),
+    /** Anglicismes internes (chemin CharsiuG2P), automatique. */
+    private val loanwords: LoanwordsLexicon = LoanwordsLexicon.EMPTY,
 ) {
     private val pipeline = PhonemePipeline(
-        AccentG2p(adapters.accent, LexiconG2p(lexicon, DictionaryG2p(adapters.dictionary, g2p))),
+        AccentG2p(
+            adapters.accent,
+            LexiconG2p(lexicon, DictionaryG2p(adapters.dictionary, LoanwordsG2p(loanwords, g2p))),
+        ),
     )
 
     /** Phonémise un texte. */
@@ -46,7 +51,8 @@ public class Frontend(
                 var end = j
                 var hit: String? = null
                 while (end > i) {
-                    hit = dict.lookup((i..end).joinToString(" ") { anns[it].token }.lowercase(), lang)
+                    val phrase = (i..end).joinToString(" ") { anns[it].token }.lowercase()
+                    hit = dict.lookup(phrase, lang) ?: loanwords.lookup(phrase)   // dict > loanwords
                     if (hit != null) break
                     end--
                 }

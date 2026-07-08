@@ -11,6 +11,15 @@ internal class DictionaryG2p(
         registry.lookup(word, lang) ?: delegate.phonemize(word, lang)
 }
 
+/** G2P décorateur : anglicismes internes avant le délégué (chemin CharsiuG2P). */
+internal class LoanwordsG2p(
+    private val loanwords: LoanwordsLexicon,
+    private val delegate: G2p,
+) : G2p {
+    override fun phonemize(word: String, lang: String): String =
+        loanwords.lookup(word) ?: delegate.phonemize(word, lang)
+}
+
 /** G2P décorateur : accent (IPA vers IPA) après le délégué. */
 internal class AccentG2p(
     private val registry: AccentRegistry,

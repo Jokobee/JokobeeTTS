@@ -1,0 +1,407 @@
+# JokobeeTTS — Loanwords anglais universels avec IPA
+# Source IPA : ipa-dict (open-dict-data, MIT license)
+# Format : mot<TAB>IPA<TAB>catégorie
+# Usage : lexique interne :free, chemin CharsiuG2P (fresitpt)
+#
+afterwork	ˈæftɝˌwɝk	lifestyle
+app	ˈæp	tech
+baby shower	ˈbeɪbi ˈʃaʊɝ	lifestyle
+baby-sitting	ˈbeɪbi ˈsɪtɪŋ	lifestyle
+backstage	ˈbækˈsteɪdʒ	lifestyle
+backup	ˈbæˌkəp	tech
+bandwidth	ˈbændwɪdθ	tech
+barbecue	ˈbɑɹbɪkˌju	lifestyle
+baseline	ˈbeɪˌsɫaɪn	lifestyle
+batch	ˈbætʃ	tech
+benchmark	ˈbɛntʃˌmɑɹk	business
+best-seller	ˈbɛst ˈsɛɫɝ	business
+bestseller	ˈbɛˈsɛɫɝ	lifestyle
+big data	ˈbɪɡ ˈdætə	tech
+bitcoin	ˈbɪtˈkɔɪn	tech
+blockchain	ˈbɫɑkˈtʃeɪn	tech
+blog	ˈbɫɔɡ	lifestyle
+blogger	ˈbɫɔɡɝ	tech
+bluetooth	ˈbɫuˌtuθ	tech
+body	ˈbɑdi	lifestyle
+bodyguard	ˈbɑdiˌɡɑɹd	lifestyle
+booking	ˈbʊkɪŋ	lifestyle
+boot	ˈbut	tech
+brainstorming	ˈbɹeɪnˌstɔɹmɪŋ	business
+brand	ˈbɹænd	business
+branding	ˈbɹændɪŋ	business
+briefing	ˈbɹifɪŋ	business
+broker	ˈbɹoʊkɝ	business
+browser	ˈbɹaʊzɝ	tech
+brunch	ˈbɹəntʃ	lifestyle
+budget	ˈbədʒɪt	business
+buffer	ˈbəfɝ	tech
+bug	ˈbəɡ	tech
+burger	ˈbɝɡɝ	lifestyle
+burnout	ˈbɝˌnaʊt	business
+business	ˈbɪznəs	business
+business plan	ˈbɪznəs ˈpɫæn	business
+buyer	ˈbaɪɝ	business
+byte	ˈbaɪt	tech
+cache	ˈkæʃ	tech
+camping	ˈkæmpɪŋ	lifestyle
+cash	ˈkæʃ	business
+cashback	ˈkæʃˌbæk	business
+casual	ˈkæʒəwəɫ	lifestyle
+ceo	ˈsiˌiˈoʊ	business
+cfo	ˈsiˌɛˈfoʊ	business
+challenge	ˈtʃæɫəndʒ	lifestyle
+champion	ˈtʃæmpiən	lifestyle
+chat	ˈtʃæt	tech
+chatbot	ˈtʃætˌbɑt	tech
+check-in	ˈtʃɛk ˈɪn	lifestyle
+checkout	ˈtʃɛˌkaʊt	lifestyle
+chill	ˈtʃɪɫ	lifestyle
+chip	ˈtʃɪp	tech
+click	ˈkɫɪk	tech
+clipboard	ˈkɫɪpˌbɔɹd	tech
+cloud	ˈkɫaʊd	tech
+club	ˈkɫəb	lifestyle
+cluster	ˈkɫəstɝ	tech
+coach	ˈkoʊtʃ	lifestyle
+coaching	ˈkoʊtʃɪŋ	lifestyle
+cocktail	ˈkɑkˌteɪɫ	lifestyle
+code	ˈkoʊd	tech
+codec	ˈkoʊˌdɛk	tech
+comeback	ˈkəmˌbæk	lifestyle
+comfort food	ˈkəmfɝt ˈfud	lifestyle
+cookie	ˈkʊki	tech
+cool	ˈkuɫ	lifestyle
+copyright	ˈkɑpiˌɹaɪt	lifestyle
+cottage	ˈkɑtədʒ	lifestyle
+coworking	ˌkoʊˈwɝkɪŋ	business
+cozy	ˈkoʊzi	lifestyle
+cpu	ˌsiˌpiˈju	tech
+crash	ˈkɹæʃ	tech
+crew	ˈkɹu	lifestyle
+crowdfunding	ˈkɹaʊdˌfəndɪŋ	business
+cupcake	ˈkəpˌkeɪk	lifestyle
+cursor	ˈkɝsɝ	tech
+customizer	ˈkəstəˌmaɪzɝ	lifestyle
+cyber	ˈsaɪbɝ	tech
+dark	ˈdɑɹk	lifestyle
+dashboard	ˈdæʃˌbɔɹd	tech
+data	ˈdætə	tech
+database	ˈdætəˌbeɪs	tech
+date	ˈdeɪt	lifestyle
+deadline	ˈdɛdˌɫaɪn	business
+deal	ˈdiɫ	business
+debug	diˈbəɡ	tech
+default	dɪˈfɔɫt	tech
+delivery	dɪˈɫɪvɝi	business
+deploy	dɪˈpɫɔɪ	tech
+design	dɪˈzaɪn	lifestyle
+designer	dɪˈzaɪnɝ	lifestyle
+desktop	ˈdɛskˌtɑp	tech
+developer	dɪˈvɛɫəpɝ	tech
+device	dɪˈvaɪs	tech
+display	dɪsˈpɫeɪ	tech
+disruptive	dɪsˈɹəptɪv	business
+diy	ˌdiˌaɪˈwaɪ	lifestyle
+dock	ˈdɑk	tech
+domain	doʊˈmeɪn	tech
+download	ˈdaʊnˌɫoʊd	tech
+downsizing	ˈdaʊnˌsaɪzɪŋ	business
+dress code	ˈdɹɛs ˈkoʊd	lifestyle
+drive	ˈdɹaɪv	lifestyle
+drone	ˈdɹoʊn	tech
+e-commerce	ˈi ˈkɑmɝs	tech
+e-learning	ˈi ˈɫɝnɪŋ	business
+email	iˈmeɪɫ	tech
+emoji	ɪˈmoʊdʒi	tech
+encoding	ɛnˈkoʊdɪŋ	tech
+entrepreneur	ˌɑntɹəpɹəˈnɝ	business
+ethernet	ˈiθɝˌnɛt	tech
+fair play	ˈfɛɹ ˈpɫeɪ	lifestyle
+fan	ˈfæn	lifestyle
+faq	ˌɛfˌeɪˈkju	tech
+fashion	ˈfæʃən	lifestyle
+fast-food	ˈfæst ˈfud	lifestyle
+feedback	ˈfidˌbæk	business
+file	ˈfaɪɫ	tech
+fintech	ˈfɪnˌtɛk	business
+firewall	ˈfaɪɹwɑɫ	tech
+firmware	ˈfɝmˌwɛɹ	tech
+fit	ˈfɪt	lifestyle
+fitness	ˈfɪtnəs	lifestyle
+flash	ˈfɫæʃ	tech
+folder	ˈfoʊɫdɝ	tech
+food truck	ˈfud ˈtɹək	lifestyle
+framework	ˈfɹeɪmˌwɝk	tech
+franchise	ˈfɹænˌtʃaɪz	business
+freelance	ˈfɹiˌɫæns	business
+fullstack	ˌfʊlˈstæk	tech
+fun	ˈfən	lifestyle
+fundraising	ˈfənˌdɹeɪsɪŋ	business
+gadget	ˈɡædʒət	tech
+game	ˈɡeɪm	lifestyle
+gaming	ˈɡeɪmɪŋ	tech
+geek	ˈɡik	tech
+gif	ˈdʒɪf	tech
+gigabyte	ˈɡɪɡəˌbaɪt	tech
+glam	ˈɡɫæm	lifestyle
+glamour	ˈɡɫæmɝ	lifestyle
+gps	ˈɡipiˈɛs	tech
+green	ˈɡɹin	lifestyle
+grill	ˈɡɹɪɫ	lifestyle
+gym	ˈdʒɪm	lifestyle
+hack	ˈhæk	tech
+hacker	ˈhækɝ	tech
+hardware	ˈhɑɹdˌwɛɹ	tech
+hashtag	ˈhæʃˌtæɡ	tech
+holding	ˈhoʊɫdɪŋ	business
+hosting	ˈhoʊstɪŋ	tech
+hotspot	ˈhɑtˌspɑt	tech
+hr	ˈeɪˈtʃɑɹ	business
+hub	ˈhəb	tech
+hype	ˈhaɪp	lifestyle
+hyperlink	ˈhaɪpɝɫɪŋk	tech
+inbound	ˈɪnbaʊnd	business
+inbox	ˈɪnˌbɑks	tech
+influencer	ˈɪnfluənsɝ	business
+input	ˈɪnˌpʊt	tech
+insider	ˌɪnˈsaɪdɝ	business
+install	ˌɪnˈstɔɫ	tech
+interface	ˈɪnɝˌfeɪs	tech
+internet	ˈɪntɝˌnɛt	tech
+iot	ˌaɪˌoʊˈti	tech
+it	ˈɪt	tech
+item	ˈaɪtəm	lifestyle
+jacket	ˈdʒækət	lifestyle
+jet lag	ˈdʒɛt ˈɫæɡ	lifestyle
+jogging	ˈdʒɑɡɪŋ	lifestyle
+joint venture	ˈdʒɔɪnt ˈvɛntʃɝ	business
+juice	ˈdʒus	lifestyle
+junk food	ˈdʒəŋk ˈfud	lifestyle
+kernel	ˈkɝnəɫ	tech
+keyboard	ˈkiˌbɔɹd	tech
+kids	ˈkɪdz	lifestyle
+kit	ˈkɪt	lifestyle
+kpi	ˌkeɪˌpiˈaɪ	business
+laptop	ˈɫæpˌtɑp	tech
+laser	ˈɫeɪzɝ	tech
+launch	ˈɫɔntʃ	business
+layout	ˈɫeɪˌaʊt	tech
+lazy	ˈɫeɪzi	lifestyle
+leader	ˈɫidɝ	business
+leadership	ˈɫidɝˌʃɪp	business
+lean	ˈɫin	business
+led	ˈɫɛd	tech
+light	ˈɫaɪt	lifestyle
+like	ˈɫaɪk	tech
+link	ˈɫɪŋk	tech
+live	ˈɫaɪv	lifestyle
+lobby	ˈɫɑbi	business
+login	ˈɫɔˌɡɪn	tech
+logo	ˈɫoʊɡoʊ	business
+logout	ˈɫɔˌɡaʊt	tech
+look	ˈɫʊk	lifestyle
+loser	ˈɫuzɝ	lifestyle
+low cost	ˈɫoʊ ˈkɑst	lifestyle
+machine learning	məˈʃin ˈɫɝnɪŋ	tech
+maker	ˈmeɪkɝ	lifestyle
+malware	ˈmæɫˌwɛɹ	tech
+management	ˈmænədʒmənt	business
+manager	ˈmænədʒɝ	business
+marketing	ˈmɑɹkətɪŋ	business
+master class	ˈmæstɝ ˈkɫæs	business
+meeting	ˈmitɪŋ	business
+megabyte	ˈmɛɡəˌbaɪt	tech
+meme	ˈmim	tech
+merchandising	ˈmɝtʃənˌdaɪzɪŋ	business
+merger	ˈmɝdʒɝ	business
+microchip	ˈmaɪˌkɹoʊˈtʃɪp	tech
+milkshake	ˈmɪɫkˌʃeɪk	lifestyle
+mindset	ˈmaɪndˌsɛt	business
+modem	ˈmoʊdəm	tech
+monitor	ˈmɑnətɝ	tech
+mood	ˈmud	lifestyle
+mouse	ˈmaʊs	tech
+must-have	ˈməst ˈhæv	lifestyle
+nail art	ˈneɪɫ ˈɑɹt	lifestyle
+network	ˈnɛtˌwɝk	tech
+networking	ˈnɛtˌwɝkɪŋ	business
+newsletter	ˈnuzˌɫɛtɝ	tech
+no comment	ˈnoʊ ˈkɑmɛnt	lifestyle
+node	ˈnoʊd	tech
+notebook	ˈnoʊtˌbʊk	tech
+nude	ˈnud	lifestyle
+offline	ˈɔˌfɫaɪn	tech
+offshore	ˈɔfˈʃɔɹ	business
+onboarding	ˈɑnˌbɔɹdɪŋ	business
+online	ˈɔnˌɫaɪn	business
+open source	ˈoʊpən ˈsɔɹs	tech
+output	ˈaʊtˌpʊt	tech
+outreach	ˈaʊˌtɹitʃ	business
+outsourcing	ˌaʊtˈsɔɹsɪŋ	business
+overbooking	ˈoʊvɝˌbʊkɪŋ	lifestyle
+package	ˈpækədʒ	tech
+partner	ˈpɑɹtnɝ	business
+party	ˈpɑɹti	lifestyle
+password	ˈpæsˌwɝd	tech
+patch	ˈpætʃ	tech
+payload	ˈpeɪˌɫoʊd	tech
+payroll	ˈpeɪˌɹoʊɫ	business
+pc	ˈpiˈsi	tech
+personal shopper	ˈpɝsɪnəɫ ˈʃɑpɝ	lifestyle
+phishing	ˈfɪʃɪŋ	tech
+ping	ˈpɪŋ	tech
+pitch	ˈpɪtʃ	business
+pivot	ˈpɪvət	business
+pixel	ˈpɪksəɫ	tech
+planning	ˈpɫænɪŋ	lifestyle
+platform	ˈpɫætˌfɔɹm	tech
+playlist	ˈpɫeɪɫɪst	tech
+plugin	ˈpɫəɡɪn	tech
+podcast	ˈpɔdˌkæst	tech
+pop-up	ˈpɑp ˈəp	tech
+portfolio	pɔɹtˈfoʊɫiˌoʊ	business
+post	ˈpoʊst	tech
+premium	ˈpɹimiəm	business
+pricing	ˈpɹaɪsɪŋ	business
+prime time	ˈpɹaɪm ˈtaɪm	lifestyle
+print	ˈpɹɪnt	tech
+privacy	ˈpɹaɪvəsi	tech
+processor	ˈpɹɑˌsɛsɝ	tech
+profile	ˈpɹoʊˌfaɪɫ	tech
+prompt	ˈpɹɑmpt	tech
+proxy	ˈpɹɑksi	tech
+qr code	ˌkjuˈɑɹ ˈkoʊd	tech
+ram	ˈɹæm	tech
+ranking	ˈɹæŋkɪŋ	business
+ransomware	ˈɹænsəmˌwɛɹ	tech
+rating	ˈɹeɪtɪŋ	lifestyle
+reboot	ɹiˈbut	tech
+relax	ɹiˈɫæks	lifestyle
+remake	ˈɹiˈmeɪk	lifestyle
+render	ˈɹɛndɝ	tech
+reset	ˈɹisɛt	tech
+resort	ɹiˈsɔɹt	lifestyle
+responsive	ɹɪˈspɑnsɪv	tech
+retail	ˈɹiˌteɪɫ	business
+road trip	ˈɹoʊd ˈtɹɪp	lifestyle
+robot	ˈɹoʊˌbɑt	tech
+roi	ˈɹɔɪ	business
+room service	ˈɹum ˈsɝvəs	lifestyle
+router	ˈɹaʊtɝ	tech
+running	ˈɹənɪŋ	lifestyle
+runtime	ˈɹənˌtaɪm	tech
+rush	ˈɹəʃ	lifestyle
+sandwich	ˈsæmwɪtʃ	lifestyle
+scalable	ˈskeɪɫəbəɫ	business
+scan	ˈskæn	tech
+scanner	ˈskænɝ	tech
+scoop	ˈskup	lifestyle
+screenshot	ˈskɹinˌʃɑt	tech
+script	ˈskɹɪpt	tech
+scroll	ˈskɹoʊɫ	tech
+scrum	ˈskɹəm	business
+sdk	ˌɛsˌdiˈkeɪ	tech
+selfie	ˈsɛɫˌfi	lifestyle
+sensor	ˈsɛnsɝ	tech
+server	ˈsɝvɝ	tech
+setup	ˈsɛˌtəp	tech
+shirt	ˈʃɝt	lifestyle
+shopping	ˈʃɑpɪŋ	lifestyle
+short	ˈʃɔɹt	lifestyle
+shortcut	ˈʃɔɹtˌkət	tech
+show	ˈʃoʊ	lifestyle
+showroom	ˈʃoʊˌɹum	lifestyle
+single	ˈsɪŋɡəɫ	lifestyle
+site	ˈsaɪt	tech
+skill	ˈskɪɫ	business
+slogan	ˈsɫoʊɡən	business
+smartphone	ˈsmɑɹtˌfoʊn	tech
+sme	ˌɛsˌɛmˈi	business
+smoothie	ˈsmuði	lifestyle
+sms	ˌɛˌsɛˈmɛs	tech
+snack	ˈsnæk	lifestyle
+sneakers	ˈsnikɝz	lifestyle
+snippet	ˈsnɪpət	tech
+software	ˈsɔfˌwɛɹ	tech
+spam	ˈspæm	tech
+speed	ˈspid	lifestyle
+spoiler	ˈspɔɪɫɝ	lifestyle
+sponsor	ˈspɑnsɝ	business
+sport	ˈspɔɹt	lifestyle
+sprint	ˈspɹɪnt	tech
+ssd	ˌɛsˌɛsˈdi	tech
+ssl	ˌɛsˌɛsˈɛl	tech
+stack	ˈstæk	tech
+stakeholder	ˈsteɪkˌhoʊɫdɝ	business
+startup	ˈstɑɹˌtəp	tech
+steak	ˈsteɪk	lifestyle
+stock	ˈstɑk	business
+storage	ˈstɔɹədʒ	tech
+store	ˈstɔɹ	lifestyle
+storytelling	ˈstɔɹiˌtɛɫɪŋ	business
+strategy	ˈstɹætədʒi	business
+stream	ˈstɹim	tech
+streaming	ˈstɹimɪŋ	tech
+stress	ˈstɹɛs	lifestyle
+style	ˈstaɪɫ	lifestyle
+supply chain	səˈpɫaɪ ˈtʃeɪn	business
+sweatshirt	ˈswɛtˌʃɝt	lifestyle
+t-shirt	ˈti ˈʃɝt	lifestyle
+tab	ˈtæb	tech
+tablet	ˈtæbɫət	tech
+tag	ˈtæɡ	tech
+target	ˈtɑɹɡət	business
+team	ˈtim	business
+teamwork	ˈtimˌwɝk	business
+template	ˈtɛmpɫeɪt	tech
+terabyte	ˌtɛɹəˈbaɪt	tech
+test	ˈtɛst	lifestyle
+thread	ˈθɹɛd	tech
+thriller	ˈθɹɪɫɝ	lifestyle
+thumbnail	ˈθəmˌneɪɫ	tech
+timing	ˈtaɪmɪŋ	business
+tip	ˈtɪp	lifestyle
+toast	ˈtoʊst	lifestyle
+token	ˈtoʊkən	tech
+toolbar	ˈtuɫˌbɑɹ	tech
+top	ˈtɑp	lifestyle
+touchscreen	ˈtətʃˌskɹin	tech
+tracker	ˈtɹækɝ	tech
+trader	ˈtɹeɪdɝ	business
+training	ˈtɹeɪnɪŋ	business
+trend	ˈtɹɛnd	business
+trending	ˈtɹɛndɪŋ	tech
+trendy	ˈtɹɛndi	lifestyle
+trigger	ˈtɹɪɡɝ	tech
+trip	ˈtɹɪp	lifestyle
+troll	ˈtɹoʊɫ	tech
+tuning	ˈtunɪŋ	lifestyle
+tutorial	tuˈtɔɹiəɫ	tech
+tweet	ˈtwit	tech
+underground	ˈəndɝˌɡɹaʊnd	lifestyle
+update	ˈəpˌdeɪt	tech
+upgrade	ˈəpˈɡɹeɪd	tech
+upload	ˈəˌpɫoʊd	tech
+url	ˈʊɹɫ	tech
+usb	ˈjuˈɛsˈbi	tech
+user	ˈjuzɝ	tech
+username	ˈjuzɝˌneɪm	tech
+venture capital	ˈvɛntʃɝ ˈkæpətəɫ	business
+vintage	ˈvɪntɪdʒ	lifestyle
+vip	ˌviˌaɪˈpi	lifestyle
+vlog	ˈvlɑɡ	lifestyle
+vpn	ˌviˌpiˈɛn	tech
+web	ˈwɛb	tech
+webcam	ˈwɛbˌkæm	tech
+webinar	ˈwɛbɪnɝ	tech
+website	ˈwɛbˌsaɪt	tech
+weekend	ˈwiˌkɛnd	lifestyle
+wellness	ˈwɛɫnəs	lifestyle
+widget	ˈwɪdʒɪt	tech
+wifi	ˈwaɪˌfaɪ	tech
+wireless	ˈwaɪɹɫɪs	tech
+workflow	ˈwɝkˌfɫoʊ	tech
+workshop	ˈwɝkˌʃɑp	business
+wrap	ˈɹæp	lifestyle
+yoga	ˈjoʊɡə	lifestyle
+zoom	ˈzum	lifestyle

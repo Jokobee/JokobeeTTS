@@ -69,7 +69,7 @@ public class Tts(
             )
             val frontend = Frontend(g2p, enG2p = { text, lang ->
                 (if (lang == "en_GB") enGb else en).phonemize(text)
-            }, adapters = adapters)
+            }, adapters = adapters, loanwords = LoanwordsLexicon.fromAssets(context))
             val synth = KokoroSynth.fromModelFile(env, modelPath, KokoroTokenizer.fromAsset(context))
             return Tts(frontend, synth, styleResolver)
         }
