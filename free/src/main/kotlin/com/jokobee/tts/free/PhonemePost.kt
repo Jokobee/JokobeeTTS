@@ -25,9 +25,13 @@ public object PhonemePost {
         "it" to mapOf('h' to ""),
     )
 
+    // Le vocab Kokoro stocke la cédille précomposée ; c'est le seul token que NFD décompose.
+    private const val CEDILLA_NFD: String = "c\u0327"
+
     /** Normalise et remplace les symboles hors vocabulaire. */
     public fun apply(ipa: String, lang: String): String {
         var nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD)
+        if (nfd.contains(CEDILLA_NFD)) nfd = nfd.replace(CEDILLA_NFD, "\u00E7")
         for ((seq, lig) in TIE_BAR) if (nfd.contains('͡')) nfd = nfd.replace(seq, lig)
         val perLang = OOV[lang] ?: emptyMap()
         val sb = StringBuilder(nfd.length)

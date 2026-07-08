@@ -58,6 +58,13 @@ class PhonemePostTest {
         assertEquals("ab", PhonemePost.apply("a͡b", "es"))          // tie-bar résiduel supprimé
     }
 
+    @Test fun recomposesCedillaForVocab() {
+        // ç est dans le vocab en précomposé (U+00E7) ; le NFD ne doit pas le casser en c + U+0327
+        val out = PhonemePost.apply("ɪç", "de")
+        assertEquals(2, out.length)
+        assertEquals(0x00E7, out[1].code)
+    }
+
     @Test fun italianSilentH() {
         // le h italien n'est jamais phonémique (h muet) -> supprimé pour "it" uniquement
         assertEquals("o", PhonemePost.apply("ho", "it"))                 // ho -> o
