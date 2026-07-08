@@ -19,22 +19,36 @@ import java.text.Normalizer
  */
 public object PhonemePost {
 
+    /**
+     * Mapping GLOBAL (toutes langues) : tics de sortie de CharsiuG2P hors vocab Kokoro.
+     * `g` (U+0067, g ASCII) → `ɡ` (U+0261, g IPA) : le vocab Kokoro n'a QUE le ɡ IPA ;
+     * sans ce mapping, le g ASCII est droppé silencieusement (audit : 64 mots fr + 42 es,
+     * ex. « grand→gʁɑ̃ », « tengo→teŋgo »). Vérifié par audit OOV sur top-2000 mots fr/es.
+     */
+    private val GLOBAL: Map<Char, String> = mapOf(
+        'g' to "ɡ",
+        // ʼ (U+02BC) : marqueur de h muet/liaison de CharsiuG2P, non phonémique dans nos
+        // langues (fr/es/romanes) → suppression EXPLICITE (« hommes→ʼɔm » donne « ɔm »,
+        // la bonne prononciation du h français muet). Audit OOV : 16 mots fr.
+        'ʼ' to "",
+    )
+
     /** Mapping OOV par langue : symbole IPA hors vocab Kokoro → substitut le plus proche. */
     private val OOV: Map<String, Map<Char, String>> = mapOf(
-        // Vide pour l'instant : à peupler par la boucle WER (chaque entrée justifiée
-        // par une mesure, pas devinée). Structure prête, ex. "de" to mapOf('ʏ' to "y").
+        // À peupler par l'audit OOV / la boucle WER (chaque entrée justifiée par une mesure).
+        // Structure prête, ex. "de" to mapOf('ʏ' to "y").
     )
 
     /**
-     * Applique NFD + le mapping OOV de `lang`. Idempotent modulo NFD.
+     * Applique NFD + le mapping GLOBAL + le mapping OOV de `lang`. Idempotent modulo NFD.
      * Ne strippe jamais : un symbole non mappé est conservé tel quel.
      */
     public fun apply(ipa: String, lang: String): String {
         val nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD)
-        val map = OOV[lang] ?: return nfd
-        if (map.isEmpty()) return nfd
+        val perLang = OOV[lang] ?: emptyMap()
+        if (GLOBAL.isEmpty() && perLang.isEmpty()) return nfd
         val sb = StringBuilder(nfd.length)
-        for (ch in nfd) sb.append(map[ch] ?: ch.toString())
+        for (ch in nfd) sb.append(GLOBAL[ch] ?: perLang[ch] ?: ch.toString())
         return sb.toString()
     }
 }

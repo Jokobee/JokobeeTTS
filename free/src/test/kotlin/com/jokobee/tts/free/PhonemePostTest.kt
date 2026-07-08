@@ -32,4 +32,17 @@ class PhonemePostTest {
         val once = PhonemePost.apply("naïve ɑ̃", "fr")
         assertEquals(once, PhonemePost.apply(once, "fr"))
     }
+
+    @Test fun mapsAsciiGToIpaG() {
+        // 'g' ASCII (U+0067, sorti par CharsiuG2P) -> 'ɡ' IPA (U+0261, seul dans le vocab
+        // Kokoro) ; sans ce mapping le g serait droppé (audit OOV : 64 mots fr + 42 es).
+        assertEquals("ɡ", PhonemePost.apply("g", "fr"))          // g -> ɡ
+        assertEquals("teŋɡo", PhonemePost.apply("teŋgo", "es"))  // teŋgo -> teŋɡo
+        assertEquals("ɡʁɑ̃", PhonemePost.apply("gʁɑ̃", "fr")) // grã
+    }
+
+    @Test fun dropsHaspireMarker() {
+        // ʼ (U+02BC) marqueur de h muet -> supprimé explicitement (« hommes→ʼɔm » -> « ɔm »)
+        assertEquals("ɔm", PhonemePost.apply("ʼɔm", "fr"))
+    }
 }
