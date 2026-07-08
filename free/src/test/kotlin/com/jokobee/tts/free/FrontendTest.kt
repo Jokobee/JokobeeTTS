@@ -26,8 +26,8 @@ class FrontendTest {
 
     @Test fun nonFrenchDelegatesTokensToG2p() {
         val stub = StubG2p()
-        Frontend(stub).toPhonemes("東京", "ja")
-        assertTrue("東京" in stub.seen)
+        Frontend(stub).toPhonemes("gato", "es")
+        assertTrue("gato" in stub.seen)
     }
 
     @Test fun outputIsNonEmptyIpa() {

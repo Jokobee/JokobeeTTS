@@ -54,9 +54,9 @@ class PhonemePipelineTest {
 
     @Test fun nonFrenchDelegatesAllWords() {
         val stub = StubG2p()
-        val anns = listOf(Ann("東京", null), Ann("は", null))  // 東京 / は
-        val out = PhonemePipeline(stub, post = identity).phonemizeAnnotations(anns, "ja")
-        assertEquals("[東京] [は]", out)
-        assertEquals(listOf("東京", "は"), stub.seen)
+        val anns = listOf(Ann("hola", null), Ann("mundo", null))
+        val out = PhonemePipeline(stub, post = identity).phonemizeAnnotations(anns, "es")
+        assertEquals("[hola] [mundo]", out)
+        assertEquals(listOf("hola", "mundo"), stub.seen)
     }
 }

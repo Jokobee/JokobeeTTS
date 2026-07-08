@@ -295,9 +295,7 @@ public abstract class BaseNormalizer(
             "fr" to Triple("pour cent", false, "virgule"), "fr_CA" to Triple("pour cent", false, "virgule"),
             "en_US" to Triple("percent", false, "point"), "en_GB" to Triple("percent", false, "point"),
             "es" to Triple("por ciento", false, "coma"), "it" to Triple("per cento", false, "virgola"),
-            "pt_BR" to Triple("por cento", false, "vírgula"), "hi" to Triple("प्रतिशत", false, "दशमलव"),
-            "ja" to Triple("パーセント", false, "点"), "zh" to Triple("百分之", true, "点"),
-            "ko" to Triple("퍼센트", false, "점"),
+            "pt_BR" to Triple("por cento", false, "vírgula"),
         )
 
         private val WL_FR = listOf(

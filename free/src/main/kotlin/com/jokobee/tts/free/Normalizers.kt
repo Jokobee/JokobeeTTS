@@ -5,9 +5,9 @@ import com.jokobee.tts.core.UnsupportedLanguageException
 /** Fabrique de normaliseurs par locale */
 public object Normalizers {
 
-    /** Les 10 locales gérées (fr et fr_CA partagent [FrenchNormalizer]). */
+    /** Les locales gérées (fr et fr_CA partagent [FrenchNormalizer]). */
     public val SUPPORTED: Set<String> = setOf(
-        "fr", "fr_CA", "en_US", "en_GB", "es", "it", "pt_BR", "hi", "ja", "zh", "ko",
+        "fr", "fr_CA", "en_US", "en_GB", "es", "it", "pt_BR",
     )
 
     public fun forLang(lang: String, verbalizer: Verbalizer): BaseNormalizer = when (lang) {
@@ -17,10 +17,6 @@ public object Normalizers {
         "es" -> SpanishNormalizer(verbalizer)
         "it" -> ItalianNormalizer(verbalizer)
         "pt_BR" -> BrazilianPortugueseNormalizer(verbalizer)
-        "hi" -> HindiNormalizer(verbalizer)
-        "ja" -> JapaneseNormalizer(verbalizer)
-        "zh" -> ChineseNormalizer(verbalizer)
-        "ko" -> KoreanNormalizer(verbalizer)
         else -> throw UnsupportedLanguageException(lang)
     }
 }

@@ -11,7 +11,7 @@ Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commerc
 
 ## Ce qui est livré (v1.0)
 
-- **Normalisation** — 10 locales (fr, en_US, en_GB, es, it, pt_BR, hi, ja, zh, ko) :
+- **Normalisation** — 6 langues (fr, en_US, en_GB, es, it, pt_BR) :
   nombres, dates, heures, devises, ordinaux, fractions, plages, chiffres romains, unités,
   acronymes, abréviations et symboles. Passez du texte brut, la normalisation s'occupe du reste.
 - **G2P (grapheme → phoneme)** — **embarqué**, 100 % offline, pour les langues supportées.
@@ -27,7 +27,7 @@ Modèle **Open Core** : tier **Free** public (ce dépôt) + tier **Pro** commerc
 | Tier | Contenu | Distribution |
 |---|---|---|
 | **`:core`** | contrats (`G2p`, `LexiconSource`, `StyleResolver`), `TextSplitter`, `LangRouter`, exceptions | Maven Central — `com.jokobee:jokobeetts-core` *(à venir)* |
-| **`:free`** | normalisation 10 locales, G2P embarqué, synthèse Kokoro, registre de voix, API `Tts` | Maven Central — `com.jokobee:jokobeetts` *(à venir)* |
+| **`:free`** | normalisation 6 langues, G2P embarqué, synthèse Kokoro, registre de voix, API `Tts` | Maven Central — `com.jokobee:jokobeetts` *(à venir)* |
 | **`:pro`** | import de voix, **blending**, streaming temps réel, GPU Vulkan, x86_64, `lang="auto"`, SSML, timestamps, **Model Manager** | **jokobee.com** (licence commerciale) — repo privé |
 | **JokobeeSDK** *(futur)* | SDK IA complet : modules par langue (`:lang-*`), **moteur de style contextuel** (`StyleResolver`), création de voix, pipelines multimodaux | — |
 

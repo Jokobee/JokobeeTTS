@@ -15,7 +15,6 @@ public object G2pLangTag {
         "fr" to "fra", "fr_CA" to "fra",
         "en_US" to "eng-us", "en_GB" to "eng-uk",
         "es" to "spa", "it" to "ita", "pt_BR" to "por-bz",
-        "hi" to "hin", "ja" to "jpn", "zh" to "cmn", "ko" to "kor",
     )
 
     public fun of(lang: String): String =

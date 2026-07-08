@@ -16,7 +16,7 @@ public object VoiceFormat {
 
     /** Locales routées par le pipeline. */
     public val SUPPORTED_LANGS: Set<String> = setOf(
-        "fr", "fr_CA", "en_US", "en_GB", "es", "it", "pt_BR", "hi", "ja", "zh", "ko",
+        "fr", "fr_CA", "en_US", "en_GB", "es", "it", "pt_BR",
     )
 
     internal fun checkLang(lang: String): String {

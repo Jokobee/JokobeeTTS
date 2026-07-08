@@ -93,13 +93,12 @@ L'**import de voix custom** et le **blending** (« créer sa voix ») sont des f
 
 ## Langues
 
-10 locales normalisées **en amont** (nombres, dates, devises, acronymes, unités…) — passez du
+6 langues normalisées **en amont** (nombres, dates, devises, acronymes, unités…) — passez du
 texte brut, pas besoin de pré-traiter.
 
 | Locale | État |
 |---|---|
-| `fr`, `fr_CA`, `es`, `en_US`, `en_GB` | ✅ validé |
-| `it`, `pt_BR`, `hi`, `ja`, `zh`, `ko` | normalisation ✅ ; synthèse — roadmap |
+| `fr`, `fr_CA`, `en_US`, `en_GB`, `es`, `it`, `pt_BR` | ✅ validé |
 
 ---
 
