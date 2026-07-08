@@ -174,6 +174,22 @@ class AdapterRegistryTest {
         assertEquals(listOf("otro"), calls)            // mot absent → modèle appelé
     }
 
+    @Test fun multiWordDictOnCharsiuPath() {
+        val reg = AdapterRegistry()
+        reg.installLoader(
+            FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("es"), mapOf("mesa grande" to "zzz")))),
+        )
+        reg.dictionary.load("d")
+        val stub = object : com.jokobee.tts.core.G2p {
+            override fun phonemize(word: String, lang: String) = "X"
+        }
+        val fe = Frontend(stub, adapters = reg)
+        val out = fe.toPhonemes("mesa grande", "es")
+        assertTrue("séquence multi-mots fusionnée", out.contains("zzz"))
+        assertEquals("greedy : une seule fusion", 1, Regex("zzz").findAll(out).count())
+        assertTrue("mot isolé non fusionné", !fe.toPhonemes("mesa", "es").contains("zzz"))
+    }
+
     // ----- chemin misaki EN : dict/accent dans la chaîne -----
     private fun misakiLex(): MisakiEnLexicon {
         val dir = File(System.getProperty("user.dir"), "src/main/assets/misaki")

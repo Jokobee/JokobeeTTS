@@ -24,13 +24,45 @@ public class Frontend(
         if ((lang == "en_US" || lang == "en_GB") && enG2p != null) {
             return enG2p.invoke(normalized, lang)   // G2P anglais (us/gb selon lang), pas de PhonemePost
         }
-        return pipeline.phonemizeAnnotations(annotate(normalized, lang), lang)
+        return pipeline.phonemizeAnnotations(mergeMultiWord(annotate(normalized, lang), lang), lang)
     }
 
     /** Annotations mot-à-mot */
     private fun annotate(text: String, lang: String): List<Ann> =
         if (lang == "fr" || lang == "fr_CA") HomographAnnotator.annotate(text)
         else TOKEN_RE.findall(text).map { Ann(it, null) }
+
+    // Fusion greedy des séquences multi-mots du dictionnaire : mots consécutifs (IPA non forcée)
+    // dont la phrase est dans tts.dictionary -> un seul Ann à IPA forcée (dict + accent). Le post
+    // final du pipeline clampe l'ensemble.
+    private fun mergeMultiWord(anns: List<Ann>, lang: String): List<Ann> {
+        val dict = adapters.dictionary
+        val out = ArrayList<Ann>(anns.size)
+        var i = 0
+        while (i < anns.size) {
+            if (isWord(anns[i].token) && anns[i].ipa == null) {
+                var j = i
+                while (j + 1 < anns.size && isWord(anns[j + 1].token) && anns[j + 1].ipa == null) j++
+                var end = j
+                var hit: String? = null
+                while (end > i) {
+                    hit = dict.lookup((i..end).joinToString(" ") { anns[it].token }.lowercase(), lang)
+                    if (hit != null) break
+                    end--
+                }
+                if (hit != null) {
+                    val ipa = adapters.accent.apply(hit, anns[i].token, lang)
+                    out.add(Ann((i..end).joinToString(" ") { anns[it].token }, ipa))
+                    i = end + 1
+                    continue
+                }
+            }
+            out.add(anns[i]); i++
+        }
+        return out
+    }
+
+    private fun isWord(token: String): Boolean = token.any { it.isLetter() }
 
     private companion object {
         // Mot (lettres + marques + apostrophe) OU suite de non-espaces non-lettres (ponctuation).
