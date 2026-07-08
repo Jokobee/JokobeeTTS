@@ -10,12 +10,17 @@ public class Frontend(
     private val verbalizer: Verbalizer = IcuVerbalizer(),
     /** Lexique custom (couche #1), universel */
     public val lexicon: MapLexiconSource = MapLexiconSource(),
+    /** Points d'insertion Pro (normalisation, dictionnaires, accent). */
+    public val adapters: AdapterRegistry = AdapterRegistry(),
 ) {
-    private val pipeline = PhonemePipeline(LexiconG2p(lexicon, g2p))
+    private val pipeline = PhonemePipeline(
+        AccentG2p(adapters.accent, LexiconG2p(lexicon, DictionaryG2p(adapters.dictionary, g2p))),
+    )
 
     /** Phonémise un texte. */
     public fun toPhonemes(text: String, lang: String): String {
-        val normalized = Normalizers.forLang(lang, verbalizer).normalize(text)
+        val pre = adapters.normalization.apply(text, lang, adapters.accent.current?.id)
+        val normalized = Normalizers.forLang(lang, verbalizer).normalize(pre)
         if ((lang == "en_US" || lang == "en_GB") && enG2p != null) {
             return enG2p.invoke(normalized, lang)   // G2P anglais (us/gb selon lang), pas de PhonemePost
         }

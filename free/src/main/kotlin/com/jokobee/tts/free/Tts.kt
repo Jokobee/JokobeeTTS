@@ -12,6 +12,16 @@ public class Tts(
 ) {
     /** Lexique custom prioritaire du pipeline, consulté avant le G2P pour toutes les langues, pour `add(...)`/`load(...)` à chaud (marques, corrections). */
     public val lexicon: com.jokobee.tts.core.MapLexiconSource get() = frontend.lexicon
+    /** Adaptation du texte brut (Pro). */
+    public val normalization: NormalizationRegistry get() = frontend.adapters.normalization
+    /** Dictionnaires de terminologie (Pro). */
+    public val dictionary: DictionaryRegistry get() = frontend.adapters.dictionary
+    /** Adaptation des phonèmes/accent (Pro). */
+    public val accent: AccentRegistry get() = frontend.adapters.accent
+    /** Active le tier Pro en installant son loader d'adapters. */
+    public fun installProLoader(loader: com.jokobee.tts.core.AdapterLoader) {
+        frontend.adapters.installLoader(loader)
+    }
     /** Synthétise une forme d'onde à partir d'un texte. */
     public fun synthesize(
         text: String,
