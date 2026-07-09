@@ -26,7 +26,7 @@ dependencies {
 }
 ```
 
-The AAR embeds **everything**: G2P, the Kokoro synthesis model, and 38 official voices.
+The AAR embeds **everything**: G2P, the Kokoro synthesis model, and 37 official voices.
 No further setup.
 
 ---
@@ -36,7 +36,7 @@ No further setup.
 ```kotlin
 import com.jokobee.tts.free.Tts
 
-val tts = Tts.create(context)                                   // zero-config, ~110 MB AAR does the rest
+val tts = Tts.create(context)                                   // zero-config, ~97 MB AAR does the rest
 val wav: ByteArray = tts.synthesizeToWav("Bonjour le monde", "fr")  // 24 kHz WAV, default fr voice
 // -> write to a file, or play via AudioTrack / MediaPlayer.
 ```
@@ -61,12 +61,12 @@ clipped by the player's init latency). Adjust via `leadMs` / `trailMs` (0 = raw)
 
 ## Bundled model & voices
 
-The Kokoro synthesis model (`model_quantized.onnx`, ~88 MB) and 38 official voice files
+The Kokoro synthesis model (`model_quantized.onnx`, ~88 MB) and 37 official voice files
 (`voices/*.bin`, ~20 MB) are packaged as AAR assets and loaded directly from memory —
 `Tts.create(context)` never touches the filesystem or the network.
 
 One default voice is picked automatically per language (see [Voices](#voices)). This is
-why the total AAR is **~110 MB**: that's the cost of "it just works" with zero setup.
+why the total AAR is **~97 MB**: that's the cost of "it just works" with zero setup.
 
 ---
 
@@ -75,7 +75,7 @@ why the total AAR is **~110 MB**: that's the cost of "it just works" with zero s
 ```kotlin
 val tts = Tts.create(context)
 
-tts.voices?.list()             // all 38 bundled official voices
+tts.voices?.list()             // all 37 bundled official voices
 tts.voices?.get("af_heart")    // a specific one by id
 ```
 
@@ -145,5 +145,5 @@ val wav = tts.synthesizeToWav("Bonjour le monde", "fr", voice)
 - Synthesis is CPU-bound: run it on a worker. A G2P cache is built in.
 - The pipeline and ONNX sessions are reusable; release resources at end of life.
 - ABI: Free = `arm64-v8a`. `x86_64` support (emulator/Chromebook) is a Pro feature.
-- The AAR is **~110 MB** (bundled model + voices). If APK size matters more than zero-setup
+- The AAR is **~97 MB** (bundled model + voices). If APK size matters more than zero-setup
   for your use case, that's noted as a possible future option — not available in v1.0.0.

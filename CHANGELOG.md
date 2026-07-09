@@ -7,7 +7,7 @@ tracking (see [README](README.md#modules--tiers)).
 ## [1.0.0] — 2026-07-09
 
 > **v1.0.0**: complete TTS engine, validated on-device (Pixel 7 Pro), shipped as a single
-> all-in-one AAR (~110 MB) — the Kokoro model and 38 official voices are bundled, not
+> all-in-one AAR (~97 MB) — the Kokoro model and 37 official voices are bundled, not
 > downloaded. Zero network, zero setup: `Tts.create(context)` and it speaks.
 
 ### Added — Zero-config API
@@ -16,7 +16,7 @@ tracking (see [README](README.md#modules--tiers)).
   model path, no voice file to manage.
 - **`synthesize`/`synthesizeToWav`** now accept an optional `voice` (defaults to a sensible
   official voice per language) and the short language alias `"en"` (→ `en_US`).
-- **`VoiceCatalog.official(context)`**: auto-populated catalog of the 38 bundled voices.
+- **`VoiceCatalog.official(context)`**: auto-populated catalog of the 37 bundled voices.
 
 ### Added — Text processing
 - **Normalization** for 6 languages (fr, en_US, en_GB, es, it, pt_BR):
@@ -32,7 +32,7 @@ tracking (see [README](README.md#modules--tiers)).
 - **Kokoro** via ONNX Runtime, model **bundled in the AAR** (`model_quantized.onnx`,
   ~88 MB), export **WAV** PCM 16-bit 24 kHz, `Tts` facade (text → audio), configurable
   lead/tail silence.
-- **38 official voices bundled** (`voices/*.bin`, ~20 MB) covering the 6 supported
+- **37 official voices bundled** (`voices/*.bin`, ~20 MB) covering the 6 supported
   languages; read-only catalog (Free).
 
 ### Added — Stitching

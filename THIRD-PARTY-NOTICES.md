@@ -9,7 +9,7 @@ product's trademark).
 
 | Component | Author/Project | License | Role |
 |---|---|---|---|
-| **Kokoro-82M** | hexgrad | **Apache-2.0** | synthesis model + 38 official voices. JokobeeTTS is "**based on Kokoro-82M**". |
+| **Kokoro-82M** | hexgrad | **Apache-2.0** | synthesis model + 37 official voices. JokobeeTTS is "**based on Kokoro-82M**". |
 | **ONNX Runtime** | Microsoft | **MIT** | inference engine |
 | **CharsiuG2P** | CharsiuNLP | **MIT** | phonemization (grapheme → phoneme) |
 | **misaki** | hexgrad (Kokoro) | **MIT** | English phonemization (grapheme → phoneme) |

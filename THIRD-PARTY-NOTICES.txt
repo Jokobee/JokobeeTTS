@@ -19,7 +19,8 @@ Kokoro-82M
 --------------------------------------------------------------------------------
 Copyright (c) hexgrad.
 Licensed under the Apache License, Version 2.0.
-Speech synthesis model (ONNX weights). JokobeeTTS is "based on Kokoro-82M".
+Speech synthesis model (ONNX weights) + 37 official voices, both bundled in the AAR.
+JokobeeTTS is "based on Kokoro-82M".
 Repository: https://github.com/hexgrad/kokoro
 
 --------------------------------------------------------------------------------
