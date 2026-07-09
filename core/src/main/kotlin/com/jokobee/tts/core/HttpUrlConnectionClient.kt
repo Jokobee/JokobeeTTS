@@ -18,7 +18,7 @@ public class HttpUrlConnectionClient(
         val code = conn.responseCode
         if (code !in 200..299) {
             conn.disconnect()
-            throw ModelResolutionException("HTTP $code sur $url")
+            throw ModelResolutionException("HTTP $code on $url")
         }
         val startsAt = if (code == HttpURLConnection.HTTP_PARTIAL) rangeStart else 0L
         val len = conn.contentLengthLong   // body of this response (-1 if unknown)

@@ -107,6 +107,6 @@ class VoiceCatalogTest {
 
     @Test fun getUnknownRejected() {
         val ex = assertThrows(VoiceError::class.java) { OpenCatalog().get("inexistante") }
-        assertTrue(ex.message!!.contains("voix inconnue"))
+        assertTrue(ex.message!!.contains("unknown voice"))
     }
 }

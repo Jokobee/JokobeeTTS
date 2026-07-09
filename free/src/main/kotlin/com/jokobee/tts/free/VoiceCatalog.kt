@@ -14,7 +14,7 @@ public open class VoiceCatalog {
 
     /** Voice by identifier (FREE). */
     public fun get(id: String): Voice = voices[id]
-        ?: throw VoiceError("voix inconnue : '$id'. Disponibles : ${voices.keys.sorted()}.")
+        ?: throw VoiceError("unknown voice: '$id'. Available: ${voices.keys.sorted()}.")
 
     /** All voices (official + custom Pro), sorted by id, with no usage distinction. */
     public fun list(): List<Voice> = voices.keys.sorted().map { voices.getValue(it) }
