@@ -50,10 +50,23 @@ val audio = tts.synthesize("Hello world", lang = "en")
 |---|---|---|
 | **`:core`** | contracts (`G2p`, `LexiconSource`, `StyleResolver`, `LanguageDetector`, `StreamingEngine`), `TextSplitter`, `AudioStitcher`, exceptions | Maven Central — `com.jokobee:jokobeetts-core` |
 | **`:free`** | 6-language normalization, embedded G2P, Kokoro synthesis with the model + 37 official voices **bundled**, **multi-sentence stitching**, `Tts` API | Maven Central — `com.jokobee:jokobeetts` (aliases: `tts-ai-android`, `tts-android-ai`) |
-| **`:pro`** | voice import, **blending**, **real-time streaming**, **`lang="auto"`** (detection), Vulkan GPU, x86_64, SSML, timestamps | **jokobee.com** (commercial license) — private repo |
+| **`:pro`** | see below | [**jokobee.com**](https://jokobee.com) (commercial license) — private repo |
 
 **Free = 100% free, no language behind a paywall.** The Free/Pro split is about **features**
 (power / real-time), not languages.
+
+### What Pro adds
+
+Drop-in on top of Free — same `Tts` API, `JokobeeTtsPro.enable(...)` unlocks the rest:
+
+- **Real-time streaming** — sentence-by-sentence audio delivery, minimal perceived latency.
+- **`lang="auto"`** — automatic language detection (fr, en_US, es, it, pt_BR).
+- **Voice import & blending** — bring your own voice, mix existing ones.
+- **Adapters** — normalization / dictionary / accent, including encrypted distribution.
+- **Vulkan GPU acceleration** and **x86_64** (emulator/Chromebook) support.
+- **SSML** and **word-level timestamps**.
+
+Hit a `ProRequiredException` in Free? → [**jokobee.com**](https://jokobee.com) for the commercial license.
 
 ## Target
 
@@ -89,7 +102,7 @@ smaller APK.
 ## Licenses
 
 - **Free** (`:core` + `:free`, this repo): **Apache-2.0** — see [LICENSE](LICENSE).
-- **Pro**: commercial license (jokobee.com).
+- **Pro**: commercial license — [jokobee.com](https://jokobee.com).
 - Third-party components (Kokoro Apache-2.0, G2P engines / ONNX Runtime MIT, ICU permissive):
   **zero GPL/LGPL**. Details in [LICENSING.md](LICENSING.md) and
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
