@@ -24,4 +24,5 @@ rootProject.name = "JokobeeTTS"
 
 // Open Core — PUBLIC repo: :core + :free (Maven Central).
 // The :pro tier lives in the PRIVATE JokobeeTTS-Private repo (composite build into here).
-include(":core", ":free")
+// tts-ai-android / tts-android-ai: zero-code discoverability aliases for :free.
+include(":core", ":free", ":tts-ai-android", ":tts-android-ai")
