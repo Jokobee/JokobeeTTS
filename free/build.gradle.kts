@@ -46,8 +46,35 @@ dependencies {
 
 mavenPublishing {
     coordinates("com.jokobee", "jokobeetts", "1.0.0")
-    signAllPublications()
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
+    if (providers.gradleProperty("signingInMemoryKey").isPresent) {
+        signAllPublications()
+        publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
+    }
+
+    pom {
+        name.set("JokobeeTTS")
+        description.set("On-device multilingual text-to-speech engine for Android, based on Kokoro-82M — normalization, G2P and 37 official voices across 6 languages.")
+        url.set("https://github.com/Jokobee/JokobeeTTS")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                id.set("jokobee")
+                name.set("Jokobee")
+                email.set("contact@jokobee.com")
+                url.set("https://jokobee.com")
+            }
+        }
+        scm {
+            url.set("https://github.com/Jokobee/JokobeeTTS")
+            connection.set("scm:git:https://github.com/Jokobee/JokobeeTTS.git")
+            developerConnection.set("scm:git:ssh://git@github.com/Jokobee/JokobeeTTS.git")
+        }
+    }
 }
 
 // THIRD-PARTY-NOTICES.txt bundled into the AAR assets (accessible at runtime via
