@@ -9,7 +9,7 @@ import com.jokobee.tts.core.UnsupportedLanguageException
 import java.io.Closeable
 import java.io.File
 
-/** Correspondance locale JokobeeTTS */
+/** JokobeeTTS locale mapping */
 public object G2pLangTag {
     private val TAGS: Map<String, String> = mapOf(
         "fr" to "fra", "fr_CA" to "fra",
@@ -20,11 +20,11 @@ public object G2pLangTag {
     public fun of(lang: String): String =
         TAGS[lang] ?: throw UnsupportedLanguageException(lang)
 
-    /** Construit l'entrée graphémique attendue par le modèle */
+    /** Builds the graphemic input expected by the model */
     public fun prompt(lang: String, word: String): String = "<${of(lang)}>: $word"
 }
 
-/** Implémentation Free de [G2p]. */
+/** Free-tier implementation of [G2p]. */
 public class CharsiuG2p(
     private val env: OrtEnvironment,
     private val encoder: OrtSession,
@@ -71,7 +71,7 @@ public class CharsiuG2p(
         }
     }
 
-    /** Sortie du modèle pour un mot. */
+    /** Model output for a word. */
     @Suppress("UNCHECKED_CAST")
     private fun argmaxLastStep(value: Any?): Long {
         val logits = value as Array<Array<FloatArray>>   // [1][T][V]
@@ -90,10 +90,10 @@ public class CharsiuG2p(
     public companion object {
         private fun LongArray.reshape1xN(): Array<LongArray> = arrayOf(this)
 
-        /** Nom du sous-dossier assets ET du dossier de cache téléchargé. */
+        /** Name of the assets subfolder AND the downloaded cache folder. */
         public const val G2P_DIR: String = "g2p"
 
-        /** Charge le modèle depuis les assets ou le cache. */
+        /** Loads the model from assets or cache. */
         public fun fromAssetsOrCache(
             context: Context,
             env: OrtEnvironment,
@@ -114,9 +114,9 @@ public class CharsiuG2p(
         ): OrtSession {
             val cached = context.getExternalFilesDir(G2P_DIR)?.let { File(it, name) }
             return if (cached != null && cached.exists()) {
-                env.createSession(cached.absolutePath, options)     // modèle téléchargé (Pro)
+                env.createSession(cached.absolutePath, options)     // downloaded model (Pro)
             } else {
-                context.assets.open("$G2P_DIR/$name").use {          // asset embarqué (Free)
+                context.assets.open("$G2P_DIR/$name").use {          // bundled asset (Free)
                     env.createSession(it.readBytes(), options)
                 }
             }

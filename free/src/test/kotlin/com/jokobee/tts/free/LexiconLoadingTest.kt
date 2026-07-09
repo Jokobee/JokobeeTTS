@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-/** BLOC B3/B4 */
+/** BLOCK B3/B4 */
 class LexiconLoadingTest {
 
     private fun tsv(s: String, alphabet: PhoneticAlphabet = PhoneticAlphabet.IPA, lang: String = "en_US") =
@@ -18,9 +18,9 @@ class LexiconLoadingTest {
     @Test fun tsvLoaderBasic() {
         val src = tsv("hello\thəlˈO\nworld\twˈɜɹld\ncat\tkˈæt\n")
         assertEquals("həlˈO", src.lookup("hello", "en_US"))
-        assertEquals("kˈæt", src.lookup("Cat", "en_US"))          // insensible à la casse
+        assertEquals("kˈæt", src.lookup("Cat", "en_US"))          // case-insensitive
         assertEquals(3, src.size)
-        assertNull(src.lookup("hello", "fr"))                     // mono-langue
+        assertNull(src.lookup("hello", "fr"))                     // single language only
         assertNull(src.lookup("absent", "en_US"))
     }
 
@@ -32,16 +32,16 @@ class LexiconLoadingTest {
 
     @Test fun tsvLoaderArpabet() {
         val src = tsv("cat\tK AE1 T\ndog\tD AO1 G\n", PhoneticAlphabet.ARPABET)
-        assertEquals("kˈæt", src.lookup("cat", "en_US"))          // converti en IPA en interne
+        assertEquals("kˈæt", src.lookup("cat", "en_US"))          // converted to IPA internally
         assertEquals("dˈɔɡ", src.lookup("dog", "en_US"))
     }
 
     @Test fun addWithAlphabet() {
         val lex = MapLexiconSource()
-            .add("hello", "həlˈO", "en_US")                                    // IPA direct
+            .add("hello", "həlˈO", "en_US")                                    // direct IPA
             .add("cat", "K AE1 T", PhoneticAlphabet.ARPABET, "en_US")          // ARPABET -> IPA
         assertEquals("həlˈO", lex.lookup("hello", "en_US"))
-        assertEquals("kˈæt", lex.lookup("cat", "en_US"))          // stocké en IPA canonique
+        assertEquals("kˈæt", lex.lookup("cat", "en_US"))          // stored in canonical IPA
     }
 
     @Test fun lexiconPriorityOrder() {
@@ -49,9 +49,9 @@ class LexiconLoadingTest {
             .load(tsv("word\tAAA\n"))
             .load(tsv("word\tBBB\n"))
         assertEquals("BBB", lex.lookup("word", "en_US"))
-        // les sources priment sur les entrées add() de base
+        // sources take priority over base add() entries
         lex.add("word", "CCC", "en_US")
-        assertEquals("BBB", lex.lookup("word", "en_US"))          // source prioritaire
+        assertEquals("BBB", lex.lookup("word", "en_US"))          // priority source
         assertEquals("CCC", lex.lookup("word2", "en_US") ?: "CCC")
     }
 

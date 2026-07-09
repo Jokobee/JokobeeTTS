@@ -9,14 +9,14 @@ import com.jokobee.tts.core.NormalizationContext
 import com.jokobee.tts.core.PhonemeAdapter
 import com.jokobee.tts.core.ProRequiredException
 
-/** Conteneur des points d'insertion Pro et de leur loader. */
+/** Container for Pro extension points and their loader. */
 public class AdapterRegistry {
     private var loader: AdapterLoader? = null
 
     internal fun requireLoader(): AdapterLoader =
         loader ?: throw ProRequiredException("This feature requires JokobeeTTS Pro — jokobee.com/pro")
 
-    /** Installe le loader Pro (appelé par le tier Pro). */
+    /** Installs the Pro loader (called by the Pro tier). */
     public fun installLoader(loader: AdapterLoader) { this.loader = loader }
 
     public val normalization: NormalizationRegistry = NormalizationRegistry(this)
@@ -30,7 +30,7 @@ private fun checkCompatible(langs: Set<String>, lang: String, id: String) {
     )
 }
 
-/** Point d'insertion normalisation (0 ou 1 actif). */
+/** Normalization extension point (0 or 1 active). */
 public class NormalizationRegistry internal constructor(private val host: AdapterRegistry) {
     public var current: NormalizationAdapter? = null
         private set
@@ -45,7 +45,7 @@ public class NormalizationRegistry internal constructor(private val host: Adapte
     }
 }
 
-/** Point d'insertion dictionnaires (cumulable, ordre = priorité). */
+/** Dictionary extension point (stackable, order = priority). */
 public class DictionaryRegistry internal constructor(private val host: AdapterRegistry) {
     private val stack = ArrayList<DictAdapter>()
 
@@ -64,7 +64,7 @@ public class DictionaryRegistry internal constructor(private val host: AdapterRe
     }
 }
 
-/** Point d'insertion accent (0 ou 1 actif). */
+/** Accent extension point (0 or 1 active). */
 public class AccentRegistry internal constructor(private val host: AdapterRegistry) {
     public var current: PhonemeAdapter? = null
         private set

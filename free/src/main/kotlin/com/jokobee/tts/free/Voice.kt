@@ -5,16 +5,16 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/** Format d'un embedding de voix. */
+/** Format of a voice embedding. */
 public object VoiceFormat {
-    /** Styles indexés par longueur de tokens [0..509]. */
+    /** Styles indexed by token length [0..509]. */
     public const val N_ROWS: Int = 510
-    /** Dimension d'un vecteur de style. */
+    /** Dimension of a style vector. */
     public const val STYLE_DIM: Int = 256
-    /** Taille attendue du fichier de voix */
+    /** Expected size of the voice file */
     public const val EXPECTED_BYTES: Int = N_ROWS * STYLE_DIM * 4
 
-    /** Locales routées par le pipeline. */
+    /** Locales routed by the pipeline. */
     public val SUPPORTED_LANGS: Set<String> = setOf(
         "fr", "fr_CA", "en_US", "en_GB", "es", "it", "pt_BR",
     )
@@ -28,7 +28,7 @@ public object VoiceFormat {
         return lang
     }
 
-    /** Octets bruts (format ci-dessus) */
+    /** Raw bytes (format above) */
     public fun parseEmbedding(raw: ByteArray): FloatArray {
         val n = raw.size
         if (n != EXPECTED_BYTES) {
@@ -49,7 +49,7 @@ public object VoiceFormat {
         return arr
     }
 
-    /** Valide un FloatArray en mémoire et en renvoie une copie. */
+    /** Validates an in-memory FloatArray and returns a copy of it. */
     public fun coerceEmbedding(embedding: FloatArray): FloatArray {
         if (embedding.size != N_ROWS * STYLE_DIM) throw VoiceError(
             "shape invalide : attendu ${N_ROWS * STYLE_DIM} floats ([$N_ROWS,$STYLE_DIM]), " +
@@ -62,18 +62,18 @@ public object VoiceFormat {
     }
 }
 
-/** Une voix */
+/** A voice */
 public class Voice private constructor(
     public val id: String,
     public val lang: String,
     private val embedding: FloatArray,
 ) {
     public companion object {
-        /** Depuis des octets bruts au format [VoiceFormat] (fichier .bin de voix). */
+        /** From raw bytes in [VoiceFormat] format (voice .bin file). */
         public fun of(id: String, lang: String, raw: ByteArray): Voice =
             build(id, lang, VoiceFormat.parseEmbedding(raw))
 
-        /** Depuis un FloatArray déjà en mémoire. */
+        /** From a FloatArray already in memory. */
         public fun of(id: String, lang: String, embedding: FloatArray): Voice =
             build(id, lang, VoiceFormat.coerceEmbedding(embedding))
 
@@ -83,17 +83,17 @@ public class Voice private constructor(
         }
     }
 
-    /** Vecteur de style pour un énoncé de `nTokens` tokens. */
+    /** Style vector for an utterance of `nTokens` tokens. */
     public fun styleFor(nTokens: Int): FloatArray {
         val idx = nTokens.coerceIn(0, VoiceFormat.N_ROWS - 1)
         val off = idx * VoiceFormat.STYLE_DIM
         return embedding.copyOfRange(off, off + VoiceFormat.STYLE_DIM)
     }
 
-    /** Copie défensive de l'embedding. */
+    /** Defensive copy of the embedding. */
     public fun copyEmbedding(): FloatArray = embedding.copyOf()
 
-    /** Sérialise au format binaire de voix. */
+    /** Serializes to the voice binary format. */
     public fun toBytes(): ByteArray {
         val buf = ByteBuffer.allocate(VoiceFormat.EXPECTED_BYTES).order(ByteOrder.LITTLE_ENDIAN)
         buf.asFloatBuffer().put(embedding)

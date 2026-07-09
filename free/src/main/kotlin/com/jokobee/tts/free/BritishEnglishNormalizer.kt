@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Variante britannique (en_GB) */
+/** British variant (en_GB) */
 public class BritishEnglishNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,

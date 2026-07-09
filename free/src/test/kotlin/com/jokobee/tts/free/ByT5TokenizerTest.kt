@@ -4,7 +4,7 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tokeniseur */
+/** Tokenizer */
 class ByT5TokenizerTest {
 
     @Test fun asciiBytesOffsetPlusThree() {
@@ -38,7 +38,7 @@ class ByT5TokenizerTest {
     }
 
     @Test fun promptFormatMatchesHfBench() {
-        // "<fra>: bonjour" doit s'encoder octet à octet, comme la référence
+        // "<fra>: bonjour" must encode byte-for-byte, like the reference
         val ids = ByT5Tokenizer.encode(G2pLangTag.prompt("fr", "bonjour"))
         assertArrayEquals(longArrayOf(63, 105, 117, 100, 65, 61, 35), ids.copyOfRange(0, 7))
         val expected = "<fra>: bonjour".toByteArray(Charsets.UTF_8)

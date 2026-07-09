@@ -16,7 +16,7 @@ class ModelManagerTest {
 
     @get:Rule val tmp = TemporaryFolder()
 
-    private val payload = Random(7).nextBytes(200_000)   // > buffer 64 Ko : exerce la boucle
+    private val payload = Random(7).nextBytes(200_000)   // > 64 KB buffer: exercises the loop
     private fun sha(b: ByteArray) =
         MessageDigest.getInstance("SHA-256").digest(b).joinToString("") { "%02x".format(it) }
 
@@ -24,7 +24,7 @@ class ModelManagerTest {
     private fun fileOf(name: String, sha: String = sha(payload), size: Long = 0) =
         ModelFile(name, "https://models.jokobee.com/$name", sha, size)
 
-    // HTTP factice servant [payload], avec ou sans support Range.
+    // Fake HTTP serving [payload], with or without Range support.
     private fun serving(body: ByteArray = payload, honorRange: Boolean = true, calls: MutableList<Long>? = null) =
         HttpClient { _, rangeStart ->
             calls?.add(rangeStart)
@@ -32,16 +32,16 @@ class ModelManagerTest {
             val slice = body.copyOfRange(start, body.size)
             HttpResponse(ByteArrayInputStream(slice), slice.size.toLong(), if (honorRange && rangeStart > 0) rangeStart else 0L)
         }
-    private val throwingHttp = HttpClient { _, _ -> throw AssertionError("HTTP ne devrait pas être appelé") }
+    private val throwingHttp = HttpClient { _, _ -> throw AssertionError("HTTP should not be called") }
 
     @Test fun download_whenAbsent_verifiesReturnsAndReportsProgress() {
         val progress = ArrayList<Pair<Long, Long>>()
         val mgr = ModelManager(cacheDir(), http = serving())
         val out = mgr.resolve(fileOf("kokoro.onnx", size = payload.size.toLong())) { _, done, total -> progress.add(done to total) }
         assertArrayEquals(payload, out.readBytes())
-        assertEquals(payload.size.toLong(), progress.last().first)   // done final == taille
-        assertEquals(payload.size.toLong(), progress.last().second)  // total connu
-        assertTrue("progression monotone", progress.map { it.first }.zipWithNext().all { it.first <= it.second })
+        assertEquals(payload.size.toLong(), progress.last().first)   // final done == size
+        assertEquals(payload.size.toLong(), progress.last().second)  // total known
+        assertTrue("monotonic progress", progress.map { it.first }.zipWithNext().all { it.first <= it.second })
     }
 
     @Test fun usesCache_whenValid_noDownload() {
@@ -64,7 +64,7 @@ class ModelManagerTest {
         val calls = ArrayList<Long>()
         val out = ModelManager(cache, http = serving(calls = calls)).resolve(fileOf("kokoro.onnx"))
         assertArrayEquals(payload, out.readBytes())
-        assertEquals(half.toLong(), calls.single())   // reprise demandée à l'octet 'half'
+        assertEquals(half.toLong(), calls.single())   // resume requested at byte 'half'
         assertFalse(File(cache, "kokoro.onnx.part").exists())
     }
 
@@ -72,12 +72,12 @@ class ModelManagerTest {
         val cache = cacheDir()
         File(cache, "m.bin.part").writeBytes(payload.copyOfRange(0, payload.size / 2))
         val out = ModelManager(cache, http = serving(honorRange = false)).resolve(fileOf("m.bin"))
-        assertArrayEquals(payload, out.readBytes())   // repart de 0, fichier complet et correct
+        assertArrayEquals(payload, out.readBytes())   // restarts from 0, complete and correct file
     }
 
     @Test fun redownloads_whenCacheCorrupt() {
         val cache = cacheDir()
-        File(cache, "kokoro.onnx").writeBytes(Random(1).nextBytes(500))   // mauvais contenu
+        File(cache, "kokoro.onnx").writeBytes(Random(1).nextBytes(500))   // wrong content
         val out = ModelManager(cache, http = serving()).resolve(fileOf("kokoro.onnx"))
         assertArrayEquals(payload, out.readBytes())
     }
@@ -85,7 +85,7 @@ class ModelManagerTest {
     @Test fun placeholderSha_skipsVerification() {
         val junk = Random(2).nextBytes(1000)
         val out = ModelManager(cacheDir(), http = serving(body = junk)).resolve(fileOf("x.bin", sha = "TODO"))
-        assertArrayEquals(junk, out.readBytes())   // accepté sans vérif (artefact pas encore uploadé)
+        assertArrayEquals(junk, out.readBytes())   // accepted without verification (artifact not yet uploaded)
     }
 
     @Test(expected = ProRequiredException::class)
@@ -98,8 +98,8 @@ class ModelManagerTest {
         val mgr = ModelManager(cache, http = serving())
         val t = try { mgr.resolve(fileOf("kokoro.onnx", sha = sha(Random(9).nextBytes(10)))); null }
         catch (e: ModelResolutionException) { e }
-        assertTrue("doit lever ModelResolutionException", t != null)
-        assertFalse("aucun fichier corrompu laissé", File(cache, "kokoro.onnx").exists())
+        assertTrue("must throw ModelResolutionException", t != null)
+        assertFalse("no corrupted file left behind", File(cache, "kokoro.onnx").exists())
     }
 
     @Test fun ensureAll_resolvesEveryFile() {
@@ -130,7 +130,7 @@ class ModelManagerTest {
         assertEquals(2, m.files.size)
         assertEquals("abc", m.file("kokoro.onnx")!!.sha256)
         assertEquals(123L, m.file("kokoro.onnx")!!.sizeBytes)
-        assertEquals("", m.file("voices.bin")!!.sha256)   // défaut : placeholder
+        assertEquals("", m.file("voices.bin")!!.sha256)   // default: placeholder
         assertEquals(0L, m.file("voices.bin")!!.sizeBytes)
     }
 }

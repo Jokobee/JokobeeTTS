@@ -10,11 +10,11 @@ class AudioPadTest {
     @Test fun addsLeadAndTrailSilence() {
         val out = AudioPad.pad(floatArrayOf(0.5f, -0.5f), sampleRate = 24000, leadMs = 200, trailMs = 100)
         assertEquals(4800 + 2 + 2400, out.size)           // 200ms + 2 + 100ms @ 24kHz
-        assertEquals(0f, out[0], 0f)                       // tête = silence
+        assertEquals(0f, out[0], 0f)                       // head = silence
         assertEquals(0f, out[4799], 0f)
-        assertEquals(0.5f, out[4800], 0f)                  // 1er échantillon audio après la tête
+        assertEquals(0.5f, out[4800], 0f)                  // 1st audio sample after the head
         assertEquals(-0.5f, out[4801], 0f)
-        assertEquals(0f, out[4802], 0f)                    // queue = silence
+        assertEquals(0f, out[4802], 0f)                    // tail = silence
         assertEquals(0f, out[out.size - 1], 0f)
     }
 

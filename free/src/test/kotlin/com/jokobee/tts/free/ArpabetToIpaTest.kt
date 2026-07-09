@@ -8,7 +8,7 @@ import org.junit.Test
 import java.io.File
 import java.text.Normalizer
 
-/** BLOC B1 */
+/** BLOCK B1 */
 class ArpabetToIpaTest {
 
     private val vocab: Set<Char> by lazy {
@@ -35,15 +35,15 @@ class ArpabetToIpaTest {
     }
 
     @Test fun arpabetGandR() {
-        assertEquals("ɡ", i("G"))            // U+0261, PAS g ASCII
+        assertEquals("ɡ", i("G"))            // U+0261, NOT ASCII g
         assertEquals('ɡ', i("G")[0]); assertEquals(0x0261, i("G")[0].code)
-        assertEquals("ɹ", i("R"))            // U+0279, PAS r ASCII
+        assertEquals("ɹ", i("R"))            // U+0279, NOT ASCII r
         assertEquals(0x0279, i("R")[0].code)
     }
 
     @Test fun erUsesKokoroForm() {
-        assertEquals("əɹ", i("ER0"))         // pas ɚ
-        assertEquals("ˈɜɹ", i("ER1"))        // pas ɝ (absent du vocab)
+        assertEquals("əɹ", i("ER0"))         // not ɚ
+        assertEquals("ˈɜɹ", i("ER1"))        // not ɝ (absent from vocab)
     }
 
     @Test fun arpabetJokobee() {

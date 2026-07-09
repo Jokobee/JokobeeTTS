@@ -5,10 +5,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Bloc 1 */
+/** Block 1 */
 class VerbalizerTest {
 
-    private val v: Verbalizer = IcuVerbalizer()   // icu4j embarqué (= android.icu au device)
+    private val v: Verbalizer = IcuVerbalizer()   // bundled icu4j (= android.icu on device)
 
     @Test fun fr() {
         assertEquals("quatorze", v.cardinal(14, "fr_CA"))
@@ -19,7 +19,7 @@ class VerbalizerTest {
     }
 
     @Test fun enUs() {
-        assertEquals("two thousand five", v.cardinal(2005, "en_US"))   // PAS de "and"
+        assertEquals("two thousand five", v.cardinal(2005, "en_US"))   // NO "and"
         assertEquals("one thousand two hundred thirty-four", v.cardinal(1234, "en_US"))
         assertEquals("third", v.ordinal(3, "en_US"))
         assertEquals("twenty-first", v.ordinal(21, "en_US"))
@@ -36,11 +36,11 @@ class VerbalizerTest {
     @Test fun it() {
         val c = v.cardinal(42, "it")
         assertEquals("quarantadue", c)
-        assertFalse(c.contains('­'))    // soft hyphens purgés
+        assertFalse(c.contains('­'))    // soft hyphens purged
     }
 
     @Test fun ptBr() {
         assertEquals("cinquenta", v.cardinal(50, "pt_BR"))
-        assertTrue(v.cardinal(1234, "pt_BR").contains(" e "))   // pt utilise « e »
+        assertTrue(v.cardinal(1234, "pt_BR").contains(" e "))   // pt uses "e"
     }
 }

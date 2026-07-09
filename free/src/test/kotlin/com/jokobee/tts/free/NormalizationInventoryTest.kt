@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** RÉGRESSION */
+/** REGRESSION */
 class NormalizationInventoryTest {
 
     private data class Case(val label: String, val input: String, val expected: String)

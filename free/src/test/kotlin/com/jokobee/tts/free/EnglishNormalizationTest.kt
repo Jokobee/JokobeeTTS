@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** BLOC 2 */
+/** BLOCK 2 */
 class EnglishNormalizationTest {
 
     private val norm = EnglishNormalizer(IcuVerbalizer())
@@ -12,12 +12,12 @@ class EnglishNormalizationTest {
     @Test fun acronymsSpelledOut() {
         assertEquals("I watch T V every day", n("I watch TV every day"))
         assertEquals("I live in the U S A and the U K", n("I live in the USA and the UK"))
-        assertEquals("NASA and the F B I", n("NASA and the FBI"))   // NASA gardé (mot), FBI épelé
+        assertEquals("NASA and the F B I", n("NASA and the FBI"))   // NASA kept (word), FBI spelled out
     }
 
     @Test fun titlesAndAbbreviations() {
         assertEquals("Doctor Smith lives on Main Street", n("Dr. Smith lives on Main St."))
-        assertEquals("Meet me at Saint Peter", n("Meet me at St. Peter"))   // St.+majuscule -> Saint
+        assertEquals("Meet me at Saint Peter", n("Meet me at St. Peter"))   // St.+uppercase -> Saint
     }
 
     @Test fun contractionsKeptForMisaki() {

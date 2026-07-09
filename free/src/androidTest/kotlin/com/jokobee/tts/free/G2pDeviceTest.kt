@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Validation ON-DEVICE (arm64) du G2P le G2P */
+/** ON-DEVICE (arm64) validation of the G2P. */
 @RunWith(AndroidJUnit4::class)
 class G2pDeviceTest {
 
@@ -23,7 +23,7 @@ class G2pDeviceTest {
             ctx.assets.open("test_cases_fr.json").bufferedReader().use { it.readText() },
         )
 
-        // Mots uniques normalisés (ce que le G2P voit réellement, hors overrides).
+        // Unique normalized words (what the G2P actually sees, excluding overrides).
         val norm = Normalizers.forLang("fr", IcuVerbalizer())
         val wordRe = Regex("""[\p{L}\p{M}']+""")
         val uniqueWords = LinkedHashSet<String>()
@@ -34,7 +34,7 @@ class G2pDeviceTest {
         Log.i(tag, "mots uniques normalisés : ${uniqueWords.size}")
 
         val cold = CharsiuG2p.fromAssetsOrCache(ctx, env)
-        cold.phonemize("bonjour", "fr")        // warmup graphe ORT
+        cold.phonemize("bonjour", "fr")        // warmup ORT graph
         var nanos = 0L
         var sample = ""
         for ((idx, w) in uniqueWords.withIndex()) {

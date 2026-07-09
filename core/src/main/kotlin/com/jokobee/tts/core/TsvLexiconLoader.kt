@@ -3,7 +3,7 @@ package com.jokobee.tts.core
 import android.content.Context
 import java.io.InputStream
 
-/** Charge un lexique de prononciation depuis un TSV. */
+/** Loads a pronunciation lexicon from a TSV. */
 public class TsvLexiconLoader private constructor(
     private val lang: String,
     private val entries: Map<String, String>,
@@ -15,7 +15,7 @@ public class TsvLexiconLoader private constructor(
     public val size: Int get() = entries.size
 
     public companion object {
-        /** Parse un flux TSV */
+        /** Parses a TSV stream */
         public fun fromStream(
             input: InputStream,
             lang: String,
@@ -38,7 +38,7 @@ public class TsvLexiconLoader private constructor(
             return TsvLexiconLoader(lang, map)
         }
 
-        /** Charge depuis un asset */
+        /** Loads from an asset */
         public fun fromAsset(
             context: Context,
             assetPath: String,

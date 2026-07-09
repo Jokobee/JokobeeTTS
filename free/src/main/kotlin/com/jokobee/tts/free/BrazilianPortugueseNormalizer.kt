@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation portugaise brésilienne (pt_BR) */
+/** Brazilian Portuguese normalization (pt_BR) */
 public class BrazilianPortugueseNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -110,7 +110,7 @@ public class BrazilianPortugueseNormalizer(
             Regex("\\bSrta\\b\\.?") to "Senhorita", Regex("\\bSra\\b\\.?") to "Senhora",
             Regex("\\bSr\\b\\.?") to "Senhor", Regex("\\bDra\\b\\.?") to "Doutora",
             Regex("\\bDr\\b\\.?") to "Doutor", Regex("\\bProf\\b\\.?") to "Professor",
-            // adresses
+            // addresses
             Regex("\\bAv\\b\\.?") to "Avenida", Regex("\\bPça\\b\\.?") to "Praça",
             Regex("\\bPca\\b\\.?") to "Praça", Regex("\\bTrav\\b\\.?") to "Travessa",
         )

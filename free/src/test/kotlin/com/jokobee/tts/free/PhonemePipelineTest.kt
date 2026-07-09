@@ -6,10 +6,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.text.Normalizer
 
-/** Orchestrateur */
+/** Orchestrator */
 class PhonemePipelineTest {
 
-    /** G2P stub deterministe */
+    /** Deterministic G2P stub */
     private class StubG2p : G2p {
         val seen = mutableListOf<String>()
         override fun phonemize(word: String, lang: String): String {
@@ -26,7 +26,7 @@ class PhonemePipelineTest {
             listOf(Ann("est", "ɛ"), Ann("chat", null)), "fr",   // "est" -> ɛ
         )
         assertEquals("ɛ [chat]", out)
-        assertEquals(listOf("chat"), stub.seen)   // "est" (override) n'a PAS touche le G2P
+        assertEquals(listOf("chat"), stub.seen)   // "est" (override) did NOT touch the G2P
     }
 
     @Test fun punctuationIsLiteralAndReattached() {

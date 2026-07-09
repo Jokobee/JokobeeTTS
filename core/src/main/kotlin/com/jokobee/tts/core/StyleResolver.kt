@@ -1,21 +1,21 @@
 package com.jokobee.tts.core
 
-/** Contexte de synthèse fourni au résolveur de style. */
+/** Synthesis context provided to the style resolver. */
 public class SynthesisContext<V>(
     public val text: String,
     public val lang: String,
     public val requestedStyle: V,
 )
 
-/** Sortie du résolveur de style. */
+/** Output of the style resolver. */
 public class StyleOutput<V>(public val style: V)
 
-/** Résout le style de synthèse à partir du contexte */
+/** Resolves the synthesis style from the context */
 public fun interface StyleResolver<V> {
     public fun resolve(context: SynthesisContext<V>): StyleOutput<V>
 }
 
-/** Résolveur par défaut (renvoie le style demandé). */
+/** Default resolver (returns the requested style). */
 public class DefaultStyleResolver<V> : StyleResolver<V> {
     override fun resolve(context: SynthesisContext<V>): StyleOutput<V> = StyleOutput(context.requestedStyle)
 }

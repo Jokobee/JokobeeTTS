@@ -16,7 +16,7 @@ class PhonemePostTest {
     }
 
     @Test fun keepsSuprasegmentals() {
-        // stress ˈ ˌ et tons ne sont pas strippés
+        // stress ˈ ˌ and tones are not stripped
         val ipa = "ˈhɛˌloʊ"
         assertEquals(Normalizer.normalize(ipa, Normalizer.Form.NFD), PhonemePost.apply(ipa, "en_US"))
     }
@@ -51,24 +51,24 @@ class PhonemePostTest {
         assertEquals("ʤiɐ", PhonemePost.apply("d͡ʒiɐ", "pt_BR"))   // dia (pt)
         assertEquals("ʧao", PhonemePost.apply("t͡ʃao", "it"))       // ciao (it)
         assertEquals("ʣ", PhonemePost.apply("d͡z", "it"))
-        assertEquals("ɡratʦje", PhonemePost.apply("ɡratt͡sje", "it")) // grazie (géminée tt + t͡s→ʦ)
+        assertEquals("ɡratʦje", PhonemePost.apply("ɡratt͡sje", "it")) // grazie (geminate tt + t͡s→ʦ)
     }
 
     @Test fun strayTieBarRemoved() {
-        assertEquals("ab", PhonemePost.apply("a͡b", "es"))          // tie-bar résiduel supprimé
+        assertEquals("ab", PhonemePost.apply("a͡b", "es"))          // residual tie-bar removed
     }
 
     @Test fun recomposesCedillaForVocab() {
-        // ç est dans le vocab en précomposé (U+00E7) ; le NFD ne doit pas le casser en c + U+0327
+        // ç is in the vocab in precomposed form (U+00E7); NFD must not break it into c + U+0327
         val out = PhonemePost.apply("ɪç", "de")
         assertEquals(2, out.length)
         assertEquals(0x00E7, out[1].code)
     }
 
     @Test fun italianSilentH() {
-        // le h italien n'est jamais phonémique (h muet) -> supprimé pour "it" uniquement
+        // Italian h is never phonemic (silent h) -> removed for "it" only
         assertEquals("o", PhonemePost.apply("ho", "it"))                 // ho -> o
         assertEquals("anno", PhonemePost.apply("hanno", "it"))           // hanno -> anno
-        assertEquals("ho", PhonemePost.apply("ho", "es"))                // conservé ailleurs
+        assertEquals("ho", PhonemePost.apply("ho", "es"))                // kept elsewhere
     }
 }

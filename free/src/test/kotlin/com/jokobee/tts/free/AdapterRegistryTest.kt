@@ -55,7 +55,7 @@ private val G2P = object : G2p { override fun phonemize(word: String, lang: Stri
 
 class AdapterRegistryTest {
 
-    // ----- Free : tout load() lève ProRequired sans loader -----
+    // ----- Free: every load() throws ProRequired without a loader -----
     @Test fun proRequiredWithoutLoader() {
         val reg = AdapterRegistry()
         expect<ProRequiredException> { reg.normalization.load("x") }
@@ -94,7 +94,7 @@ class AdapterRegistryTest {
         expect<AdapterIncompatibleException> { reg.normalization.apply("x", "es", null) }
     }
 
-    // ----- dictionary : priorité lexicon > dict > g2p -----
+    // ----- dictionary: priority lexicon > dict > g2p -----
     @Test fun dictPriorityLexiconThenDictThenG2p() {
         val reg = AdapterRegistry()
         reg.installLoader(
@@ -103,8 +103,8 @@ class AdapterRegistryTest {
         reg.dictionary.load("d")
         val lex = MapLexiconSource().apply { add("hola", "LEX", "es") }
         val chain = AccentG2p(reg.accent, LexiconG2p(lex, DictionaryG2p(reg.dictionary, G2P)))
-        assertEquals("LEX", chain.phonemize("hola", "es"))   // #1 lexicon gagne
-        assertEquals("MESA", chain.phonemize("mesa", "es"))  // #2 dict (absent du lexicon)
+        assertEquals("LEX", chain.phonemize("hola", "es"))   // #1 lexicon wins
+        assertEquals("MESA", chain.phonemize("mesa", "es"))  // #2 dict (absent from lexicon)
         assertEquals("G2P", chain.phonemize("otro", "es"))   // #3 fallback
     }
 
@@ -120,10 +120,10 @@ class AdapterRegistryTest {
         )
         reg.dictionary.load("d1"); reg.dictionary.load("d2")
         assertEquals(listOf("d1", "d2"), reg.dictionary.loaded)
-        assertEquals("D1", reg.dictionary.lookup("mesa", "es"))   // premier chargé gagne
-        assertEquals("D2S", reg.dictionary.lookup("silla", "es")) // trouvé dans le 2e
+        assertEquals("D1", reg.dictionary.lookup("mesa", "es"))   // first loaded wins
+        assertEquals("D2S", reg.dictionary.lookup("silla", "es")) // found in the 2nd
         reg.dictionary.unload("d1")
-        assertEquals("D2", reg.dictionary.lookup("mesa", "es"))   // d1 retiré, d2 reste
+        assertEquals("D2", reg.dictionary.lookup("mesa", "es"))   // d1 removed, d2 remains
         reg.dictionary.unloadAll()
         assertEquals(null, reg.dictionary.lookup("mesa", "es"))
     }
@@ -135,7 +135,7 @@ class AdapterRegistryTest {
         expect<AdapterIncompatibleException> { reg.dictionary.lookup("a", "fr") }
     }
 
-    // ----- accent : IPA -> IPA après résolution -----
+    // ----- accent: IPA -> IPA after resolution -----
     @Test fun accentNotLoaded_passthrough() {
         assertEquals("G2P", AccentG2p(AdapterRegistry().accent, G2P).phonemize("x", "fr"))
     }
@@ -146,7 +146,7 @@ class AdapterRegistryTest {
         reg.accent.load("q")
         val chain = AccentG2p(reg.accent, G2P)
         assertEquals("G2P+A", chain.phonemize("x", "fr"))
-        assertEquals("G2P+A", chain.phonemize("x", "fr_CA"))  // famille fr acceptée
+        assertEquals("G2P+A", chain.phonemize("x", "fr_CA"))  // fr family accepted
         reg.accent.unload()
         assertEquals("G2P", chain.phonemize("x", "fr"))
     }
@@ -158,7 +158,7 @@ class AdapterRegistryTest {
         expect<AdapterIncompatibleException> { AccentG2p(reg.accent, G2P).phonemize("x", "es") }
     }
 
-    // ----- CharsiuG2P (fr/es/it/pt) : lexicon/dict AVANT le modèle -----
+    // ----- CharsiuG2P (fr/es/it/pt): lexicon/dict BEFORE the model -----
     @Test fun charsiuLexiconDictBeforeModel() {
         val reg = AdapterRegistry()
         reg.installLoader(FakeLoader(dicts = mapOf("d" to StubDict("d", setOf("es"), mapOf("mesa" to "MESA")))))
@@ -169,9 +169,9 @@ class AdapterRegistryTest {
         }
         val chain = AccentG2p(reg.accent, LexiconG2p(MapLexiconSource(), DictionaryG2p(reg.dictionary, spy)))
         assertEquals("MESA", chain.phonemize("mesa", "es"))
-        assertEquals(0, calls.size)                    // mot du dico → modèle NON appelé
+        assertEquals(0, calls.size)                    // word from dict → model NOT called
         chain.phonemize("otro", "es")
-        assertEquals(listOf("otro"), calls)            // mot absent → modèle appelé
+        assertEquals(listOf("otro"), calls)            // word absent → model called
     }
 
     @Test fun multiWordDictOnCharsiuPath() {
@@ -190,7 +190,7 @@ class AdapterRegistryTest {
         assertTrue("mot isolé non fusionné", !fe.toPhonemes("mesa", "es").contains("zzz"))
     }
 
-    // ----- chemin misaki EN : dict/accent dans la chaîne -----
+    // ----- misaki EN path: dict/accent in the chain -----
     private fun misakiLex(): MisakiEnLexicon {
         val dir = File(System.getProperty("user.dir"), "src/main/assets/misaki")
         return MisakiEnLexicon.fromStreams(
@@ -249,7 +249,7 @@ class AdapterRegistryTest {
         assertTrue(overridden.endsWith("zzz"))
     }
 
-    // ----- indépendance des trois systèmes -----
+    // ----- independence of the three systems -----
     @Test fun allThreeIndependent() {
         val reg = AdapterRegistry()
         reg.installLoader(
@@ -262,7 +262,7 @@ class AdapterRegistryTest {
         reg.normalization.load("n"); reg.dictionary.load("d"); reg.accent.load("a")
         reg.normalization.unload()
         assertEquals(null, reg.normalization.current)
-        assertEquals(listOf("d"), reg.dictionary.loaded)   // dict intact
-        assertEquals("a", reg.accent.current?.id)          // accent intact
+        assertEquals(listOf("d"), reg.dictionary.loaded)   // dict unaffected
+        assertEquals("a", reg.accent.current?.id)          // accent unaffected
     }
 }

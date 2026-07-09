@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation espagnole (es) */
+/** Spanish normalization (es) */
 public class SpanishNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -105,7 +105,7 @@ public class SpanishNormalizer(
             Regex("\\bSrta\\b\\.?") to "Señorita", Regex("\\bSra\\b\\.?") to "Señora",
             Regex("\\bSr\\b\\.?") to "Señor", Regex("\\bDra\\b\\.?") to "Doctora",
             Regex("\\bDr\\b\\.?") to "Doctor", Regex("\\bProf\\b\\.?") to "Profesor",
-            // adresses
+            // addresses
             Regex("\\bAvda\\b\\.?") to "Avenida", Regex("\\bAv\\b\\.?") to "Avenida",
             Regex("\\bPza\\b\\.?") to "Plaza", Regex("\\bDepto\\b\\.?") to "Departamento",
             Regex("\\bDpto\\b\\.?") to "Departamento", Regex("\\bnúm\\b\\.?", RegexOption.IGNORE_CASE) to "número",

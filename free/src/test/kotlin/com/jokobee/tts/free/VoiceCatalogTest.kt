@@ -10,13 +10,13 @@ import org.junit.Test
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/** Registre de voix */
+/** Voice registry */
 class VoiceCatalogTest {
 
     private val N = VoiceFormat.N_ROWS
     private val D = VoiceFormat.STYLE_DIM
 
-    /** Embedding déterministe */
+    /** Deterministic embedding */
     private fun emb(seed: Int = 0): FloatArray =
         FloatArray(N * D) { ((it / D) + seed) * 0.001f }
 
@@ -26,7 +26,7 @@ class VoiceCatalogTest {
         return buf.array()
     }
 
-    /** Sous-classe de test */
+    /** Test subclass */
     private class OpenCatalog : VoiceCatalog() {
         fun put(v: Voice): Voice = add(v)
     }
@@ -41,7 +41,7 @@ class VoiceCatalogTest {
     }
 
     @Test fun bytesEqualsFloatsPath() {
-        // Voix construite depuis octets == construite depuis FloatArray (chemin unique).
+        // Voice built from bytes == built from FloatArray (single path).
         val floats = emb(3)
         val fromFloats = Voice.of("a", "en_US", floats)
         val fromBytes = Voice.of("b", "en_US", bytesOf(floats))
@@ -50,8 +50,8 @@ class VoiceCatalogTest {
 
     @Test fun styleForClampsAndIndexes() {
         val v = Voice.of("v", "fr", emb())
-        assertArrayEquals(FloatArray(D) { 0f }, v.styleFor(0), 0f)          // ligne 0
-        assertArrayEquals(FloatArray(D) { 5 * 0.001f }, v.styleFor(5), 0f)  // ligne 5
+        assertArrayEquals(FloatArray(D) { 0f }, v.styleFor(0), 0f)          // row 0
+        assertArrayEquals(FloatArray(D) { 5 * 0.001f }, v.styleFor(5), 0f)  // row 5
         assertArrayEquals(FloatArray(D) { 0f }, v.styleFor(-7), 0f)         // < 0 → 0
         val last = FloatArray(D) { (N - 1) * 0.001f }
         assertArrayEquals(last, v.styleFor(N + 1000), 0f)                   // > 509 → 509
@@ -102,7 +102,7 @@ class VoiceCatalogTest {
         assertTrue("ff_siwis" in cat)
         assertFalse("nope" in cat)
         assertEquals("ff_siwis", cat.get("ff_siwis").id)
-        assertEquals(listOf("am_adam", "ff_siwis"), cat.list().map { it.id }) // trié par id
+        assertEquals(listOf("am_adam", "ff_siwis"), cat.list().map { it.id }) // sorted by id
     }
 
     @Test fun getUnknownRejected() {

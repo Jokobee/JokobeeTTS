@@ -2,10 +2,10 @@ package com.jokobee.tts.free
 
 import java.text.Normalizer
 
-/** Filtre post-G2P pour la compatibilité du vocabulaire de phonèmes. */
+/** Post-G2P filter for phoneme vocabulary compatibility. */
 public object PhonemePost {
 
-    /** Substitutions globales (toutes langues). */
+    /** Global substitutions (all languages). */
     private val GLOBAL: Map<Char, String> = mapOf(
         'g' to "ɡ",
         'ʼ' to "",
@@ -15,20 +15,20 @@ public object PhonemePost {
         '͡' to "",
     )
 
-    /** Séquences à substituer. */
+    /** Sequences to substitute. */
     private val TIE_BAR: List<Pair<String, String>> = listOf(
         "d͡ʒ" to "ʤ", "t͡ʃ" to "ʧ", "d͡z" to "ʣ", "t͡s" to "ʦ",
     )
 
-    /** Substitutions par langue. */
+    /** Per-language substitutions. */
     private val OOV: Map<String, Map<Char, String>> = mapOf(
         "it" to mapOf('h' to ""),
     )
 
-    // Le vocab Kokoro stocke la cédille précomposée ; c'est le seul token que NFD décompose.
+    // The Kokoro vocab stores the precomposed cedilla; it's the only token that NFD decomposes.
     private const val CEDILLA_NFD: String = "c\u0327"
 
-    /** Normalise et remplace les symboles hors vocabulaire. */
+    /** Normalizes and replaces out-of-vocabulary symbols. */
     public fun apply(ipa: String, lang: String): String {
         var nfd = Normalizer.normalize(ipa, Normalizer.Form.NFD)
         if (nfd.contains(CEDILLA_NFD)) nfd = nfd.replace(CEDILLA_NFD, "\u00E7")

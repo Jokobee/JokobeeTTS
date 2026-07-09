@@ -6,7 +6,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Tokeniseur Kokoro */
+/** Kokoro Tokenizer */
 class KokoroTokenizerTest {
 
     private val vocab = mapOf('a' to 1, 'b' to 2, 'ɛ' to 3, 'e' to 5, ' ' to 9)
@@ -28,7 +28,7 @@ class KokoroTokenizerTest {
     @Test fun nTokensExcludesBoundaries() {
         assertEquals(2, tok.nTokens(tok.encode("ab")))
         assertEquals(0, tok.nTokens(tok.encode("")))       // [0,0] -> 0
-        assertEquals(0, tok.nTokens(tok.encode("zzz")))    // tout hors vocab -> [0,0]
+        assertEquals(0, tok.nTokens(tok.encode("zzz")))    // all outside vocab -> [0,0]
     }
 
     @Test fun containsReflectsVocab() {

@@ -1,10 +1,10 @@
 package com.jokobee.tts.core
 
-/** Valeur de `lang` demandant la détection automatique de la locale. */
+/** Value of `lang` requesting automatic locale detection. */
 public const val AUTO: String = "auto"
 
-/** Détection de la locale d'un texte parmi les locales supportées. Implémentée par le tier Pro. */
+/** Detects the locale of a text among the supported locales. Implemented by the Pro tier. */
 public fun interface LanguageDetector {
-    /** Locale supportée la plus probable, ou `null` si indéterminée. */
+    /** Most likely supported locale, or `null` if undetermined. */
     public fun detect(text: String): String?
 }

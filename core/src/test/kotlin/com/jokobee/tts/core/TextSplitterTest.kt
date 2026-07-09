@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Port de tests/test_text_splitter.py (15 vérifications). */
+/** Port of tests/test_text_splitter.py (15 checks). */
 class TextSplitterTest {
 
     private fun words(s: String) = s.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
@@ -43,7 +43,7 @@ class TextSplitterTest {
         val longue = "alpha bravo charlie delta echo foxtrot golf hotel india juliett kilo"
         val segs = nop.split(longue)
         assertTrue(segs.all { it.length <= 25 })
-        assertEquals(words(longue), words(segs.joinToString(" ")))   // aucun mot coupé
+        assertEquals(words(longue), words(segs.joinToString(" ")))   // no word cut off
     }
 
     @Test fun cjk() {

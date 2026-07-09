@@ -16,38 +16,38 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 
-/** Façade TTS complète */
+/** Complete TTS facade */
 public class Tts(
     private val frontend: Frontend,
     private val synth: Synthesizer,
     private val styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
 ) {
-    /** Lexique custom prioritaire du pipeline, consulté avant le G2P pour toutes les langues, pour `add(...)`/`load(...)` à chaud (marques, corrections). */
+    /** Pipeline-priority custom lexicon, consulted before the G2P for all languages, for hot `add(...)`/`load(...)` (brands, corrections). */
     public val lexicon: com.jokobee.tts.core.MapLexiconSource get() = frontend.lexicon
-    /** Adaptation du texte brut (Pro). */
+    /** Raw text adaptation (Pro). */
     public val normalization: NormalizationRegistry get() = frontend.adapters.normalization
-    /** Dictionnaires de terminologie (Pro). */
+    /** Terminology dictionaries (Pro). */
     public val dictionary: DictionaryRegistry get() = frontend.adapters.dictionary
-    /** Adaptation des phonèmes/accent (Pro). */
+    /** Phoneme/accent adaptation (Pro). */
     public val accent: AccentRegistry get() = frontend.adapters.accent
-    /** Active le tier Pro en installant son loader d'adapters. */
+    /** Activates the Pro tier by installing its adapter loader. */
     public fun installProLoader(loader: com.jokobee.tts.core.AdapterLoader) {
         frontend.adapters.installLoader(loader)
     }
-    /** Assemblage des segments (silence entre phrases, fondu, normalisation). Configurable par le dev. */
+    /** Segment stitching (silence between sentences, fade, normalization). Configurable by the developer. */
     public var stitchConfig: StitchConfig = StitchConfig(sampleRate = SAMPLE_RATE)
 
-    /** Moteur de synthèse streaming (Pro). Installé par [installStreamingEngine]. */
+    /** Streaming synthesis engine (Pro). Installed by [installStreamingEngine]. */
     private var streamer: StreamingEngine? = null
-    /** Installe le moteur streaming Pro (appelé par le tier Pro). */
+    /** Installs the Pro streaming engine (called by the Pro tier). */
     public fun installStreamingEngine(engine: StreamingEngine) { streamer = engine }
 
-    /** Détecteur de langue (Pro). Installé par [installLanguageDetector]. */
+    /** Language detector (Pro). Installed by [installLanguageDetector]. */
     private var detector: LanguageDetector? = null
-    /** Installe le détecteur de langue Pro (appelé par le tier Pro). */
+    /** Installs the Pro language detector (called by the Pro tier). */
     public fun installLanguageDetector(d: LanguageDetector) { detector = d }
 
-    // Résout lang="auto" via le détecteur Pro ; sinon renvoie lang tel quel.
+    // Resolves lang="auto" via the Pro detector; otherwise returns lang unchanged.
     private fun resolveLang(text: String, lang: String): String {
         if (lang != AUTO) return lang
         val d = detector ?: throw ProRequiredException(
@@ -56,11 +56,11 @@ public class Tts(
         return d.detect(text) ?: throw UnsupportedLanguageException(AUTO)
     }
 
-    // Synthèse d'un segment isolé (phonèmes → onde), sans assemblage ni padding.
+    // Synthesis of an isolated segment (phonemes -> waveform), without stitching or padding.
     private fun synthSegmentRaw(segment: String, lang: String, style: Voice, speed: Float): FloatArray =
         synth.synth(frontend.toPhonemes(segment, lang), style, speed)
 
-    /** Synthèse streaming : chaque phrase livrée à [onChunk] dès qu'elle est prête (`false` interrompt). Pro. */
+    /** Streaming synthesis: each sentence delivered to [onChunk] as soon as it's ready (`false` stops it). Pro. */
     public fun synthesizeStreaming(
         text: String,
         lang: String,
@@ -82,7 +82,7 @@ public class Tts(
         )
     }
 
-    /** Streaming exposé comme [Flow] de [StreamChunk] (backpressure + annulation). Pro. */
+    /** Streaming exposed as a [Flow] of [StreamChunk] (backpressure + cancellation). Pro. */
     public fun synthesizeFlow(
         text: String,
         lang: String,
@@ -100,13 +100,13 @@ public class Tts(
                 lang = actualLang,
                 config = stitchConfig,
                 synthSegment = { seg, l -> synthSegmentRaw(seg, l, style, speed) },
-                // trySendBlocking échoue si le collecteur a annulé (canal fermé) -> onChunk=false -> arrêt du moteur.
+                // trySendBlocking fails if the collector has cancelled (channel closed) -> onChunk=false -> engine stops.
                 onChunk = { chunk -> trySendBlocking(chunk).isSuccess },
             )
         }
     }
 
-    /** Synthétise une forme d'onde à partir d'un texte. */
+    /** Synthesizes a waveform from a text. */
     public fun synthesize(
         text: String,
         lang: String,
@@ -119,11 +119,11 @@ public class Tts(
         val resolved = styleResolver.resolve(SynthesisContext(text, actualLang, voice)).style
         val segments = TextSplitter().split(text)
         val waves = segments.map { synth.synth(frontend.toPhonemes(it, actualLang), resolved, speed) }
-        val stitched = AudioStitcher.stitch(waves, stitchConfig)   // silence de tête = 1 seule fois via AudioPad
+        val stitched = AudioStitcher.stitch(waves, stitchConfig)   // leading silence = only once, via AudioPad
         return AudioPad.pad(stitched, SAMPLE_RATE, leadMs, trailMs)
     }
 
-    /** Idem, exporté en octets WAV PCM 16 bits mono 24 kHz (avec silence de tête/queue). */
+    /** Same, exported as 16-bit PCM mono 24 kHz WAV bytes (with leading/trailing silence). */
     public fun synthesizeToWav(
         text: String,
         lang: String,
@@ -134,9 +134,9 @@ public class Tts(
     ): ByteArray = WavWriter.toWav(synthesize(text, lang, voice, speed, leadMs, trailMs), SAMPLE_RATE)
 
     public companion object {
-        private const val SAMPLE_RATE = 24000   // sortie native Kokoro
+        private const val SAMPLE_RATE = 24000   // native Kokoro output
 
-        /** Pipeline TTS prêt à l'emploi */
+        /** Ready-to-use TTS pipeline */
         public fun create(
             context: android.content.Context,
             env: ai.onnxruntime.OrtEnvironment,

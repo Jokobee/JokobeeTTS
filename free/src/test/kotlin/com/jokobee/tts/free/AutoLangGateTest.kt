@@ -8,11 +8,11 @@ import com.jokobee.tts.core.UnsupportedLanguageException
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** lang="auto" est une capacité Pro : sans détecteur installé → ProRequired ; détecteur muet → UnsupportedLanguage. */
+/** lang="auto" is a Pro capability: without an installed detector → ProRequired; silent detector → UnsupportedLanguage. */
 class AutoLangGateTest {
 
     private val frontend = Frontend(object : G2p { override fun phonemize(word: String, lang: String) = "" })
-    // Le synth enregistre la lang effective résolue (via les phonèmes n'est pas possible ; on capte la lang par un fake détecteur).
+    // The synth records the effective resolved lang (not possible via the phonemes; we capture the lang via a fake detector).
     private val synth = object : Synthesizer {
         override fun synth(phonemes: String, voice: Voice, speed: Float) = FloatArray(4)
     }
@@ -30,9 +30,9 @@ class AutoLangGateTest {
     }
 
     @Test fun auto_detectorResolves_routesToDetectedLang() {
-        // Détecteur factice renvoyant "es" ; la synthèse ne doit pas lever (pipeline es).
+        // Fake detector returning "es"; synthesis must not throw (es pipeline).
         val tts = Tts(frontend, synth).also { it.installLanguageDetector(LanguageDetector { "es" }) }
         val out = tts.synthesize("Hola mundo", AUTO, voice)
-        assertEquals(true, out.isNotEmpty())   // routé sans exception
+        assertEquals(true, out.isNotEmpty())   // routed without exception
     }
 }

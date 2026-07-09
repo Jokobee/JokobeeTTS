@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Plomberie streaming côté :free (callback + Flow) : un moteur installé livre ses chunks à l'appelant. */
+/** Streaming plumbing on the :free side (callback + Flow): an installed engine delivers its chunks to the caller. */
 class StreamingWiringTest {
 
     private val frontend = Frontend(object : G2p { override fun phonemize(word: String, lang: String) = "" })
@@ -18,7 +18,7 @@ class StreamingWiringTest {
     }
     private val voice = Voice.of("v", "fr", FloatArray(VoiceFormat.N_ROWS * VoiceFormat.STYLE_DIM))
 
-    // Moteur factice : émet 2 chunks synthétiques sans appeler synthSegment (isole la plomberie).
+    // Fake engine: emits 2 synthetic chunks without calling synthSegment (isolates the plumbing).
     private val fakeEngine = StreamingEngine { _, _, _, _, onChunk ->
         var go = onChunk(StreamChunk(FloatArray(4) { 1f }, 0, "a", isFinal = false))
         if (go) onChunk(StreamChunk(FloatArray(4) { 2f }, 1, "b", isFinal = true))
@@ -37,7 +37,7 @@ class StreamingWiringTest {
     @Test fun synthesizeStreaming_returningFalseInterrupts() {
         val got = ArrayList<Int>()
         ttsWithEngine().synthesizeStreaming("x. y.", "fr", voice) { got.add(it.index); false }
-        assertEquals(listOf(0), got)   // interrompu après le 1ᵉʳ
+        assertEquals(listOf(0), got)   // interrupted after the 1st
     }
 
     @Test fun synthesizeFlow_collectsAllChunks() {

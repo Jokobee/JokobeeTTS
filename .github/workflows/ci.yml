@@ -1,7 +1,7 @@
 name: CI
 
-# Build + test du tier Free (:core + :free). AUCUNE publication (Maven Central / JitPack) :
-# la distribution se fera séparément, après validation. Artifacts éphémères (rétention courte).
+# Build + test of the Free tier (:core + :free). NO publishing (Maven Central / JitPack):
+# distribution happens separately, after validation. Ephemeral artifacts (short retention).
 
 on:
   push:

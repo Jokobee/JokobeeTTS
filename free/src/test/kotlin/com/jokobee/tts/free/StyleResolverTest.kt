@@ -9,7 +9,7 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** BLOC A */
+/** BLOCK A */
 class StyleResolverTest {
 
     private class StubG2p : G2p {
@@ -21,7 +21,7 @@ class StyleResolverTest {
     @Test fun defaultStyleResolverPassthrough() {
         val v = voice()
         val out = DefaultStyleResolver<Voice>().resolve(com.jokobee.tts.core.SynthesisContext("hola", "es", v))
-        assertSame(v, out.style)   // exactement la voix demandée, inchangée
+        assertSame(v, out.style)   // exactly the requested voice, unchanged
     }
 
     @Test fun styleResolverCalledInPipeline() {

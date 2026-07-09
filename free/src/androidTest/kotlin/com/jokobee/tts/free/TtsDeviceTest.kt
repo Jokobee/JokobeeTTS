@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 
-/** PREUVE BOUT-EN-BOUT ON-DEVICE (arm64) */
+/** END-TO-END ON-DEVICE PROOF (arm64) */
 @RunWith(AndroidJUnit4::class)
 class TtsDeviceTest {
 
@@ -24,7 +24,7 @@ class TtsDeviceTest {
         assertTrue("modèle Kokoro absent (${modelFile.absolutePath}) — le pousser avant le run",
             modelFile.exists())
 
-        // Chaîne complète, assemblée en Kotlin sur le device.
+        // Full pipeline, assembled in Kotlin on the device.
         val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(ctx, env))
         val frontend = Frontend(g2p)
         val tokenizer = KokoroTokenizer.fromAsset(ctx)

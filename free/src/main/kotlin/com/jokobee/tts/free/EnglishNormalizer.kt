@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation anglaise (en_US). */
+/** English normalization (en_US). */
 public open class EnglishNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -10,7 +10,7 @@ public open class EnglishNormalizer(
 
     private fun intOfEn(s: String): Long = s.replace(",", "").toLong()
 
-    /** Années */
+    /** Years */
     protected fun year(y: Long): String {
         if (y in 2000..2009) return card(y)
         if (y in 1100..9999 && y % 100 != 0L) {
@@ -75,7 +75,7 @@ public open class EnglishNormalizer(
         card(m.groupValues[1].toLong()) + " point " + m.groupValues[2].map { card(it.toString().toLong()) }.joinToString(" ")
     }
 
-    // INTEGER résiduel
+    // Residual INTEGER
     protected fun rInteger(text: String): String = INTEGER_RE.replace(text) { m -> card(intOfEn(m.value)) }
 
     protected fun rAbbreviations(text: String): String {

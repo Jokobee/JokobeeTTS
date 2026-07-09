@@ -1,18 +1,18 @@
 package com.jokobee.tts.core
 
-/** Conversion d'une prononciation ARPABET vers l'IPA. */
+/** Converts an ARPABET pronunciation to IPA. */
 public object ArpabetToIpa {
 
     private val TOKEN = Regex("^([A-Za-z]+)([0-2]?)$")
 
-    /** Voyelles à IPA fixe (le marqueur de stress est préfixé). */
+    /** Vowels with fixed IPA (the stress marker is prefixed). */
     private val VOWELS: Map<String, String> = mapOf(
         "AA" to "ɑ", "AE" to "æ", "AO" to "ɔ", "AW" to "aʊ", "AY" to "aɪ",
         "EH" to "ɛ", "EY" to "eɪ", "IH" to "ɪ", "IY" to "i",
         "OW" to "oʊ", "OY" to "ɔɪ", "UH" to "ʊ", "UW" to "u",
     )
 
-    /** Consonnes (aucun stress). */
+    /** Consonants (no stress). */
     private val CONSONANTS: Map<String, String> = mapOf(
         "B" to "b", "CH" to "ʧ", "D" to "d", "DH" to "ð", "F" to "f", "G" to "ɡ", "HH" to "h",
         "JH" to "ʤ", "K" to "k", "L" to "l", "M" to "m", "N" to "n", "NG" to "ŋ", "P" to "p",
@@ -22,7 +22,7 @@ public object ArpabetToIpa {
 
     private fun marker(stress: String): String = when (stress) { "1" -> "ˈ"; "2" -> "ˌ"; else -> "" }
 
-    /** Convertit une prononciation ARPABET en IPA. */
+    /** Converts an ARPABET pronunciation to IPA. */
     public fun toIpa(arpabet: String, onWarn: (String) -> Unit = {}): String {
         val sb = StringBuilder()
         for (tok in arpabet.trim().split(Regex("\\s+"))) {
@@ -32,7 +32,7 @@ public object ArpabetToIpa {
             val base = m.groupValues[1].uppercase()
             val stress = m.groupValues[2]
             when (base) {
-                // Voyelles à IPA dépendant du stress (schwa vs wedge, r-schwa).
+                // Vowels with stress-dependent IPA (schwa vs wedge, r-schwa).
                 "AH" -> sb.append(if (stress == "0" || stress.isEmpty()) "ə" else marker(stress) + "ʌ")
                 "ER" -> sb.append(if (stress == "0" || stress.isEmpty()) "əɹ" else marker(stress) + "ɜɹ")
                 else -> {
@@ -41,7 +41,7 @@ public object ArpabetToIpa {
                     when {
                         vowel != null -> sb.append(marker(stress) + vowel)
                         cons != null -> sb.append(cons)
-                        else -> onWarn(tok)                                            // hors 39 → ignoré
+                        else -> onWarn(tok)                                            // outside the 39 → ignored
                     }
                 }
             }

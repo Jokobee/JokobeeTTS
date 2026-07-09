@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import org.json.JSONArray
 import org.junit.Assert.fail
 
-/** Charge un fichier de cas JSON (resources/cases/) et vérifie normalize == attendu. */
+/** Loads a JSON test-case file (resources/cases/) and checks normalize == expected. */
 object CaseRunner {
 
     data class Case(val source: String, val expected: String, val category: String)

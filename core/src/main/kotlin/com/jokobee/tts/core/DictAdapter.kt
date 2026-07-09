@@ -1,6 +1,6 @@
 package com.jokobee.tts.core
 
-/** Dictionnaire de terminologie : mot vers IPA. */
+/** Terminology dictionary: word to IPA. */
 public interface DictAdapter {
     public val id: String
     public val langs: Set<String>

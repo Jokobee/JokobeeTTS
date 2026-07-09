@@ -2,7 +2,7 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.G2p
 
-/** Décorateur [G2p] avec cache */
+/** [G2p] decorator with caching */
 public class CachingG2p(
     private val delegate: G2p,
     private val maxEntries: Int = 5000,
@@ -19,6 +19,6 @@ public class CachingG2p(
         return ipa
     }
 
-    /** Nombre d'entrées actuellement en cache (diagnostic/test). */
+    /** Number of entries currently cached (diagnostic/test). */
     public fun size(): Int = synchronized(cache) { cache.size }
 }

@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation française (fr/fr_CA). */
+/** French normalization (fr/fr_CA). */
 public class FrenchNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -62,7 +62,7 @@ public class FrenchNormalizer(
         card(m.groupValues[1].toLong()) + " virgule " + card(m.groupValues[2].toLong())
     }
 
-    // ENTIER résiduel (avec séparateurs de milliers)
+    // Residual INTEGER (with thousands separators)
     private fun rInteger(text: String): String = INTEGER_RE.replace(text) { m ->
         card(intOf(m.value, TH_RE))
     }

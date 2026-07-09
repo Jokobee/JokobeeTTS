@@ -16,7 +16,7 @@ class MisakiEnLexiconTest {
         )
     }
 
-    /** Étape finale de */
+    /** Final step */
     private fun finalize(ps: String): String = ps.replace('ɾ', 'T').replace('ʔ', 't')
 
     @Test fun matchesMisakiGolden() {

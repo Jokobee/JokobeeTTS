@@ -2,7 +2,7 @@ package com.jokobee.tts.free
 
 import java.text.Normalizer
 
-/** Base des normaliseurs */
+/** Base class for normalizers */
 public abstract class BaseNormalizer(
     protected val v: Verbalizer,
     private val onWarning: ((String) -> Unit)? = null,
@@ -12,7 +12,7 @@ public abstract class BaseNormalizer(
 
     protected fun warn(msg: String) {
         warnings.add(msg)
-        onWarning?.let { try { it(msg) } catch (e: Exception) { /* callback fautif ignoré */ } }
+        onWarning?.let { try { it(msg) } catch (e: Exception) { /* faulty callback ignored */ } }
     }
 
     // --- helpers ---------------------------------------------------------
@@ -29,7 +29,7 @@ public abstract class BaseNormalizer(
         } else card(numStr.toLong())
     }
 
-    // --- protecteur ------------------------------------------------------
+    // --- protector -------------------------------------------------------
     private fun protect(textIn: String): Pair<String, List<String>> {
         var text = textIn
         val store = ArrayList<String>()
@@ -55,7 +55,7 @@ public abstract class BaseNormalizer(
         return sb.toString()
     }
 
-    // --- règles universelles --------------------------------------------
+    // --- universal rules --------------------------------------------------
     protected fun rWhitelist(text: String): String {
         var t = text
         for ((pat, rep) in WHITELIST_WORDS[locale] ?: emptyList()) t = pat.replace(t) { rep }
@@ -150,7 +150,7 @@ public abstract class BaseNormalizer(
     private fun digitWords(s: String): String =
         s.filter { it.isDigit() }.map { card(it.digitToInt().toLong()) }.joinToString(" ")
 
-    /** Verbalise les adresses e-mail et les URL. */
+    /** Verbalizes email addresses and URLs. */
     protected fun rElectronic(text: String): String {
         val w = ELECTRONIC_WORDS[locale] ?: return text
         fun sep(s: String): String = s
@@ -161,7 +161,7 @@ public abstract class BaseNormalizer(
         return t
     }
 
-    /** Verbalise les numéros de téléphone chiffre à chiffre. */
+    /** Verbalizes phone numbers digit by digit. */
     protected fun rTelephone(text: String): String {
         val w = ELECTRONIC_WORDS[locale] ?: return text
         fun speak(raw: String): String {
@@ -175,7 +175,7 @@ public abstract class BaseNormalizer(
         return t
     }
 
-    /** Verbalise les codes postaux (canadien, brésilien, ZIP). */
+    /** Verbalizes postal codes (Canadian, Brazilian, ZIP). */
     protected fun rPostal(text: String): String {
         if (locale !in ELECTRONIC_WORDS) return text
         fun alnum(s: String) = s.map { if (it.isDigit()) card(it.digitToInt().toLong()) else it.toString() }.joinToString(" ")
@@ -213,7 +213,7 @@ public abstract class BaseNormalizer(
     private inline fun safe(name: String, block: () -> String): String? =
         try { block() } catch (e: Exception) { warn("$name sautée: ${e.message}"); null }
 
-    /** Ordre significatif des règles de la locale (à définir par sous-classe). */
+    /** Meaningful order of locale rules (to be defined by the subclass). */
     protected abstract fun rules(): List<(String) -> String>
 
     private data class FracData(val known: Map<Pair<Int, Int>, String>, val over: String, val join: String, val half: String)
@@ -236,7 +236,7 @@ public abstract class BaseNormalizer(
         private val RANGE_RE = Regex("(?<![\\d./\\-])(\\d+)\\s*-\\s*(\\d+)(?![\\d/\\-])(?!\\.\\d)")
         private val ACR_RE = Regex("\\b[A-Z]{2,5}\\b")
 
-        // catégories Unicode conservées par strip_unknown (L, M, N, P, Z)
+        // Unicode categories kept by strip_unknown (L, M, N, P, Z)
         private val KEEP_TYPES = intArrayOf(
             Character.UPPERCASE_LETTER.toInt(), Character.LOWERCASE_LETTER.toInt(), Character.TITLECASE_LETTER.toInt(),
             Character.MODIFIER_LETTER.toInt(), Character.OTHER_LETTER.toInt(),
@@ -249,14 +249,14 @@ public abstract class BaseNormalizer(
         )
 
         private val CI = setOf(RegexOption.IGNORE_CASE)
-        // Toujours protégés (jamais verbalisés).
+        // Always protected (never verbalized).
         private val PROTECT_ALWAYS = listOf(
             Regex("(?:v|version|バージョン|버전|版本)\\s*\\.?\\s*\\d+(?:\\.\\d+)*", CI),
             Regex("〒\\s?\\d{3}-\\d{4}"),
             Regex("\\b[A-Z]{2}\\s?\\d{3,4}\\b"),
             Regex("#\\d+\\b"),
         )
-        // Protégés seulement pour les locales qui ne les verbalisent pas.
+        // Protected only for locales that don't verbalize them.
         private val PROTECT_COND = listOf(
             Regex("(?:https?://|www\\.)\\S+", CI),
             Regex("[\\w.+-]+@[\\w-]+\\.[\\w.-]+", CI),
@@ -343,7 +343,7 @@ public abstract class BaseNormalizer(
         )
 
         private fun symRules(mapping: Map<String, String>) = mapping.map { (s, w) ->
-            //   (crash au chargement) alors qu'ils passent sur la JVM. Vérifié on-device.
+            //   (crash at load time) even though they work fine on the JVM. Verified on-device.
             val wc = "[\\p{L}\\p{N}_]"
             Regex("(?<=$wc)\\s*" + Regex.escape(s) + "\\s*(?=$wc)") to " $w "
         }

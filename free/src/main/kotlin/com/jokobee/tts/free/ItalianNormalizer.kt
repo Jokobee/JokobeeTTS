@@ -1,6 +1,6 @@
 package com.jokobee.tts.free
 
-/** Normalisation italienne (it) */
+/** Italian normalization (it) */
 public class ItalianNormalizer(
     verbalizer: Verbalizer,
     onWarning: ((String) -> Unit)? = null,
@@ -91,7 +91,7 @@ public class ItalianNormalizer(
         private val MONTHS_ARR = MONTHS.split("|")
 
         private val CUR = mapOf(
-            "€" to listOf("euro", "euro", "centesimo", "centesimi"),       // euro invariable
+            "€" to listOf("euro", "euro", "centesimo", "centesimi"),       // euro is invariable
             "$" to listOf("dollaro", "dollari", "centesimo", "centesimi"),
             "£" to listOf("sterlina", "sterline", "penny", "penny"),
         )
@@ -104,7 +104,7 @@ public class ItalianNormalizer(
             Regex("\\bSig\\b\\.?") to "Signor", Regex("\\bDott\\.?ssa\\b\\.?") to "Dottoressa",
             Regex("\\bDott\\b\\.?") to "Dottor", Regex("\\bProf\\.?ssa\\b\\.?") to "Professoressa",
             Regex("\\bProf\\b\\.?") to "Professor", Regex("\\bDr\\b\\.?") to "Dottor",
-            // adresses
+            // addresses
             Regex("\\bV\\.le\\b") to "viale", Regex("\\bP\\.?zza\\b") to "piazza",
             Regex("\\bP\\.za\\b") to "piazza", Regex("\\bC\\.so\\b") to "corso",
         )

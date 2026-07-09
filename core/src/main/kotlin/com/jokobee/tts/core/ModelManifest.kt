@@ -2,17 +2,17 @@ package com.jokobee.tts.core
 
 import org.json.JSONObject
 
-/** Un fichier de modèle à résoudre (modèle ONNX, pack de voix…). */
+/** A model file to resolve (ONNX model, voice pack...). */
 public data class ModelFile(
     public val name: String,
     public val url: String,
-    /** SHA-256 hex attendu ; vide ou "TODO" = vérification ignorée (placeholder avant upload). */
+    /** Expected hex SHA-256; empty or "TODO" = verification skipped (placeholder before upload). */
     public val sha256: String = "",
-    /** Taille attendue en octets (0 = inconnue). */
+    /** Expected size in bytes (0 = unknown). */
     public val sizeBytes: Long = 0,
 )
 
-/** Manifeste des artefacts d'une version (téléchargés depuis Cloudflare). */
+/** Manifest of a version's artifacts (downloaded from Cloudflare). */
 public data class ModelManifest(
     public val version: String,
     public val files: List<ModelFile>,
@@ -20,7 +20,7 @@ public data class ModelManifest(
     public fun file(name: String): ModelFile? = files.firstOrNull { it.name == name }
 
     public companion object {
-        /** Parse un `manifest.json` (`org.json`, disponible au runtime Android). */
+        /** Parses a `manifest.json` (`org.json`, available at Android runtime). */
         public fun fromJson(json: String): ModelManifest {
             val root = JSONObject(json)
             val arr = root.getJSONArray("files")

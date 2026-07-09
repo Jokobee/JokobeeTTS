@@ -30,7 +30,7 @@ class LoanwordsTest {
         return s
     }
 
-    // ----- audit qualité : 402 IPA -> PhonemePost -> 0 hors-vocab -----
+    // ----- quality audit: 402 IPA -> PhonemePost -> 0 out-of-vocab -----
     @Test fun loanwordsAllInVocab() {
         val vocab = vocabChars()
         val loan = loanwords()
@@ -43,7 +43,7 @@ class LoanwordsTest {
         assertTrue("phonèmes hors-vocab après clamp : $oov", oov.isEmpty())
     }
 
-    // ----- pipeline : anglicisme prononcé en anglais -----
+    // ----- pipeline: anglicism pronounced in English -----
     private fun expect(loan: LoanwordsLexicon, word: String, lang: String) =
         PhonemePost.apply(loan.lookup(word, lang)!!, lang)
 
@@ -65,7 +65,7 @@ class LoanwordsTest {
     @Test fun lexiconOverridesLoanwords() {
         val fe = Frontend(stub, loanwords = loanwords())
         fe.lexicon.add("parking", "zzz", "fr")
-        assertEquals("zzz", fe.toPhonemes("parking", "fr"))   // tts.lexicon prime
+        assertEquals("zzz", fe.toPhonemes("parking", "fr"))   // tts.lexicon takes priority
     }
 
     @Test fun dictOverridesLoanwords() {
@@ -81,34 +81,34 @@ class LoanwordsTest {
         })
         reg.dictionary.load("d")
         val fe = Frontend(stub, adapters = reg, loanwords = loanwords())
-        assertEquals("zzz", fe.toPhonemes("cloud", "es"))     // tts.dictionary prime
+        assertEquals("zzz", fe.toPhonemes("cloud", "es"))     // tts.dictionary takes priority
     }
 
-    // ----- non-interférence -----
+    // ----- non-interference -----
     @Test fun loanwordsNotOnMisaki() {
         val fe = Frontend(stub, enG2p = { text, _ -> "MISAKI:$text" }, loanwords = loanwords())
-        assertEquals("MISAKI:package", fe.toPhonemes("package", "en_US"))  // loanwords NON consulté
+        assertEquals("MISAKI:package", fe.toPhonemes("package", "en_US"))  // loanwords NOT consulted
     }
 
     @Test fun loanwordsNoRegressionOnNativeWords() {
         val fe = Frontend(stub, loanwords = loanwords())
-        assertEquals("X", fe.toPhonemes("bonjour", "fr"))     // mot natif absent -> CharsiuG2P (stub)
+        assertEquals("X", fe.toPhonemes("bonjour", "fr"))     // missing native word -> CharsiuG2P (stub)
     }
 
-    // ----- multi-mots -----
+    // ----- multi-word -----
     @Test fun loanwordsMultiWord() {
         val loan = loanwords()
         val fe = Frontend(stub, loanwords = loan)
         assertEquals(expect(loan, "machine learning", "fr"), fe.toPhonemes("machine learning", "fr"))
     }
 
-    // ----- exclusion par langue : le natif gagne si collision -----
+    // ----- per-language exclusion: native wins on collision -----
     @Test fun nativeWinsOnCollisionPerLanguage() {
         val loan = loanwords()
-        assertEquals(null, loan.lookup("chat", "fr"))       // « chat » = félin en fr -> exclu
-        assertEquals(null, loan.lookup("chat", "fr_CA"))    // variante de fr
+        assertEquals(null, loan.lookup("chat", "fr"))       // "chat" = feline in French -> excluded
+        assertEquals(null, loan.lookup("chat", "fr_CA"))    // French variant
         assertTrue("chat gardé en es (anglicisme)", loan.lookup("chat", "es") != null)
-        assertEquals(null, loan.lookup("pain", "fr"))       // faux-ami fr
+        assertEquals(null, loan.lookup("pain", "fr"))       // French false friend
         assertEquals(null, loan.lookup("coin", "fr"))
         assertTrue("package : anglicisme partout", loan.lookup("package", "fr") != null)
         assertTrue(loan.lookup("cloud", "es") != null)
@@ -117,13 +117,13 @@ class LoanwordsTest {
     @Test fun excludedLoanwordFallsToNative() {
         val loan = loanwords()
         val fe = Frontend(stub, loanwords = loan)
-        assertEquals("X", fe.toPhonemes("chat", "fr"))                    // exclu fr -> CharsiuG2P (stub)
-        assertEquals(expect(loan, "chat", "es"), fe.toPhonemes("chat", "es"))  // gardé es -> anglais
+        assertEquals("X", fe.toPhonemes("chat", "fr"))                    // excluded fr -> CharsiuG2P (stub)
+        assertEquals(expect(loan, "chat", "es"), fe.toPhonemes("chat", "es"))  // kept es -> English
     }
 
     @Test fun devLexiconOverridesExclusion() {
         val fe = Frontend(stub, loanwords = loanwords())
-        fe.lexicon.add("chat", "tʃæt", "fr")               // le dev force l'anglais
-        assertEquals("tʃæt", fe.toPhonemes("chat", "fr"))  // tts.lexicon prime sur l'exclusion
+        fe.lexicon.add("chat", "tʃæt", "fr")               // dev forces English
+        assertEquals("tʃæt", fe.toPhonemes("chat", "fr"))  // tts.lexicon takes priority over exclusion
     }
 }

@@ -4,7 +4,7 @@ import com.jokobee.tts.core.G2p
 import com.jokobee.tts.core.ProRequiredException
 import org.junit.Test
 
-/** En build Free (aucun moteur streaming installé), les API streaming lèvent ProRequiredException. */
+/** In the Free build (no streaming engine installed), streaming APIs throw ProRequiredException. */
 class StreamingGateTest {
 
     private val frontend = Frontend(object : G2p { override fun phonemize(word: String, lang: String) = "" })
@@ -21,6 +21,6 @@ class StreamingGateTest {
 
     @Test(expected = ProRequiredException::class)
     fun synthesizeFlow_free_throwsProRequired() {
-        tts.synthesizeFlow("Bonjour.", "fr", voice)   // levée immédiate (avant collecte)
+        tts.synthesizeFlow("Bonjour.", "fr", voice)   // thrown immediately (before collection)
     }
 }

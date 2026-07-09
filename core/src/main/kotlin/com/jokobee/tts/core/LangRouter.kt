@@ -1,11 +1,11 @@
 package com.jokobee.tts.core
 
-/** Résout la locale à utiliser pour un segment de texte */
+/** Resolves the locale to use for a text segment */
 public interface LangRouter {
     public fun resolve(segment: String): String
 }
 
-/** Routeur renvoyant toujours une locale fixe. */
+/** Router that always returns a fixed locale. */
 public class ExplicitLangRouter(private val lang: String) : LangRouter {
     override fun resolve(segment: String): String = lang
 }

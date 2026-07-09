@@ -4,8 +4,8 @@ plugins {
     alias(libs.plugins.maven.publish)
 }
 
-// :core — contrats, exceptions, LangRouter (interface), TextSplitter, Voice.
-// Publié : com.jokobee:jokobeetts-core
+// :core — contracts, exceptions, LangRouter (interface), TextSplitter, Voice.
+// Published as: com.jokobee:jokobeetts-core
 android {
     namespace = "com.jokobee.tts.core"
     compileSdk = 36
@@ -24,7 +24,7 @@ kotlin {
 
 dependencies {
     testImplementation(libs.junit)
-    testImplementation(libs.org.json)   // manifest.json parsé en test JVM (org.json fourni par Android au runtime)
+    testImplementation(libs.org.json)   // manifest.json parsed in JVM tests (org.json provided by Android at runtime)
 }
 
 mavenPublishing {

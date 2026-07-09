@@ -9,7 +9,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** ON-DEVICE : loanwords (anglicismes) + phonémisation des langues romanes via CharsiuG2P réel. */
+/** ON-DEVICE: loanwords (anglicisms) + phonemization of Romance languages via real CharsiuG2P. */
 @RunWith(AndroidJUnit4::class)
 class LoanwordsDeviceTest {
 
@@ -25,7 +25,7 @@ class LoanwordsDeviceTest {
 
     @Test fun loanwordPronouncedEnglishOnDevice() {
         val (fe, loan) = frontend()
-        // "package" en fr -> prononciation anglaise (loanwords), pas la française.
+        // "package" in fr -> English pronunciation (loanwords), not the French one.
         val out = fe.toPhonemes("package", "fr")
         Log.i(tag, "package(fr) = $out")
         assertEquals(PhonemePost.apply(loan.lookup("package", "fr")!!, "fr"), out)
@@ -40,8 +40,8 @@ class LoanwordsDeviceTest {
 
     @Test fun perLanguageExclusionOnDevice() {
         val (fe, loan) = frontend()
-        val chatFr = fe.toPhonemes("chat", "fr")   // exclu fr (félin) -> natif CharsiuG2P
-        val chatEs = fe.toPhonemes("chat", "es")   // gardé es (anglicisme) -> anglais
+        val chatFr = fe.toPhonemes("chat", "fr")   // excluded fr (feline) -> native CharsiuG2P
+        val chatEs = fe.toPhonemes("chat", "es")   // kept es (anglicism) -> English
         Log.i(tag, "chat fr=$chatFr es=$chatEs")
         assertTrue("chat(fr) doit être natif (pas d'æ anglais) : $chatFr", !chatFr.contains("æ"))
         assertEquals(PhonemePost.apply(loan.lookup("chat", "es")!!, "es"), chatEs)

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "JokobeeTTS"
 
-// Open Core — repo PUBLIC : :core + :free (Maven Central).
-// Le tier :pro vit dans le repo PRIVÉ JokobeeTTS-private (composite build vers ici).
+// Open Core — PUBLIC repo: :core + :free (Maven Central).
+// The :pro tier lives in the PRIVATE JokobeeTTS-private repo (composite build into here).
 include(":core", ":free")

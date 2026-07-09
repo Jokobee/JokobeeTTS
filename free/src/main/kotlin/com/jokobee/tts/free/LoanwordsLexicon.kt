@@ -3,22 +3,22 @@ package com.jokobee.tts.free
 import android.content.Context
 import java.io.InputStream
 
-/** Anglicismes universels (IPA anglais), avec exclusion par langue (le natif gagne si collision). */
+/** Universal anglicisms (English IPA), with per-language exclusion (native wins on collision). */
 public class LoanwordsLexicon private constructor(
     private val map: Map<String, String>,
     private val excluded: Map<String, Set<String>>,
 ) {
 
-    /** IPA anglais si le mot est un anglicisme non-exclu pour cette langue, sinon null. */
+    /** English IPA if the word is a non-excluded anglicism for this language, null otherwise. */
     public fun lookup(word: String, lang: String): String? {
         val w = word.lowercase()
-        if (excluded[w]?.contains(langKey(lang)) == true) return null   // mot courant natif : natif gagne
+        if (excluded[w]?.contains(langKey(lang)) == true) return null   // common native word: native wins
         return map[w]
     }
 
     public val size: Int get() = map.size
 
-    /** Toutes les entrées (mot lowercase → IPA), pour l'audit. */
+    /** All entries (lowercase word -> IPA), for auditing. */
     public val all: Map<String, String> get() = map
 
     private fun langKey(lang: String): String = lang.substringBefore('_')   // fr_CA→fr, pt_BR→pt

@@ -1,45 +1,45 @@
 package com.jokobee.tts.core
 
-/** Source de phonèmes prioritaire (couche #1) du pipeline G2P */
+/** Priority phoneme source (layer #1) of the G2P pipeline */
 public interface LexiconSource {
     public fun lookup(word: String, lang: String): String?
 }
 
-/** Source vide par défaut. */
+/** Default empty source. */
 public object EmptyLexiconSource : LexiconSource {
     override fun lookup(word: String, lang: String): String? = null
 }
 
-/** Lexique custom mutable, indexé par `(lang, word)` (clé insensible à la casse), stockant toujours de l'IPA canonique */
+/** Mutable custom lexicon, indexed by `(lang, word)` (case-insensitive key), always storing canonical IPA */
 public class MapLexiconSource() : LexiconSource {
     private val entries = HashMap<String, String>()
     private val sources = ArrayList<LexiconSource>()
 
-    /** Constructeur pratique */
+    /** Convenience constructor */
     public constructor(entries: Map<String, String>, lang: String) : this() {
         for ((w, ipa) in entries) add(w, ipa, lang)
     }
 
     private fun key(lang: String, word: String) = "$lang ${word.lowercase()}"
 
-    /** Ajoute une prononciation IPA. */
+    /** Adds an IPA pronunciation. */
     public fun add(word: String, ipa: String, lang: String): MapLexiconSource {
         entries[key(lang, word)] = ipa
         return this
     }
 
-    /** Ajoute une prononciation dans un alphabet donné (convertie en IPA avant stockage). */
+    /** Adds a pronunciation in a given alphabet (converted to IPA before storage). */
     public fun add(word: String, pronunciation: String, alphabet: PhoneticAlphabet, lang: String): MapLexiconSource =
         add(word, alphabet.toIpa(pronunciation), lang)
 
-    /** Enchaîne une source additionnelle. */
+    /** Chains an additional source. */
     public fun load(source: LexiconSource): MapLexiconSource {
         sources.add(source)
         return this
     }
 
     override fun lookup(word: String, lang: String): String? {
-        for (s in sources.asReversed()) s.lookup(word, lang)?.let { return it }   // dernier chargé gagne
+        for (s in sources.asReversed()) s.lookup(word, lang)?.let { return it }   // last loaded wins
         return entries[key(lang, word)]
     }
 }

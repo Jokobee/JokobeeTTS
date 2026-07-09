@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Désambiguïsation des */
+/** Homograph disambiguation */
 class HomographAnnotatorTest {
 
     private data class Case(val sentence: String, val target: String, val expected: String)

@@ -2,21 +2,21 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.VoiceError
 
-/** Catalogue des voix disponibles */
+/** Catalog of available voices */
 public open class VoiceCatalog {
     private val voices = LinkedHashMap<String, Voice>()
 
-    /** Peuplement interne à la lib (voix officielles) et point d'extension du tier Pro */
+    /** Internal library population (official voices) and Pro tier extension point */
     protected open fun add(voice: Voice): Voice {
         voices[voice.id] = voice
         return voice
     }
 
-    /** Voix par identifiant (FREE). */
+    /** Voice by identifier (FREE). */
     public fun get(id: String): Voice = voices[id]
         ?: throw VoiceError("voix inconnue : '$id'. Disponibles : ${voices.keys.sorted()}.")
 
-    /** Toutes les voix (officielles + custom Pro), triées par id, sans distinction d'usage. */
+    /** All voices (official + custom Pro), sorted by id, with no usage distinction. */
     public fun list(): List<Voice> = voices.keys.sorted().map { voices.getValue(it) }
 
     public operator fun contains(id: String): Boolean = id in voices

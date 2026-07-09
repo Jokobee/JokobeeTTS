@@ -4,7 +4,7 @@ import com.jokobee.tts.core.EmptyLexiconSource
 import com.jokobee.tts.core.G2p
 import com.jokobee.tts.core.LexiconSource
 
-/** Orchestration au niveau phrase du G2P anglais */
+/** Sentence-level orchestration of the English G2P */
 public class MisakiEnG2p(
     private val lexicon: MisakiEnLexicon,
     private val fallback: G2p? = null,
@@ -18,21 +18,21 @@ public class MisakiEnG2p(
         var ph: String = ""
     }
 
-    /** Texte normalisé anglais */
+    /** Normalized English text */
     public fun phonemize(text: String): String {
         val toks = tokenize(text)
-        val pre = multiWord(toks)   // séquences multi-mots du dico (greedy) résolues d'avance
+        val pre = multiWord(toks)   // multi-word dictionary sequences (greedy) resolved ahead of time
         var fv: Boolean? = null
         for (i in toks.indices.reversed()) {
             val t = toks[i]
             t.ph = when {
-                pre[i] != null -> withAccent(pre[i]!!, t)      // tête multi-mots ("" pour les consommés)
+                pre[i] != null -> withAccent(pre[i]!!, t)      // multi-word head ("" for consumed tokens)
                 t.isWord -> {
-                    val resolved = customLexicon.lookup(t.text, lang)     // #1 tts.lexicon (EN TÊTE)
+                    val resolved = customLexicon.lookup(t.text, lang)     // #1 tts.lexicon (FIRST)
                         ?: dictionary?.lookup(t.text, lang)?.let { PhonemePost.apply(it, lang) }  // #2 tts.dictionary
-                        ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #3 lexique (tag)
+                        ?: lexicon.phonemize(t.text, tagOf(toks, i), fv).first  // #3 lexicon (tag)
                         ?: fallback?.phonemize(t.text, "en_US")?.ifEmpty { null }
-                            ?.let { PhonemePost.apply(it, "en_US") }      // #4 fallback CLAMPÉ
+                            ?.let { PhonemePost.apply(it, "en_US") }      // #4 clamped fallback
                         ?: unk
                     withAccent(resolved, t)
                 }
@@ -41,14 +41,14 @@ public class MisakiEnG2p(
             fv = tokenContext(fv, t.ph)
         }
         val out = buildString { for (t in toks) { append(t.ph); append(t.ws) } }
-        return out.replace('ɾ', 'T').replace('ʔ', 't').trim()   // finalisation
+        return out.replace('ɾ', 'T').replace('ʔ', 't').trim()   // finalization
     }
 
     private fun withAccent(ipa: String, t: Tok): String =
         if (t.isWord && accent?.current != null && ipa.isNotEmpty())
             PhonemePost.apply(accent.apply(ipa, t.text, lang), lang) else ipa
 
-    // Fenêtre glissante greedy (séquences les plus longues d'abord) sur les mots consécutifs.
+    // Greedy sliding window (longest sequences first) over consecutive words.
     private fun multiWord(toks: List<Tok>): Array<String?> {
         val pre = arrayOfNulls<String>(toks.size)
         val dict = dictionary ?: return pre
@@ -89,7 +89,7 @@ public class MisakiEnG2p(
         return toks
     }
 
-    /** Étiquette catégorielle légère. */
+    /** Lightweight categorical tag. */
     private fun tagOf(toks: List<Tok>, i: Int): String? {
         FUNCTION_TAGS[toks[i].text.lowercase()]?.let { return it }
         var p = i - 1; var steps = 0
@@ -102,7 +102,7 @@ public class MisakiEnG2p(
             }
             p--
         }
-        if (nextWord(toks, i) in DETERMINERS) return "VB"   // « close the door » (impératif) → verbe
+        if (nextWord(toks, i) in DETERMINERS) return "VB"   // "close the door" (imperative) -> verb
         return null
     }
 
@@ -112,7 +112,7 @@ public class MisakiEnG2p(
         return if (p < toks.size) toks[p].text.lowercase() else null
     }
 
-    /** Le mot courant (ps) commence-t-il par une voyelle ? (null si ponctuation/inconnu). */
+    /** Does the current word (ps) start with a vowel? (null if punctuation/unknown). */
     private fun tokenContext(prev: Boolean?, ps: String): Boolean? {
         for (c in ps) {
             if (c in NON_QUOTE_PUNCTS) return null
@@ -123,18 +123,18 @@ public class MisakiEnG2p(
     }
 
     public companion object {
-        // Mot (lettres, apostrophe/tiret internes) OU un caractère non-mot (ponctuation).
+        // Word (letters, internal apostrophe/hyphen) OR a non-word character (punctuation).
         private val TOKEN_RE = Regex("""[A-Za-z]+(?:['’-][A-Za-z]+)*|[^\sA-Za-z]""")
         private const val VOWELS = "AIOQWYaiuæɑɒɔəɛɜɪʊʌᵻ"
         private const val CONSONANTS = "bdfhjklmnpstvwzðŋɡɹɾʃʒʤʧθ"
         private const val NON_QUOTE_PUNCTS = ";:,.!?—…"
 
-        /** Tags pour les mots-outils ultra-fréquents (lecture dominante) */
+        /** Tags for ultra-frequent function words (dominant reading) */
         private val FUNCTION_TAGS: Map<String, String> = mapOf(
             "a" to "DT", "an" to "DT", "the" to "DT", "i" to "PRP", "in" to "IN",
         )
 
-        // Contexte de désambiguïsation par le tag.
+        // Tag-based disambiguation context.
         private val DETERMINERS = setOf(
             "the", "a", "an", "this", "that", "these", "those", "my", "your", "his", "her",
             "its", "our", "their", "no", "some", "any", "each", "every", "another", "such",
@@ -148,7 +148,7 @@ public class MisakiEnG2p(
             "do", "does", "did", "let", "please", "not", "we", "they", "i", "you", "he", "she", "it",
         )
 
-        /** Fabrique depuis les lexiques embarqués + un fallback + lexique custom. */
+        /** Factory built from the embedded lexicons + a fallback + custom lexicon. */
         public fun fromAssets(
             context: android.content.Context,
             fallback: G2p? = null,

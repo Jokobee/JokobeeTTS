@@ -13,15 +13,15 @@ kotlinxCoroutines = "1.9.0"
 [libraries]
 onnxruntime-android = { module = "com.microsoft.onnxruntime:onnxruntime-android", version.ref = "onnxruntime" }
 junit = { module = "junit:junit", version.ref = "junit" }
-# androidx.test — INSTRUMENTED scope (validation on-device : latence G2P réelle arm64).
+# androidx.test — INSTRUMENTED scope (on-device validation: real arm64 G2P latency).
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
-# icu4j = android.icu (même lib) — TEST SCOPE uniquement pour exécuter la
-# verbalisation RBNF sur la JVM (android.icu n'est pas mockée en test unitaire).
+# icu4j = android.icu (same lib) — TEST SCOPE only, to run RBNF
+# verbalization on the JVM (android.icu is not mocked in unit tests).
 icu4j = { module = "com.ibm.icu:icu4j", version.ref = "icu4j" }
-# kotlinx-coroutines — API publique : Flow<StreamChunk> pour le streaming (F2).
+# kotlinx-coroutines — public API: Flow<StreamChunk> for streaming (F2).
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-# org.json — TEST scope : lit les fichiers de cas JSON (test_cases_XX.json).
+# org.json — TEST scope: reads JSON test case files (test_cases_XX.json).
 org-json = { module = "org.json:json", version.ref = "orgJson" }
 
 [plugins]

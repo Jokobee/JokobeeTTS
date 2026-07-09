@@ -7,7 +7,7 @@ import org.junit.Test
 import java.io.File
 import java.text.Normalizer
 
-/** AUDIT QUALITÉ anglais */
+/** English quality audit */
 class MisakiEnAuditTest {
 
     private val misakiDir = File(System.getProperty("user.dir"), "src/main/assets/misaki")
@@ -45,9 +45,9 @@ class MisakiEnAuditTest {
     @Test fun fallbackIsClampedToVocab() {
         val rawFallback = object : G2p {
             override fun phonemize(word: String, lang: String) = when (word.lowercase()) {
-                "paul" -> "pˈɔɫ"          // ɫ hors-vocab
-                "kubernetes" -> "kˈubɝnits" // ɝ hors-vocab
-                else -> "tˈɛɡ"             // g ASCII hors-vocab
+                "paul" -> "pˈɔɫ"          // ɫ out-of-vocab
+                "kubernetes" -> "kˈubɝnits" // ɝ out-of-vocab
+                else -> "tˈɛɡ"             // ASCII g out-of-vocab
             }
         }
         val g2p = g2p(fallback = rawFallback)

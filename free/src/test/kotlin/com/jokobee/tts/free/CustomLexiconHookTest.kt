@@ -8,7 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-/** BLOC 3 */
+/** BLOCK 3 */
 class CustomLexiconHookTest {
 
     private fun lexicon(): MisakiEnLexicon {
@@ -22,7 +22,7 @@ class CustomLexiconHookTest {
     @Test fun emptyStubDoesNotChangeResult() {
         val lex = lexicon()
         val withStub = MisakiEnG2p(lex, customLexicon = EmptyLexiconSource).phonemize("hello world")
-        val without = MisakiEnG2p(lex).phonemize("hello world")   // défaut = EmptyLexiconSource
+        val without = MisakiEnG2p(lex).phonemize("hello world")   // default = EmptyLexiconSource
         assertEquals(without, withStub)
     }
 

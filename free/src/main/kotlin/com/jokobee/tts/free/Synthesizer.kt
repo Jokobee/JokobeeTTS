@@ -1,7 +1,7 @@
 package com.jokobee.tts.free
 
-/** Moteur de synthèse phonèmes + voix */
+/** Phoneme + voice synthesis engine */
 public interface Synthesizer {
-    /** Phonèmes IPA + voix + vitesse */
+    /** IPA phonemes + voice + speed */
     public fun synth(phonemes: String, voice: Voice, speed: Float): FloatArray
 }

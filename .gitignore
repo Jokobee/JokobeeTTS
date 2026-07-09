@@ -7,5 +7,5 @@ local.properties
 captures/
 .cxx/
 
-# THIRD-PARTY-NOTICES.txt copié dans les assets au build (source = racine du repo)
+# THIRD-PARTY-NOTICES.txt copied into assets at build time (source = repo root)
 free/src/main/assets/THIRD-PARTY-NOTICES.txt

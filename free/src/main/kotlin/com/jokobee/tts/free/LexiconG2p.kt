@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import com.jokobee.tts.core.G2p
 import com.jokobee.tts.core.LexiconSource
 
-/** Décorateur [G2p] appliquant le crochet lexique custom (couche #1) avant le G2P délégué */
+/** [G2p] decorator applying the custom lexicon hook (layer #1) before the delegated G2P */
 public class LexiconG2p(
     private val lexicon: LexiconSource,
     private val delegate: G2p,

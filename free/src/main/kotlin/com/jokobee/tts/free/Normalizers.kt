@@ -2,10 +2,10 @@ package com.jokobee.tts.free
 
 import com.jokobee.tts.core.UnsupportedLanguageException
 
-/** Fabrique de normaliseurs par locale */
+/** Factory of normalizers per locale */
 public object Normalizers {
 
-    /** Les locales gérées (fr et fr_CA partagent [FrenchNormalizer]). */
+    /** The supported locales (fr and fr_CA share [FrenchNormalizer]). */
     public val SUPPORTED: Set<String> = setOf(
         "fr", "fr_CA", "en_US", "en_GB", "es", "it", "pt_BR",
     )

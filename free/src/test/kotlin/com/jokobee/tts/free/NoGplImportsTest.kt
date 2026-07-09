@@ -4,11 +4,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
-/** GARDE anti-GPL */
+/** Anti-GPL guard */
 class NoGplImportsTest {
 
     @Test fun noGplTokensInShippableSources() {
-        // user.dir = dossier du module :free lors du run Gradle.
+        // user.dir = the :free module's directory during the Gradle run.
         val moduleDir = File(System.getProperty("user.dir"))
         val roots = listOf(
             File(moduleDir, "src/main"),                 // :free

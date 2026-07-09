@@ -5,14 +5,14 @@ import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
 import java.io.Closeable
 
-/** Synthèse Kokoro-82M v1.0 */
+/** Kokoro-82M v1.0 synthesis */
 public class KokoroSynth(
     private val env: OrtEnvironment,
     private val session: OrtSession,
     private val tokenizer: KokoroTokenizer,
 ) : Synthesizer, Closeable {
 
-    /** Synthétise une forme d'onde à partir de phonèmes et d'une voix. */
+    /** Synthesizes a waveform from phonemes and a voice. */
     override fun synth(phonemes: String, voice: Voice, speed: Float): FloatArray {
         val ids = tokenizer.encode(phonemes)
         val style = voice.styleFor(tokenizer.nTokens(ids))     // FloatArray[256]
@@ -38,7 +38,7 @@ public class KokoroSynth(
     }
 
     public companion object {
-        /** Ouvre une session sur un fichier modèle local (déjà téléchargé) + vocab embarqué. */
+        /** Opens a session on a local model file (already downloaded) + embedded vocab. */
         public fun fromModelFile(
             env: OrtEnvironment,
             modelPath: String,

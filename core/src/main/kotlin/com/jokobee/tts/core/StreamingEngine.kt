@@ -1,6 +1,6 @@
 package com.jokobee.tts.core
 
-/** Un segment audio livré au fil de la synthèse streaming. */
+/** An audio segment delivered during streaming synthesis. */
 public class StreamChunk(
     public val audio: FloatArray,
     public val index: Int,
@@ -8,7 +8,7 @@ public class StreamChunk(
     public val isFinal: Boolean,
 )
 
-/** Moteur de synthèse streaming (phrase par phrase). Implémenté par le tier Pro. */
+/** Streaming synthesis engine (sentence by sentence). Implemented by the Pro tier. */
 public fun interface StreamingEngine {
     public fun stream(
         text: String,

@@ -2,7 +2,7 @@ package com.jokobee.tts.core
 
 import kotlin.math.abs
 
-/** Configuration d'assemblage audio de segments. */
+/** Configuration for stitching audio segments together. */
 public data class StitchConfig(
     public val sampleRate: Int = 24000,
     public val silenceBetweenMs: Int = 300,
@@ -11,7 +11,7 @@ public data class StitchConfig(
     public val peakTarget: Float = 0.95f,
 )
 
-/** Assemble des segments PCM en un flux : fondu anti-clic, silence inter-segment, normalisation de crête. */
+/** Stitches PCM segments into a single stream: anti-click fade, inter-segment silence, peak normalization. */
 public object AudioStitcher {
 
     public fun stitch(segments: List<FloatArray>, config: StitchConfig = StitchConfig()): FloatArray {
@@ -27,12 +27,12 @@ public object AudioStitcher {
         for ((i, seg) in faded.withIndex()) {
             seg.copyInto(out, pos)
             pos += seg.size
-            if (i < faded.size - 1) pos += gap   // silence (zéros) entre segments
+            if (i < faded.size - 1) pos += gap   // silence (zeros) between segments
         }
         return if (config.peakNormalize) normalizePeak(out, config.peakTarget) else out
     }
 
-    /** Fondu linéaire vers zéro sur les [fade] échantillons de bord (jointures propres). Exposé pour le streaming (fondu par chunk). */
+    /** Linear fade to zero over the [fade] edge samples (clean joins). Exposed for streaming (per-chunk fade). */
     public fun fadeEdges(seg: FloatArray, fade: Int): FloatArray {
         if (fade <= 0 || seg.size < 2 * fade) return seg
         val out = seg.copyOf()

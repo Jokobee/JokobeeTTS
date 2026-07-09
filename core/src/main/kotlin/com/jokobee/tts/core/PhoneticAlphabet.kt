@@ -1,12 +1,12 @@
 package com.jokobee.tts.core
 
-/** Alphabet phonétique d'une prononciation */
+/** Phonetic alphabet of a pronunciation */
 public enum class PhoneticAlphabet {
     IPA,
     ARPABET,
     X_SAMPA;
 
-    /** Convertit une prononciation de cet alphabet vers l'IPA */
+    /** Converts a pronunciation from this alphabet to IPA */
     public fun toIpa(pronunciation: String, onWarn: (String) -> Unit = {}): String = when (this) {
         IPA -> pronunciation
         ARPABET -> ArpabetToIpa.toIpa(pronunciation, onWarn)

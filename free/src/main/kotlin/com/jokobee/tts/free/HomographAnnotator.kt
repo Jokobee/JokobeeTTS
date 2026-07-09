@@ -1,12 +1,12 @@
 package com.jokobee.tts.free
 
-/** Désambiguïsation contextuelle française + lexique des mots-outils, en amont d'un G2P mot-à-mot */
+/** French contextual disambiguation + function-word lexicon, upstream of a word-by-word G2P */
 public object HomographAnnotator {
 
-    /** Un token annoté */
+    /** An annotated token */
     public data class Ann(val token: String, val ipa: String?)
 
-    /** Règle contextuelle */
+    /** Contextual rule */
     private class Rule(val test: (List<String>, Int) -> Boolean, val ipa: String)
 
     private class Entry(val default: String, val rules: List<Rule>)
@@ -38,7 +38,7 @@ public object HomographAnnotator {
         }
     }
 
-    /** Tokenisation simple mots/ponctuation, apostrophe collée au clitique. */
+    /** Simple word/punctuation tokenization, apostrophe attached to the clitic. */
     internal fun tokenize(text: String): List<String> {
         val nfc = java.text.Normalizer.normalize(text, java.text.Normalizer.Form.NFC)
         val out = ArrayList<String>()
@@ -64,7 +64,7 @@ public object HomographAnnotator {
     private val WORD_RE = Regex("[a-zA-ZÀ-ÿ']+|[^\\sa-zA-ZÀ-ÿ']+")
     private val CLITIC_RE = Regex("^([cdjlnst]'|qu')(.+)$", RegexOption.IGNORE_CASE)
 
-    /** Mots-outils */
+    /** Function words */
     private val FUNCTION_WORDS: Map<String, String> = mapOf(
         "le" to "lə", "la" to "la", "les" to "le", "l'" to "l",
         "de" to "də", "des" to "de", "du" to "dy", "d'" to "d",

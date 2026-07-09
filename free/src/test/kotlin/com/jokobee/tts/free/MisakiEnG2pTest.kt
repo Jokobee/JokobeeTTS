@@ -30,7 +30,7 @@ class MisakiEnG2pTest {
             val got = g2p.phonemize(sent)
             sentTotal++
             if (got == expected) sentMatch++ else if (diffs.size < 20) diffs.add("«$sent»\n    exp: $expected\n    got: $got")
-            // mot-à-mot (même découpage par espace)
+            // word-by-word (same space-based split)
             val ew = expected.split(" "); val gw = got.split(" ")
             if (ew.size == gw.size) for (k in ew.indices) { wordTotal++; if (ew[k] == gw[k]) wordMatch++ }
         }

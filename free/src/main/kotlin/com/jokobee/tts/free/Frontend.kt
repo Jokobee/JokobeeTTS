@@ -8,11 +8,11 @@ public class Frontend(
     private val g2p: G2p,
     private val enG2p: ((String, String) -> String)? = null,
     private val verbalizer: Verbalizer = IcuVerbalizer(),
-    /** Lexique custom (couche #1), universel */
+    /** Custom lexicon (layer #1), universal */
     public val lexicon: MapLexiconSource = MapLexiconSource(),
-    /** Points d'insertion Pro (normalisation, dictionnaires, accent). */
+    /** Pro extension points (normalization, dictionaries, accent). */
     public val adapters: AdapterRegistry = AdapterRegistry(),
-    /** Anglicismes internes (chemin CharsiuG2P), automatique. */
+    /** Internal loanwords (CharsiuG2P path), automatic. */
     private val loanwords: LoanwordsLexicon = LoanwordsLexicon.EMPTY,
 ) {
     private val pipeline = PhonemePipeline(
@@ -22,24 +22,24 @@ public class Frontend(
         ),
     )
 
-    /** Phonémise un texte. */
+    /** Phonemizes a text. */
     public fun toPhonemes(text: String, lang: String): String {
         val pre = adapters.normalization.apply(text, lang, adapters.accent.current?.id)
         val normalized = Normalizers.forLang(lang, verbalizer).normalize(pre)
         if ((lang == "en_US" || lang == "en_GB") && enG2p != null) {
-            return enG2p.invoke(normalized, lang)   // G2P anglais (us/gb selon lang), pas de PhonemePost
+            return enG2p.invoke(normalized, lang)   // English G2P (us/gb depending on lang), no PhonemePost
         }
         return pipeline.phonemizeAnnotations(mergeMultiWord(annotate(normalized, lang), lang), lang)
     }
 
-    /** Annotations mot-à-mot */
+    /** Word-by-word annotations */
     private fun annotate(text: String, lang: String): List<Ann> =
         if (lang == "fr" || lang == "fr_CA") HomographAnnotator.annotate(text)
         else TOKEN_RE.findall(text).map { Ann(it, null) }
 
-    // Fusion greedy des séquences multi-mots du dictionnaire : mots consécutifs (IPA non forcée)
-    // dont la phrase est dans tts.dictionary -> un seul Ann à IPA forcée (dict + accent). Le post
-    // final du pipeline clampe l'ensemble.
+    // Greedy merge of dictionary multi-word sequences: consecutive words (IPA not forced)
+    // whose phrase is in tts.dictionary -> a single Ann with forced IPA (dict + accent). The
+    // pipeline's final post-processing clamps the whole set.
     private fun mergeMultiWord(anns: List<Ann>, lang: String): List<Ann> {
         val dict = adapters.dictionary
         val out = ArrayList<Ann>(anns.size)
@@ -71,7 +71,7 @@ public class Frontend(
     private fun isWord(token: String): Boolean = token.any { it.isLetter() }
 
     private companion object {
-        // Mot (lettres + marques + apostrophe) OU suite de non-espaces non-lettres (ponctuation).
+        // Word (letters + marks + apostrophe) OR sequence of non-space non-letters (punctuation).
         private val TOKEN_RE = Regex("""[\p{L}\p{M}']+|[^\s\p{L}\p{M}']+""")
         private fun Regex.findall(s: String): List<String> = findAll(s).map { it.value }.toList()
     }

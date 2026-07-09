@@ -4,13 +4,13 @@ import android.content.Context
 import org.json.JSONObject
 import java.io.InputStream
 
-/** Étage lexique + morphologie + stress d'un mot anglais */
+/** Lexicon + morphology + stress stage for an English word */
 public class MisakiEnLexicon private constructor(
     private val golds: Map<String, Entry>,
     private val silvers: Map<String, Entry>,
     private val british: Boolean,
 ) {
-    /** Entrée de lexique */
+    /** Lexicon entry */
     public sealed interface Entry
     @JvmInline public value class Str(public val ps: String) : Entry
     public class Dict(public val m: Map<String, String?>) : Entry
@@ -47,7 +47,7 @@ public class MisakiEnLexicon private constructor(
         return word.substring(1) == word.substring(1).uppercase()
     }
 
-    /** Mots-outils contextuels (dépendent du tag / de la voyelle suivante). */
+    /** Contextual function words (depend on the tag / following vowel). */
     private fun getSpecialCase(word: String, tag: String?, stress: Double?, fv: Boolean?): Pair<String?, Int> {
         if (tag == "ADD" && word in ADD_SYMBOLS) return lookup(ADD_SYMBOLS.getValue(word), null, -0.5, fv)
         if (word in SYMBOLS) return lookup(SYMBOLS.getValue(word), null, null, fv)
@@ -108,7 +108,7 @@ public class MisakiEnLexicon private constructor(
         return applyStress(ps, stress) to rating
     }
 
-    // ----- suffixes morphologiques (règles phonèmes) ------------------------
+    // ----- morphological suffixes (phoneme rules) ------------------------
     private fun sfx(stem: String?): String? {
         if (stem.isNullOrEmpty()) return null
         val last = stem.last()
@@ -198,7 +198,7 @@ public class MisakiEnLexicon private constructor(
         return null to 0
     }
 
-    /** Convertit un mot en phonèmes. */
+    /** Converts a word to phonemes. */
     public fun phonemize(word0: String, tag: String? = null, futureVowel: Boolean? = null): Pair<String?, Int> {
         var word = java.text.Normalizer.normalize(word0.replace('‘', '\'').replace('’', '\''), java.text.Normalizer.Form.NFKC)
         val stress = if (word == word.lowercase()) null else capStresses[if (word == word.uppercase()) 1 else 0]
@@ -219,7 +219,7 @@ public class MisakiEnLexicon private constructor(
         private val ADD_SYMBOLS = mapOf("." to "dot", "/" to "slash")
         private val SYMBOLS = mapOf("%" to "percent", "&" to "and", "+" to "plus", "@" to "at")
 
-        /** Ajuste/place le stress */
+        /** Adjusts/places the stress */
         public fun applyStress(ps0: String?, stress: Double?): String? {
             val ps = ps0 ?: return null
             fun hasVowel() = ps.any { it in VOWELS }
@@ -265,7 +265,7 @@ public class MisakiEnLexicon private constructor(
                     e[k.lowercase()] = v
                 }
             }
-            return e + d   // d écrase e (comme {**e, **d})
+            return e + d   // d overrides e (like {**e, **d})
         }
 
         private fun parse(json: String): Map<String, Entry> {

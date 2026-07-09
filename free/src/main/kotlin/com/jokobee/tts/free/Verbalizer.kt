@@ -3,7 +3,7 @@ package com.jokobee.tts.free
 import com.ibm.icu.text.RuleBasedNumberFormat
 import com.ibm.icu.util.ULocale
 
-/** Verbalise les nombres */
+/** Verbalizes numbers */
 public interface Verbalizer {
     /** Cardinal */
     public fun cardinal(n: Long, locale: String): String
@@ -11,11 +11,11 @@ public interface Verbalizer {
     /** Ordinal */
     public fun ordinal(n: Long, locale: String, feminine: Boolean = false): String
 
-    /** Verbalisation avec un ruleset */
+    /** Verbalization with a ruleset */
     public fun spellout(n: Long, locale: String, ruleset: String): String
 }
 
-/** Implémentation icu4j (production + test, sortie identique) */
+/** icu4j implementation (production + test, identical output) */
 public class IcuVerbalizer : Verbalizer {
 
     private val cache = HashMap<String, RuleBasedNumberFormat>()
