@@ -1,42 +1,42 @@
-# Licences — JokobeeTTS
+# Licensing — JokobeeTTS
 
-Vue d'ensemble du modèle de licence, par tier produit et par composant.
+Overview of the licensing model, per product tier and per component.
 
-## Code JokobeeTTS, par tier
+## JokobeeTTS code, by tier
 
-| Tier | Licence | Portée |
+| Tier | License | Scope |
 |---|---|---|
-| **Free** (`:core` + `:free`, ce dépôt) | **Apache-2.0** — voir [LICENSE](LICENSE) | Open source complet. Toutes les langues. Usage libre, y compris commercial, sous réserve des obligations Apache-2.0 (ci-dessous). |
-| **Pro** (`:pro`, dépôt privé) | **Licence commerciale** — jokobee.com | Import de voix, blending, streaming, GPU, Model Manager, etc. Non open source. |
-| **SDK** (JokobeeSDK, futur) | à définir | Évolution (modules par langue, style contextuel, création de voix). |
+| **Free** (`:core` + `:free`, this repo) | **Apache-2.0** — see [LICENSE](LICENSE) | Fully open source. All languages. Free use, including commercial, subject to the Apache-2.0 obligations (below). |
+| **Pro** (`:pro`, private repo) | **Commercial license** — jokobee.com | Voice import, blending, streaming, GPU, Model Manager, etc. Not open source. |
+| **SDK** (JokobeeSDK, future) | TBD | Evolution (per-language modules, contextual style, voice creation). |
 
-**Free = 100 % gratuit et open source, aucune langue derrière un paywall.** Le tier Pro est
-un sur-ensemble de features payantes ; il ne restreint aucune langue.
+**Free = 100% free and open source, no language behind a paywall.** The Pro tier is a
+superset of paid features; it restricts no language.
 
-## Composants tiers embarqués/liés (chemin distribué)
+## Bundled/linked third-party components (distributed path)
 
-Tous **permissifs** — aucune dépendance GPL/LGPL dans l'artefact livré.
+All **permissive** — no GPL/LGPL dependency in the shipped artifact.
 
-| Composant | Licence |
+| Component | License |
 |---|---|
-| Kokoro-82M (modèle) | Apache-2.0 |
-| Moteurs de phonémisation (G2P) | MIT |
+| Kokoro-82M (model) | Apache-2.0 |
+| Phonemization engines (G2P) | MIT |
 | ONNX Runtime | MIT |
-| ICU4J (icu4j embarqué) | Unicode/ICU (permissive) |
+| ICU4J (embedded icu4j) | Unicode/ICU (permissive) |
 
-Noms, auteurs, copyrights et dépôts des composants : [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-Version texte embarquée dans l'AAR (`assets/THIRD-PARTY-NOTICES.txt`, lisible au runtime
-via `context.assets.open(...)` pour un écran « licences open source »).
+Component names, authors, copyrights and repositories: [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+A text version is bundled in the AAR (`assets/THIRD-PARTY-NOTICES.txt`, readable at runtime
+via `context.assets.open(...)` for an "open source licenses" screen).
 
-## Obligations si vous redistribuez (Apache-2.0)
+## Obligations if you redistribute (Apache-2.0)
 
-1. Fournir une copie de la licence Apache-2.0 ([LICENSE](LICENSE)).
-2. Conserver les notices d'attribution ([THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) /
-   `.txt`), notamment « **based on Kokoro-82M** ».
-3. Signaler les fichiers modifiés.
-4. Ne pas utiliser les marques des projets sources comme marque de votre produit.
+1. Provide a copy of the Apache-2.0 license ([LICENSE](LICENSE)).
+2. Keep the attribution notices ([THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) / `.txt`),
+   in particular "**based on Kokoro-82M**".
+3. State modified files.
+4. Do not use the source projects' trademarks as your product's trademark.
 
-## Garantie « zéro GPL »
+## "Zero GPL" guarantee
 
-Le chemin shippable (`:core` + `:free`) ne référence **aucune** dépendance GPL/LGPL. Un test
-de garde échoue à la moindre contamination.
+The shippable path (`:core` + `:free`) references **no** GPL/LGPL dependency. A guard test
+fails on the slightest contamination.

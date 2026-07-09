@@ -1,57 +1,56 @@
 # Changelog
 
-Format [Keep a Changelog](https://keepachangelog.com/), versionnage [SemVer](https://semver.org/).
-Ce changelog couvre le **tier Free** (`:core` + `:free`). Le tier **Pro** et le **SDK** ont
-leur propre suivi (voir [README](README.md#modules--tiers)).
+Format [Keep a Changelog](https://keepachangelog.com/), versioning [SemVer](https://semver.org/).
+This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier and the **SDK**
+have their own tracking (see [README](README.md#modules--tiers)).
 
-## [1.0.0] — en préparation
+## [1.0.0] — in preparation
 
-> Périmètre **v1.0** : moteur TTS complet, validé on-device (Pixel 7 Pro). La coordinate de
-> build reste temporairement `0.1.0` jusqu'à la première publication (Maven Central +
-> hébergement du modèle Kokoro).
+> **v1.0** scope: complete TTS engine, validated on-device (Pixel 7 Pro). The build coordinate
+> stays at `0.1.0` for now until the first release (Maven Central + Kokoro model hosting).
 
-### Ajouté — Traitement du texte
-- **Normalisation** 6 langues (fr, en_US, en_GB, es, it, pt_BR) :
-  nombres, dates (nommées et numériques), heures, devises (par locale), ordinaux, fractions,
-  plages, chiffres romains, unités de mesure, acronymes, abréviations (titres et adresses),
-  symboles, numéros de téléphone, adresses e-mail, URL et codes postaux (lus à voix haute).
-- **Verbalisation** des nombres via ICU (icu4j embarqué).
+### Added — Text processing
+- **Normalization** for 6 languages (fr, en_US, en_GB, es, it, pt_BR):
+  numbers, dates (named and numeric), times, currencies (per locale), ordinals, fractions,
+  ranges, roman numerals, units of measure, acronyms, abbreviations (titles and addresses),
+  symbols, phone numbers, email addresses, URLs and postal codes (read aloud).
+- **Number verbalization** via ICU (embedded icu4j).
 
-### Ajouté — G2P (grapheme → phoneme)
-- **G2P embarqué**, 100 % offline, pour les langues supportées.
+### Added — G2P (grapheme → phoneme)
+- **Embedded G2P**, 100% offline, for the supported languages.
 
-### Ajouté — Synthèse
-- **Kokoro** via ONNX Runtime, export **WAV** PCM 16 bits 24 kHz, façade **`Tts`**
-  (texte → audio), silence de tête/queue configurable.
-- **Registre de voix** : catalogue de voix officielles en lecture (Free).
+### Added — Synthesis
+- **Kokoro** via ONNX Runtime, **WAV** PCM 16-bit 24 kHz export, `Tts` facade
+  (text → audio), configurable lead/tail silence.
+- **Voice registry**: read-only catalog of official voices (Free).
 
-### Ajouté — Assemblage & téléchargement
-- **`AudioStitcher`** (`:core`) : assemblage multi-phrases — fondu anti-clic aux jointures,
-  silence inter-phrase configurable, normalisation de crête. Câblé dans `Tts.synthesize`
+### Added — Stitching & download
+- **`AudioStitcher`** (`:core`): multi-sentence stitching — anti-click crossfade at joins,
+  configurable inter-sentence silence, peak normalization. Wired into `Tts.synthesize`
   (`stitchConfig`).
-- **`ModelManager`** (`:core`) : téléchargement du modèle Kokoro / des voix —
-  priorité **cache > assets > téléchargement**, reprise (`.part` + `Range`), progression,
-  vérification **SHA-256**, crochet `Authorizer` (licence). Manifeste `manifest.json`.
+- **`ModelManager`** (`:core`): downloads the Kokoro model / voices —
+  **cache > assets > download** priority, resume (`.part` + `Range`), progress,
+  **SHA-256** verification, `Authorizer` hook (licensing). `manifest.json` manifest.
 
-### Ajouté — Extensibilité (crochets réservés)
-- **`LexiconSource`** (`:core`) : lexique custom prioritaire (couche avant le G2P). Stub vide.
-- **`StyleResolver`** (`:core`) : résolution du style/voix avant synthèse. Pass-through v1.0.
-- **`StreamingEngine`** / **`StreamChunk`** (`:core`) : contrat de synthèse streaming
-  (implémentation dans le tier **Pro** ; `ProRequiredException` en Free).
-- **`LanguageDetector`** + `lang="auto"` (`:core`) : contrat de détection de langue
-  (implémentation **Pro** ; `ProRequiredException` en Free).
+### Added — Extensibility (reserved hooks)
+- **`LexiconSource`** (`:core`): priority custom lexicon (layer before G2P). Empty stub.
+- **`StyleResolver`** (`:core`): style/voice resolution before synthesis. Pass-through in v1.0.
+- **`StreamingEngine`** / **`StreamChunk`** (`:core`): streaming synthesis contract
+  (implemented in the **Pro** tier; `ProRequiredException` in Free).
+- **`LanguageDetector`** + `lang="auto"` (`:core`): language detection contract
+  (implemented in **Pro**; `ProRequiredException` in Free).
 
-### Validé
-- **Bout-en-bout on-device** (Pixel 7 Pro, arm64) : texte → WAV audible.
-- Régression garantie par une suite de tests unitaires.
+### Validated
+- **End-to-end on-device** (Pixel 7 Pro, arm64): text → audible WAV.
+- Regression guarded by a unit test suite.
 
-### Notes de version
-- **Free** = 100 % gratuit, toutes les langues (pas de paywall langue). Zéro GPL/LGPL.
-- **Pro** (streaming temps réel, `lang="auto"`, blending, import de voix, GPU…) : licence
-  commerciale, jokobee.com. *(Le téléchargeur `ModelManager` est en `:core`/Free ; le crochet
-  `Authorizer` permet d'y adosser une licence Pro.)*
-- **SDK** (modules par langue, style contextuel, création de voix) : évolution future.
+### Release notes
+- **Free** = 100% free, all languages (no language paywall). Zero GPL/LGPL.
+- **Pro** (real-time streaming, `lang="auto"`, blending, voice import, GPU…): commercial
+  license, jokobee.com. *(The `ModelManager` downloader lives in `:core`/Free; the `Authorizer`
+  hook lets you attach Pro licensing to it.)*
+- **SDK** (per-language modules, contextual style, voice creation): future evolution.
 
 ## [0.1.0]
 
-- Squelette multi-module (`:core`/`:free`/`:pro`), build vérifié.
+- Multi-module skeleton (`:core`/`:free`/`:pro`), build verified.

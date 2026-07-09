@@ -1,28 +1,28 @@
 # THIRD-PARTY-NOTICES — JokobeeTTS
 
-JokobeeTTS est un produit **Jokobee** (jokobee.com, contact@jokobee.com). Il **emballe et
-étend** des composants tiers ci-dessous. JokobeeTTS n'est ni affilié ni endossé par les
-projets sources (Apache-2.0 §6 — les marques des projets sources ne sont pas utilisées comme
-marque du produit).
+JokobeeTTS is a **Jokobee** product (jokobee.com, contact@jokobee.com). It **packages and
+extends** the third-party components below. JokobeeTTS is neither affiliated with nor endorsed
+by the source projects (Apache-2.0 §6 — the source projects' trademarks are not used as the
+product's trademark).
 
-## Composants du chemin distribué (artefact livré)
+## Components in the distributed path (shipped artifact)
 
-| Composant | Auteur/Projet | Licence | Rôle |
+| Component | Author/Project | License | Role |
 |---|---|---|---|
-| **Kokoro-82M** | hexgrad | **Apache-2.0** | modèle de synthèse. JokobeeTTS est « **based on Kokoro-82M** ». |
-| **ONNX Runtime** | Microsoft | **MIT** | moteur d'inférence |
-| **CharsiuG2P** | CharsiuNLP | **MIT** | phonémisation (grapheme → phoneme) |
-| **misaki** | hexgrad (Kokoro) | **MIT** | phonémisation anglaise (grapheme → phoneme) |
-| **ICU4J** (`com.ibm.icu:icu4j`) | Unicode, Inc. | **Unicode/ICU License** (permissive) | verbalisation des nombres (RBNF spellout) |
-| Code JokobeeTTS | Jokobee | Apache-2.0 (tier Free) | normalisation, registre de voix, orchestration |
+| **Kokoro-82M** | hexgrad | **Apache-2.0** | synthesis model. JokobeeTTS is "**based on Kokoro-82M**". |
+| **ONNX Runtime** | Microsoft | **MIT** | inference engine |
+| **CharsiuG2P** | CharsiuNLP | **MIT** | phonemization (grapheme → phoneme) |
+| **misaki** | hexgrad (Kokoro) | **MIT** | English phonemization (grapheme → phoneme) |
+| **ICU4J** (`com.ibm.icu:icu4j`) | Unicode, Inc. | **Unicode/ICU License** (permissive) | number verbalization (RBNF spellout) |
+| JokobeeTTS code | Jokobee | Apache-2.0 (Free tier) | normalization, voice registry, orchestration |
 
-**Aucune dépendance GPL/LGPL dans l'artefact distribué.**
+**No GPL/LGPL dependency in the distributed artifact.**
 
-## Obligations Apache-2.0 respectées
-1. **Attribution conservée** : ce fichier + mention « based on Kokoro-82M » dans le
-   README. Copyright hexgrad conservé.
-2. **Pas d'usage de la marque source** comme marque produit : le produit s'appelle
-   **JokobeeTTS**, pas « Kokoro » (évite toute apparence d'affiliation/endorsement).
-3. **Changements documentés** : JokobeeTTS ajoute une couche de normalisation multilingue,
-   un registre de voix, une orchestration et un traitement gracieux des erreurs. Les **poids
-   du modèle ne sont pas modifiés** (emballage/orchestration seulement).
+## Apache-2.0 obligations fulfilled
+1. **Attribution kept**: this file + the "based on Kokoro-82M" mention in the README.
+   hexgrad copyright preserved.
+2. **No source trademark used** as a product trademark: the product is called **JokobeeTTS**,
+   not "Kokoro" (avoids any appearance of affiliation/endorsement).
+3. **Changes documented**: JokobeeTTS adds a multilingual normalization layer, a voice
+   registry, orchestration and graceful error handling. The **model weights are not modified**
+   (packaging/orchestration only).
