@@ -45,7 +45,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("com.jokobee", "jokobeetts", "0.1.0")
+    coordinates("com.jokobee", "jokobeetts", "1.0.0")
 }
 
 // THIRD-PARTY-NOTICES.txt bundled into the AAR assets (accessible at runtime via

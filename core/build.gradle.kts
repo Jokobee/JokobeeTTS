@@ -28,5 +28,5 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("com.jokobee", "jokobeetts-core", "0.1.0")
+    coordinates("com.jokobee", "jokobeetts-core", "1.0.0")
 }
