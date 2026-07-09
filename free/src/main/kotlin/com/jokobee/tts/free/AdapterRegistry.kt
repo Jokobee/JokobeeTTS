@@ -26,7 +26,7 @@ public class AdapterRegistry {
 
 private fun checkCompatible(langs: Set<String>, lang: String, id: String) {
     if (lang !in langs) throw AdapterIncompatibleException(
-        "adapter '$id' incompatible avec '$lang' (attendu : ${langs.sorted()})",
+        "adapter '$id' incompatible with '$lang' (expected: ${langs.sorted()})",
     )
 }
 
@@ -76,7 +76,7 @@ public class AccentRegistry internal constructor(private val host: AdapterRegist
         val a = current ?: return phonemes
         if (a.baseLang != lang && a.baseLang != lang.substringBefore('_')) {
             throw AdapterIncompatibleException(
-                "accent '${a.id}' incompatible avec '$lang' (base attendue : ${a.baseLang})",
+                "accent '${a.id}' incompatible with '$lang' (expected base: ${a.baseLang})",
             )
         }
         return a.adapt(phonemes, AdapterContext(word, lang, null))

@@ -63,7 +63,7 @@ class VoiceCatalogTest {
         val ex = assertThrows(VoiceError::class.java) {
             Voice.of("t", "fr", bytesOf(emb()).copyOf(VoiceFormat.EXPECTED_BYTES - 4))
         }
-        assertTrue(ex.message!!.contains("attendu"))
+        assertTrue(ex.message!!.contains("expected"))
     }
 
     @Test fun oversizedBytesRejected() {
@@ -75,17 +75,17 @@ class VoiceCatalogTest {
     @Test fun nonFiniteBytesRejected() {
         val nan = FloatArray(N * D) { Float.NaN }
         val ex = assertThrows(VoiceError::class.java) { Voice.of("t", "fr", bytesOf(nan)) }
-        assertTrue(ex.message!!.lowercase().contains("non finies"))
+        assertTrue(ex.message!!.lowercase().contains("non-finite"))
     }
 
     @Test fun badShapeFloatsRejected() {
         val ex = assertThrows(VoiceError::class.java) { Voice.of("t", "fr", FloatArray(10)) }
-        assertTrue(ex.message!!.contains("shape invalide"))
+        assertTrue(ex.message!!.contains("invalid shape"))
     }
 
     @Test fun unknownLangRejected() {
         val ex = assertThrows(VoiceError::class.java) { Voice.of("t", "xx", emb()) }
-        assertTrue(ex.message!!.contains("lang inconnue"))
+        assertTrue(ex.message!!.contains("unknown lang"))
     }
 
     @Test fun emptyIdRejected() {

@@ -21,9 +21,9 @@ public object VoiceFormat {
 
     internal fun checkLang(lang: String): String {
         if (lang !in SUPPORTED_LANGS) throw VoiceError(
-            "lang inconnue : '$lang'. Attendu l'une de ${SUPPORTED_LANGS.sorted()}. " +
-                "La lang route le pipeline frontend ; une locale non gérée n'a pas de " +
-                "chemin normaliseur/G2P/voix.",
+            "unknown lang: '$lang'. Expected one of ${SUPPORTED_LANGS.sorted()}. " +
+                "The lang routes the frontend pipeline; an unhandled locale has no " +
+                "normalizer/G2P/voice path.",
         )
         return lang
     }
@@ -33,18 +33,18 @@ public object VoiceFormat {
         val n = raw.size
         if (n != EXPECTED_BYTES) {
             val unit = STYLE_DIM * 4
-            val detail = if (n % unit == 0) " (≈ ${n / unit} lignes de $STYLE_DIM)" else ""
+            val detail = if (n % unit == 0) " (≈ ${n / unit} rows of $STYLE_DIM)" else ""
             throw VoiceError(
-                "taille invalide : attendu $EXPECTED_BYTES octets ([$N_ROWS,$STYLE_DIM] " +
-                    "float32 LE), reçu $n$detail. Fichier tronqué ou mauvais format ?",
+                "invalid size: expected $EXPECTED_BYTES bytes ([$N_ROWS,$STYLE_DIM] " +
+                    "float32 LE), got $n$detail. Truncated file or wrong format?",
             )
         }
         val fb = ByteBuffer.wrap(raw).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer()
         val arr = FloatArray(N_ROWS * STYLE_DIM)
         fb.get(arr)
         for (x in arr) if (!x.isFinite()) throw VoiceError(
-            "valeurs non finies (NaN/Inf) détectées : mauvais dtype ou endianness ? " +
-                "Attendu float32 little-endian.",
+            "non-finite values (NaN/Inf) detected: wrong dtype or endianness? " +
+                "Expected float32 little-endian.",
         )
         return arr
     }
@@ -52,11 +52,11 @@ public object VoiceFormat {
     /** Validates an in-memory FloatArray and returns a copy of it. */
     public fun coerceEmbedding(embedding: FloatArray): FloatArray {
         if (embedding.size != N_ROWS * STYLE_DIM) throw VoiceError(
-            "shape invalide : attendu ${N_ROWS * STYLE_DIM} floats ([$N_ROWS,$STYLE_DIM]), " +
-                "reçu ${embedding.size}.",
+            "invalid shape: expected ${N_ROWS * STYLE_DIM} floats ([$N_ROWS,$STYLE_DIM]), " +
+                "got ${embedding.size}.",
         )
         for (x in embedding) if (!x.isFinite()) throw VoiceError(
-            "valeurs non finies (NaN/Inf) dans l'embedding.",
+            "non-finite values (NaN/Inf) in the embedding.",
         )
         return embedding.copyOf()
     }
@@ -78,7 +78,7 @@ public class Voice private constructor(
             build(id, lang, VoiceFormat.coerceEmbedding(embedding))
 
         private fun build(id: String, lang: String, emb: FloatArray): Voice {
-            if (id.isEmpty()) throw VoiceError("id de voix requis (chaîne non vide).")
+            if (id.isEmpty()) throw VoiceError("voice id required (non-empty string).")
             return Voice(id, VoiceFormat.checkLang(lang), emb)
         }
     }

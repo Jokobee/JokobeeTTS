@@ -11,7 +11,7 @@ public class PipelineNotAvailableException(message: String) : JokobeeTtsExceptio
 
 /** Locale outside the supported set (fr, en_US, en_GB, es, it, pt_BR). */
 public class UnsupportedLanguageException(lang: String) :
-    JokobeeTtsException("Locale non supportée : $lang")
+    JokobeeTtsException("Unsupported locale: $lang")
 
 /** Feature requiring JokobeeTTS Pro. */
 public class ProRequiredException(message: String) : JokobeeTtsException(message)

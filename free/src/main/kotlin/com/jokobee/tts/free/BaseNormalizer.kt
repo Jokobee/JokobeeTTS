@@ -50,7 +50,7 @@ public abstract class BaseNormalizer(
         val sb = StringBuilder(text.length)
         for (c in text) {
             if (c == '\n' || c == '\t' || Character.getType(c) in KEEP_TYPES) sb.append(c)
-            else warn("symbole retiré '" + c + "' (U+" + c.code.toString(16).uppercase().padStart(4, '0') + ")")
+            else warn("symbol removed '" + c + "' (U+" + c.code.toString(16).uppercase().padStart(4, '0') + ")")
         }
         return sb.toString()
     }
@@ -191,27 +191,27 @@ public abstract class BaseNormalizer(
     public fun normalize(text: String?): String {
         warnings.clear()
         if (text.isNullOrEmpty()) return ""
-        var t = try { Normalizer.normalize(text, Normalizer.Form.NFC) } catch (e: Exception) { warn("NFC échouée"); text }
-        val (protectedText, store) = try { protect(t) } catch (e: Exception) { warn("protecteur ignoré"); return finish(t, emptyList()) }
+        var t = try { Normalizer.normalize(text, Normalizer.Form.NFC) } catch (e: Exception) { warn("NFC failed"); text }
+        val (protectedText, store) = try { protect(t) } catch (e: Exception) { warn("protector skipped"); return finish(t, emptyList()) }
         t = protectedText
         t = safe("whitelist") { rWhitelist(t) } ?: t
         t = safe("punctuation") { rPunctuation(t) } ?: t
         t = safe("electronic") { rElectronic(t) } ?: t
         t = safe("telephone") { rTelephone(t) } ?: t
         t = safe("postal") { rPostal(t) } ?: t
-        for (rule in rules()) t = safe("règle") { rule(t) } ?: t
+        for (rule in rules()) t = safe("rule") { rule(t) } ?: t
         return finish(t, store)
     }
 
     private fun finish(textIn: String, store: List<String>): String {
-        var t = try { restore(textIn, store) } catch (e: Exception) { warn("restore ignoré"); textIn }
+        var t = try { restore(textIn, store) } catch (e: Exception) { warn("restore skipped"); textIn }
         t = stripUnknown(t)
         t = COLLAPSE_RE.replace(t, " ")
         return t.trim()
     }
 
     private inline fun safe(name: String, block: () -> String): String? =
-        try { block() } catch (e: Exception) { warn("$name sautée: ${e.message}"); null }
+        try { block() } catch (e: Exception) { warn("$name skipped: ${e.message}"); null }
 
     /** Meaningful order of locale rules (to be defined by the subclass). */
     protected abstract fun rules(): List<(String) -> String>

@@ -77,7 +77,7 @@ public class ModelManager(
         download(file, target, progress)
         if (!verify(target, file.sha256)) {
             target.delete()
-            throw ModelResolutionException("SHA-256 mismatch après téléchargement de '${file.name}'.")
+            throw ModelResolutionException("SHA-256 mismatch after downloading '${file.name}'.")
         }
         return target
     }
@@ -105,7 +105,7 @@ public class ModelManager(
         }
         target.delete()
         if (!part.renameTo(target)) throw ModelResolutionException(
-            "Impossible de finaliser '${file.name}' (renommage du .part échoué).",
+            "Unable to finalize '${file.name}' (renaming the .part file failed).",
         )
     }
 

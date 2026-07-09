@@ -21,7 +21,7 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (avec LFS pour les assets G2P)
+      - name: Checkout (with LFS for G2P assets)
         uses: actions/checkout@v4
         with:
           lfs: true
@@ -35,7 +35,7 @@ jobs:
       - name: Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Tests unitaires (:core + :free)
+      - name: Unit tests (:core + :free)
         run: |
           chmod +x ./gradlew
           ./gradlew :core:test :free:test --stacktrace
@@ -43,7 +43,7 @@ jobs:
       - name: Build AAR Free (release)
         run: ./gradlew :free:assembleRelease --stacktrace
 
-      - name: Upload AAR (validation seulement — éphémère)
+      - name: Upload AAR (validation only — ephemeral)
         uses: actions/upload-artifact@v4
         with:
           name: jokobeetts-free-aar
