@@ -47,7 +47,7 @@ dependencies {
 mavenPublishing {
     coordinates("com.jokobee", "jokobeetts", "1.0.0")
     signAllPublications()
-    publishToMavenCentral(automaticRelease = false)   // manual release: upload to staging, click Publish on the portal yourself
+    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
 }
 
 // THIRD-PARTY-NOTICES.txt bundled into the AAR assets (accessible at runtime via
