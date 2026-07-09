@@ -1,8 +1,8 @@
 # Changelog
 
 Format [Keep a Changelog](https://keepachangelog.com/), versioning [SemVer](https://semver.org/).
-This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier and the **SDK**
-have their own tracking (see [README](README.md#modules--tiers)).
+This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier has its own
+tracking (see [README](README.md#modules--tiers)).
 
 ## [1.0.0] — in preparation
 
@@ -49,7 +49,6 @@ have their own tracking (see [README](README.md#modules--tiers)).
 - **Pro** (real-time streaming, `lang="auto"`, blending, voice import, GPU…): commercial
   license, jokobee.com. *(The `ModelManager` downloader lives in `:core`/Free; the `Authorizer`
   hook lets you attach Pro licensing to it.)*
-- **SDK** (per-language modules, contextual style, voice creation): future evolution.
 
 ## [0.1.0]
 

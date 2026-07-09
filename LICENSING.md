@@ -8,7 +8,6 @@ Overview of the licensing model, per product tier and per component.
 |---|---|---|
 | **Free** (`:core` + `:free`, this repo) | **Apache-2.0** — see [LICENSE](LICENSE) | Fully open source. All languages. Free use, including commercial, subject to the Apache-2.0 obligations (below). |
 | **Pro** (`:pro`, private repo) | **Commercial license** — jokobee.com | Voice import, blending, streaming, GPU, Model Manager, etc. Not open source. |
-| **SDK** (JokobeeSDK, future) | TBD | Evolution (per-language modules, contextual style, voice creation). |
 
 **Free = 100% free and open source, no language behind a paywall.** The Pro tier is a
 superset of paid features; it restricts no language.

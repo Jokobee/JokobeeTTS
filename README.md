@@ -31,7 +31,6 @@ Text → 24 kHz audio, 100% local, no network after the model is installed.
 | **`:core`** | contracts (`G2p`, `LexiconSource`, `StyleResolver`, `LanguageDetector`, `StreamingEngine`), `TextSplitter`, `AudioStitcher`, **`ModelManager`** (downloader), exceptions | Maven Central — `com.jokobee:jokobeetts-core` *(coming)* |
 | **`:free`** | 6-language normalization, embedded G2P, Kokoro synthesis, voice registry, **multi-sentence stitching**, `Tts` API | Maven Central — `com.jokobee:jokobeetts` *(coming)* |
 | **`:pro`** | voice import, **blending**, **real-time streaming**, **`lang="auto"`** (detection), Vulkan GPU, x86_64, SSML, timestamps | **jokobee.com** (commercial license) — private repo |
-| **JokobeeSDK** *(future)* | full AI SDK: per-language modules (`:lang-*`), **contextual style engine** (`StyleResolver`), voice creation, multimodal pipelines | — |
 
 **Free = 100% free, no language behind a paywall.** The Free/Pro split is about **features**
 (power / real-time), not languages.
@@ -58,9 +57,6 @@ Text → 24 kHz audio, 100% local, no network after the model is installed.
 - Official voices for the 6 languages bundled in `:free`.
 - Maven Central publication (`:core` + `:free`), bump the coordinate `0.1.0` → `1.0.0`.
 
-**Beyond (SDK)**
-- Per-language modules (`:lang-*`), contextual style engine (`StyleResolver`), voice creation.
-
 ## Build
 
 ```
@@ -71,7 +67,7 @@ Text → 24 kHz audio, 100% local, no network after the model is installed.
 ## Licenses
 
 - **Free** (`:core` + `:free`, this repo): **Apache-2.0** — see [LICENSE](LICENSE).
-- **Pro**: commercial license (jokobee.com). **SDK**: future.
+- **Pro**: commercial license (jokobee.com).
 - Third-party components (Kokoro Apache-2.0, G2P engines / ONNX Runtime MIT, ICU permissive):
   **zero GPL/LGPL**. Details in [LICENSING.md](LICENSING.md) and
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
