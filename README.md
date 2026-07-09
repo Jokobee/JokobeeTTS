@@ -15,9 +15,13 @@ the AAR** — zero download, zero network, zero setup.
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.jokobee:jokobeetts-free:1.0.0")
+    implementation("com.jokobee:jokobeetts:1.0.0")
 }
 ```
+
+> Also published under the aliases `com.jokobee:tts-ai-android:1.0.0` and
+> `com.jokobee:tts-android-ai:1.0.0` (same artifact, easier to find by generic search) —
+> pick whichever coordinate you prefer, they resolve to the same engine.
 
 ```kotlin
 // 3 lines — it speaks
@@ -44,8 +48,8 @@ val audio = tts.synthesize("Hello world", lang = "en")
 
 | Tier | Contents | Distribution |
 |---|---|---|
-| **`:core`** | contracts (`G2p`, `LexiconSource`, `StyleResolver`, `LanguageDetector`, `StreamingEngine`), `TextSplitter`, `AudioStitcher`, exceptions | Maven Central — `com.jokobee:jokobeetts-core` *(coming)* |
-| **`:free`** | 6-language normalization, embedded G2P, Kokoro synthesis with the model + 37 official voices **bundled**, **multi-sentence stitching**, `Tts` API | Maven Central — `com.jokobee:jokobeetts-free` *(coming)* |
+| **`:core`** | contracts (`G2p`, `LexiconSource`, `StyleResolver`, `LanguageDetector`, `StreamingEngine`), `TextSplitter`, `AudioStitcher`, exceptions | Maven Central — `com.jokobee:jokobeetts-core` |
+| **`:free`** | 6-language normalization, embedded G2P, Kokoro synthesis with the model + 37 official voices **bundled**, **multi-sentence stitching**, `Tts` API | Maven Central — `com.jokobee:jokobeetts` (aliases: `tts-ai-android`, `tts-android-ai`) |
 | **`:pro`** | voice import, **blending**, **real-time streaming**, **`lang="auto"`** (detection), Vulkan GPU, x86_64, SSML, timestamps | **jokobee.com** (commercial license) — private repo |
 
 **Free = 100% free, no language behind a paywall.** The Free/Pro split is about **features**
@@ -73,7 +77,7 @@ smaller APK.
 
 ## Roadmap
 
-- Maven Central publication (`:core` + `:free`).
+- Leaner, download-based AAR variant for developers who need a smaller APK footprint.
 
 ## Build
 

@@ -52,6 +52,11 @@ tracking (see [README](README.md#modules--tiers)).
 - **End-to-end on-device** (Pixel 7 Pro, arm64): text → audible WAV, zero-config path.
 - Regression guarded by a unit test suite.
 
+### Published
+- **Maven Central**: `com.jokobee:jokobeetts-core:1.0.0` and `com.jokobee:jokobeetts:1.0.0`,
+  plus two discoverability aliases (same artifact, zero extra code):
+  `com.jokobee:tts-ai-android:1.0.0` and `com.jokobee:tts-android-ai:1.0.0`.
+
 ### Release notes
 - **Free** = 100% free, all languages (no language paywall), zero download. Zero GPL/LGPL.
 - **Pro** (real-time streaming, `lang="auto"`, blending, voice import, GPU…): commercial
