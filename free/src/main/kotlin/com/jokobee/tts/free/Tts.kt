@@ -21,6 +21,8 @@ public class Tts(
     private val frontend: Frontend,
     private val synth: Synthesizer,
     private val styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
+    /** Official voice catalog (populated by `create(context)`, the zero-config path). Backs the default-voice lookup in [synthesize]/[synthesizeToWav] when no [Voice] is passed. */
+    public var voices: VoiceCatalog? = null,
 ) {
     /** Pipeline-priority custom lexicon, consulted before the G2P for all languages, for hot `add(...)`/`load(...)` (brands, corrections). */
     public val lexicon: com.jokobee.tts.core.MapLexiconSource get() = frontend.lexicon
@@ -54,6 +56,19 @@ public class Tts(
             "Auto language detection requires JokobeeTTS Pro — jokobee.com/pro",
         )
         return d.detect(text) ?: throw UnsupportedLanguageException(AUTO)
+    }
+
+    // Short-form alias accepted by the zero-config API ("en" -> "en_US"); every other lang is unchanged.
+    private fun resolveLangAlias(lang: String): String = if (lang == "en") "en_US" else lang
+
+    // Looks up the default official voice for a language in the bundled catalog (zero-config API only).
+    private fun defaultVoiceFor(lang: String): Voice {
+        val catalog = voices ?: throw IllegalStateException(
+            "No default voice available: this Tts instance has no bundled voice catalog " +
+                "(use Tts.create(context) for the zero-config API, or pass a Voice explicitly).",
+        )
+        val id = VoiceCatalog.DEFAULT_VOICE_ID[lang] ?: throw UnsupportedLanguageException(lang)
+        return catalog.get(id)
     }
 
     // Synthesis of an isolated segment (phonemes -> waveform), without stitching or padding.
@@ -106,17 +121,23 @@ public class Tts(
         }
     }
 
-    /** Synthesizes a waveform from a text. */
+    /**
+     * Synthesizes a waveform from a text. `lang` accepts the short alias `"en"` (-> `"en_US"`)
+     * in addition to the full locale codes. If `voice` is omitted, a default official voice for
+     * `lang` is used (requires the zero-config `Tts.create(context)`; see [voices]).
+     */
     public fun synthesize(
         text: String,
         lang: String,
-        voice: Voice,
+        voice: Voice? = null,
         speed: Float = 1.0f,
         leadMs: Int = 200,
         trailMs: Int = 100,
     ): FloatArray {
-        val actualLang = resolveLang(text, lang)
-        val resolved = styleResolver.resolve(SynthesisContext(text, actualLang, voice)).style
+        val resolvedLang0 = resolveLangAlias(lang)
+        val actualLang = resolveLang(text, resolvedLang0)
+        val actualVoice = voice ?: defaultVoiceFor(actualLang)
+        val resolved = styleResolver.resolve(SynthesisContext(text, actualLang, actualVoice)).style
         val segments = TextSplitter().split(text)
         val waves = segments.map { synth.synth(frontend.toPhonemes(it, actualLang), resolved, speed) }
         val stitched = AudioStitcher.stitch(waves, stitchConfig)   // leading silence = only once, via AudioPad
@@ -127,7 +148,7 @@ public class Tts(
     public fun synthesizeToWav(
         text: String,
         lang: String,
-        voice: Voice,
+        voice: Voice? = null,
         speed: Float = 1.0f,
         leadMs: Int = 200,
         trailMs: Int = 100,
@@ -136,13 +157,8 @@ public class Tts(
     public companion object {
         private const val SAMPLE_RATE = 24000   // native Kokoro output
 
-        /** Ready-to-use TTS pipeline */
-        public fun create(
-            context: android.content.Context,
-            env: ai.onnxruntime.OrtEnvironment,
-            modelPath: String,
-            styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
-        ): Tts {
+        // Shared text-processing frontend (normalization, G2P, lexicon/dictionary/accent hooks).
+        private fun buildFrontend(context: android.content.Context, env: ai.onnxruntime.OrtEnvironment): Frontend {
             val adapters = AdapterRegistry()
             val g2p = CachingG2p(CharsiuG2p.fromAssetsOrCache(context, env))
             val en = MisakiEnG2p.fromAssets(
@@ -153,11 +169,36 @@ public class Tts(
                 context, fallback = g2p, british = true,
                 dictionary = adapters.dictionary, accent = adapters.accent,
             )
-            val frontend = Frontend(g2p, enG2p = { text, lang ->
+            return Frontend(g2p, enG2p = { text, lang ->
                 (if (lang == "en_GB") enGb else en).phonemize(text)
             }, adapters = adapters, loanwords = LoanwordsLexicon.fromAssets(context))
+        }
+
+        /** Ready-to-use TTS pipeline, model loaded from an external file (e.g. Pro's own download path). */
+        public fun create(
+            context: android.content.Context,
+            env: ai.onnxruntime.OrtEnvironment,
+            modelPath: String,
+            styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
+        ): Tts {
+            val frontend = buildFrontend(context, env)
             val synth = KokoroSynth.fromModelFile(env, modelPath, KokoroTokenizer.fromAsset(context))
             return Tts(frontend, synth, styleResolver)
+        }
+
+        /**
+         * Zero-config pipeline: Kokoro model + 38 official voices are bundled in the AAR
+         * assets — no file path, no download, no network. Just call [synthesize] with a
+         * language (e.g. `"en"`, `"fr"`) and it uses a default official voice automatically.
+         */
+        public fun create(
+            context: android.content.Context,
+            styleResolver: StyleResolver<Voice> = DefaultStyleResolver(),
+        ): Tts {
+            val env = ai.onnxruntime.OrtEnvironment.getEnvironment()
+            val frontend = buildFrontend(context, env)
+            val synth = KokoroSynth.fromAsset(context, env, KokoroTokenizer.fromAsset(context))
+            return Tts(frontend, synth, styleResolver, voices = VoiceCatalog.official(context))
         }
     }
 }

@@ -72,4 +72,27 @@ class TtsDeviceTest {
         assertTrue("WAV EN trop court", wav.size > 44 + 24000)
         synth.close()
     }
+
+    /** Zero-config path: Tts.create(context) — model + voices loaded from the bundled AAR assets, no file push. */
+    @Test fun zeroConfigCreateSynthesizesOnDevice() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+
+        val t0 = System.nanoTime()
+        val tts = Tts.create(ctx)
+        val initMs = (System.nanoTime() - t0) / 1e6
+
+        assertTrue("bundled voice catalog missing", (tts.voices?.size ?: 0) >= 30)
+
+        val wav = tts.synthesizeToWav("Bonjour le monde", "fr", leadMs = 1000, trailMs = 200)
+        val out = File(ctx.getExternalFilesDir(null), "zero_config_fr.wav")
+        out.writeBytes(wav)
+
+        val wavEn = tts.synthesizeToWav("Hello world", "en")   // short-locale alias + default voice
+        val outEn = File(ctx.getExternalFilesDir(null), "zero_config_en.wav")
+        outEn.writeBytes(wavEn)
+
+        Log.i(tag, "Zero-config: init ${"%.0f".format(initMs)} ms, fr ${wav.size}o, en ${wavEn.size}o")
+        assertTrue("zero-config WAV (fr) too short", wav.size > 44 + 24000)
+        assertTrue("zero-config WAV (en) too short", wavEn.size > 44 + 24000)
+    }
 }

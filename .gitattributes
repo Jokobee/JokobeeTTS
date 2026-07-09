@@ -1,3 +1,5 @@
 free/src/main/assets/g2p/*.onnx filter=lfs diff=lfs merge=lfs -text
 free/src/androidTest/assets/*.bin filter=lfs diff=lfs merge=lfs -text
 free/src/main/assets/misaki/*.json filter=lfs diff=lfs merge=lfs -text
+free/src/main/assets/kokoro/*.onnx filter=lfs diff=lfs merge=lfs -text
+free/src/main/assets/voices/*.bin filter=lfs diff=lfs merge=lfs -text

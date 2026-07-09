@@ -1,14 +1,15 @@
 # JokobeeTTS — Integration guide (developers)
 
 Text → 24 kHz audio on-device. This guide covers the **Free** tier (`:core` + `:free`).
+Everything (model, voices, G2P) ships **inside the AAR** — no download, no network, ever.
 
 - [Installation](#installation)
 - [Quick start](#quick-start)
-- [The Kokoro model](#the-kokoro-model)
+- [Bundled model & voices](#bundled-model--voices)
 - [Voices](#voices)
 - [Languages](#languages)
 - [Extension hooks](#extension-hooks)
-- [Model download (ModelManager)](#model-download-modelmanager)
+- [Advanced: explicit model/voice loading](#advanced-explicit-modelvoice-loading)
 - [Performance & threading](#performance--threading)
 
 ---
@@ -21,74 +22,73 @@ Text → 24 kHz audio on-device. This guide covers the **Free** tier (`:core` + 
 ```kotlin
 // build.gradle.kts (once published)
 dependencies {
-    implementation("com.jokobee:jokobeetts:1.0.0")   // :free (depends on :core)
+    implementation("com.jokobee:jokobeetts-free:1.0.0")   // depends on :core
 }
 ```
 
-The AAR embeds the G2P (offline). The **Kokoro synthesis model** is not embedded —
-see [The Kokoro model](#the-kokoro-model).
+The AAR embeds **everything**: G2P, the Kokoro synthesis model, and 38 official voices.
+No further setup.
 
 ---
 
 ## Quick start
 
-Assemble the pipeline **once** (expensive: loads the models), then reuse it.
-
 ```kotlin
-import ai.onnxruntime.OrtEnvironment
 import com.jokobee.tts.free.Tts
-import com.jokobee.tts.free.Voice
 
-val env = OrtEnvironment.getEnvironment()
-
-// Ready-to-use pipeline (normalization + embedded G2P + synthesis).
-// `modelPath` = local Kokoro model file (see "The Kokoro model").
-val tts = Tts.create(context, env, modelPath)
-
-// Load a voice and synthesize.
-val voice = Voice.of("ff_siwis", "fr", voiceBytes)
-val wav: ByteArray = tts.synthesizeToWav("Bonjour le monde", "fr", voice)   // 24 kHz WAV
+val tts = Tts.create(context)                                   // zero-config, ~110 MB AAR does the rest
+val wav: ByteArray = tts.synthesizeToWav("Bonjour le monde", "fr")  // 24 kHz WAV, default fr voice
 // -> write to a file, or play via AudioTrack / MediaPlayer.
 ```
+
+`Tts.create(context)` builds the whole pipeline **once** (expensive: loads the models) — do
+it **once**, off the UI thread, and reuse the instance.
 
 Output forms:
 
 ```kotlin
-val samples: FloatArray = tts.synthesize(text, lang, voice, speed = 1.0f)   // f32 [-1,1] 24 kHz
-val wavBytes: ByteArray = tts.synthesizeToWav(text, lang, voice)            // WAV PCM 16-bit
+val samples: FloatArray = tts.synthesize(text, lang)               // f32 [-1,1] 24 kHz, default voice
+val wavBytes: ByteArray = tts.synthesizeToWav(text, lang)           // WAV PCM 16-bit, default voice
 ```
+
+`lang` accepts the short alias `"en"` (→ `en_US`) in addition to full locale codes
+(`fr`, `en_US`, `en_GB`, `es`, `it`, `pt_BR`).
 
 A **lead (200 ms) / tail (100 ms) silence** is added by default (avoids the first word being
 clipped by the player's init latency). Adjust via `leadMs` / `trailMs` (0 = raw).
 
 ---
 
-## The Kokoro model
+## Bundled model & voices
 
-The synthesis model (~88 MB) is **downloaded on first launch** (too large for the AAR /
-Maven Central), then cached.
+The Kokoro synthesis model (`model_quantized.onnx`, ~88 MB) and 38 official voice files
+(`voices/*.bin`, ~20 MB) are packaged as AAR assets and loaded directly from memory —
+`Tts.create(context)` never touches the filesystem or the network.
 
-- **v1.0**: a `:core` downloader (pinned URL + SHA256) fetches it into
-  `context.getExternalFilesDir("kokoro")` — *(in progress, see Roadmap)*.
-- **Today**: pass its path to `Tts.create(context, env, modelPath)`.
-  You can place it yourself (e.g. under `getExternalFilesDir("kokoro")`).
-
-The G2P follows the same cache principle: a model **dropped into the cache** automatically
-takes precedence over the embedded asset, with no code change.
+One default voice is picked automatically per language (see [Voices](#voices)). This is
+why the total AAR is **~110 MB**: that's the cost of "it just works" with zero setup.
 
 ---
 
 ## Voices
 
 ```kotlin
-val voice = Voice.of("af_heart", "en_US", bytes)     // from .bin bytes
+val tts = Tts.create(context)
 
-val catalog = VoiceCatalog()                         // read-only catalog (Free)
-catalog.get("af_heart"); catalog.list()
+tts.voices?.list()             // all 38 bundled official voices
+tts.voices?.get("af_heart")    // a specific one by id
 ```
 
-**Custom voice import** and **blending** ("create your voice") are **Pro** features
-(`VoiceRegistry`). In Free, official voices load from your assets.
+`synthesize`/`synthesizeToWav` use a sensible default voice per language when none is
+passed. To pick a specific one instead:
+
+```kotlin
+val voice = tts.voices?.get("bf_emma")
+val wav = tts.synthesizeToWav("Good afternoon", "en_GB", voice)
+```
+
+**Custom voice import** and **blending** ("create your voice") are **Pro** features — see
+[jokobee.com](https://jokobee.com).
 
 ---
 
@@ -99,7 +99,7 @@ text, no need to pre-process.
 
 | Locale | Status |
 |---|---|
-| `fr`, `fr_CA`, `en_US`, `en_GB`, `es`, `it`, `pt_BR` | ✅ validated |
+| `fr`, `fr_CA`, `en_US`, `en_GB`, `es`, `it`, `pt_BR` (`en` accepted as an alias of `en_US`) | ✅ validated |
 
 ---
 
@@ -116,38 +116,25 @@ class BrandLexicon : com.jokobee.tts.core.LexiconSource {
 tts.lexicon.load(BrandLexicon())             // registered in the pipeline
 
 // Style/voice resolution — the pipeline ALWAYS goes through the StyleResolver.
-val tts2 = Tts.create(context, env, modelPath,
+val tts2 = Tts.create(context,
     styleResolver = com.jokobee.tts.core.DefaultStyleResolver())
 ```
 
 ---
 
-## Model download (ModelManager)
+## Advanced: explicit model/voice loading
 
-`ModelManager` (`:core`) resolves the ONNX model and voices to local files.
-Priority: **cache** (already downloaded and verified) → embedded **assets** → **download**
-(Cloudflare). Resumable download (`.part` + `Range`), progress, SHA-256 verification.
+For custom setups (e.g. the Pro tier swapping in an updated model), the lower-level API
+still takes an explicit ONNX environment and model path/bytes instead of the bundled asset:
 
 ```kotlin
-val manifest = com.jokobee.tts.core.ModelManifest.fromJson(
-    context.assets.open("model-manifest.json").bufferedReader().readText(),
-)
-val mgr = com.jokobee.tts.core.ModelManager(
-    cacheDir = java.io.File(context.filesDir, "kokoro"),
-    assets = com.jokobee.tts.core.AssetProvider { name ->
-        runCatching { context.assets.open(name) }.getOrNull()   // any embedded voices/model
-    },
-)
-val files = mgr.ensureAll(manifest) { name, done, total ->
-    // update progress UI (total = -1 if unknown)
-}
-val tts = Tts.create(context, env, modelPath = files.getValue("kokoro.onnx").absolutePath)
-```
+val env = ai.onnxruntime.OrtEnvironment.getEnvironment()
+val tts = Tts.create(context, env, modelPath = "/path/to/model.onnx")
 
-The manifest (`docs/model-manifest.template.json`) lists each artifact
-(`name`, `url`, `sha256`, `size`). A `sha256` of `"TODO"` or empty **skips** verification
-(artifact not uploaded yet). The `Authorizer` hook (stub `{ true }`) lets you gate the
-download on a license (Pro) later.
+val voiceBytes = context.assets.open("voices/ff_siwis.bin").use { it.readBytes() }
+val voice = com.jokobee.tts.free.Voice.of("ff_siwis", "fr", voiceBytes)
+val wav = tts.synthesizeToWav("Bonjour le monde", "fr", voice)
+```
 
 ---
 
@@ -158,3 +145,5 @@ download on a license (Pro) later.
 - Synthesis is CPU-bound: run it on a worker. A G2P cache is built in.
 - The pipeline and ONNX sessions are reusable; release resources at end of life.
 - ABI: Free = `arm64-v8a`. `x86_64` support (emulator/Chromebook) is a Pro feature.
+- The AAR is **~110 MB** (bundled model + voices). If APK size matters more than zero-setup
+  for your use case, that's noted as a possible future option — not available in v1.0.0.

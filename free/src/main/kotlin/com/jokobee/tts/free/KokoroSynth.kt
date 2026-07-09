@@ -45,5 +45,17 @@ public class KokoroSynth(
             tokenizer: KokoroTokenizer,
             options: OrtSession.SessionOptions = OrtSession.SessionOptions(),
         ): KokoroSynth = KokoroSynth(env, env.createSession(modelPath, options), tokenizer)
+
+        /** Opens a session directly on the model bundled in the AAR assets — no file, no download. */
+        public fun fromAsset(
+            context: android.content.Context,
+            env: OrtEnvironment,
+            tokenizer: KokoroTokenizer,
+            assetPath: String = "kokoro/model_quantized.onnx",
+            options: OrtSession.SessionOptions = OrtSession.SessionOptions(),
+        ): KokoroSynth {
+            val bytes = context.assets.open(assetPath).use { it.readBytes() }
+            return KokoroSynth(env, env.createSession(bytes, options), tokenizer)
+        }
     }
 }
