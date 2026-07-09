@@ -43,5 +43,5 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           chmod +x ./gradlew
-          ./gradlew :core:publishAndReleaseToMavenCentral :free:publishAndReleaseToMavenCentral \
+          ./gradlew :core:publishToMavenCentral :free:publishToMavenCentral \
             --no-configuration-cache --no-daemon

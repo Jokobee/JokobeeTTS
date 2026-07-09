@@ -29,4 +29,6 @@ dependencies {
 
 mavenPublishing {
     coordinates("com.jokobee", "jokobeetts-core", "1.0.0")
+    signAllPublications()
+    publishToMavenCentral(automaticRelease = false)   // manual release: upload to staging, click Publish on the portal yourself
 }
