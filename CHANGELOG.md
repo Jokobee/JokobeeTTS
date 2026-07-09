@@ -56,6 +56,9 @@ tracking (see [README](README.md#modules--tiers)).
 - **Maven Central**: `com.jokobee:jokobeetts-core:1.0.0` and `com.jokobee:jokobeetts:1.0.0`,
   plus two discoverability aliases (same artifact, zero extra code):
   `com.jokobee:tts-ai-android:1.0.0` and `com.jokobee:tts-android-ai:1.0.0`.
+- **JitPack**: `com.github.Jokobee.JokobeeTTS:jokobeetts:v1.0.1` (also `jokobeetts-core`,
+  `tts-ai-android`, `tts-android-ai`) — same content as Maven Central 1.0.0; the git tag
+  is v1.0.1 due to a JitPack build-cache quirk on the first v1.0.0 tag.
 
 ### Release notes
 - **Free** = 100% free, all languages (no language paywall), zero download. Zero GPL/LGPL.

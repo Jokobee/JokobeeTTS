@@ -1,6 +1,8 @@
 # JokobeeTTS
 
 [![CI](https://github.com/Jokobee/JokobeeTTS/actions/workflows/ci.yml/badge.svg)](https://github.com/Jokobee/JokobeeTTS/actions/workflows/ci.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/com.jokobee/jokobeetts.svg?label=Maven%20Central)](https://search.maven.org/artifact/com.jokobee/jokobeetts)
+[![JitPack](https://jitpack.io/v/Jokobee/JokobeeTTS.svg)](https://jitpack.io/#Jokobee/JokobeeTTS)
 
 **On-device** text-to-speech for Android, based on **Kokoro-82M** (Apache-2.0).
 Text → 24 kHz audio, 100% local. The Kokoro model and 37 official voices are **bundled in
@@ -22,6 +24,17 @@ dependencies {
 > Also published under the aliases `com.jokobee:tts-ai-android:1.0.0` and
 > `com.jokobee:tts-android-ai:1.0.0` (same artifact, easier to find by generic search) —
 > pick whichever coordinate you prefer, they resolve to the same engine.
+
+Alternative — via [JitPack](https://jitpack.io/#Jokobee/JokobeeTTS):
+
+```kotlin
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}
+dependencies {
+    implementation("com.github.Jokobee.JokobeeTTS:jokobeetts:v1.0.1")
+}
+```
 
 ```kotlin
 // 3 lines — it speaks
