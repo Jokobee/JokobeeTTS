@@ -5,7 +5,7 @@
 [![JitPack](https://jitpack.io/v/Jokobee/JokobeeTTS.svg)](https://jitpack.io/#Jokobee/JokobeeTTS)
 
 **On-device** text-to-speech for Android, based on **Kokoro-82M** (Apache-2.0).
-Text → 24 kHz audio, 100% local. The Kokoro model and 37 official voices are **bundled in
+Text → 24 kHz audio, 100% local. The Kokoro model and 38 official voices are **bundled in
 the AAR** — zero download, zero network, zero setup.
 **Open Core** model: public **Free** tier (this repo) + commercial **Pro** tier.
 
@@ -51,7 +51,7 @@ val audio = tts.synthesize("Hello world", lang = "en")
 - **G2P (grapheme → phoneme)** — **embedded**, 100% offline, for the supported languages.
 - **Kokoro synthesis** — ONNX engine, **model bundled in the AAR** (no download), WAV PCM
   16-bit 24 kHz export, `Tts` facade (text → audio), configurable lead/tail silence.
-- **37 official voices — bundled**, one sensible default per supported locale, used
+- **38 official voices — bundled**, one sensible default per supported locale, used
   automatically by the zero-config `Tts.create(context)` API.
 - **Validated on-device** (Pixel 7 Pro, arm64): text → audible WAV.
 - **Extension hooks** (public API): `LexiconSource` (priority custom lexicon),
@@ -62,7 +62,7 @@ val audio = tts.synthesize("Hello world", lang = "en")
 | Tier | Contents | Distribution |
 |---|---|---|
 | **`:core`** | contracts (`G2p`, `LexiconSource`, `StyleResolver`, `LanguageDetector`, `StreamingEngine`), `TextSplitter`, `AudioStitcher`, exceptions | Maven Central — `com.jokobee:jokobeetts-core` |
-| **`:free`** | 6-language normalization, embedded G2P, Kokoro synthesis with the model + 37 official voices **bundled**, **multi-sentence stitching**, `Tts` API | Maven Central — `com.jokobee:jokobeetts` (aliases: `tts-ai-android`, `tts-android-ai`) |
+| **`:free`** | 6-language normalization, embedded G2P, Kokoro synthesis with the model + 38 official voices **bundled**, **multi-sentence stitching**, `Tts` API | Maven Central — `com.jokobee:jokobeetts` (aliases: `tts-ai-android`, `tts-android-ai`) |
 | **`:pro`** | see below | [**jokobee.com**](https://jokobee.com) (commercial license) — private repo |
 
 **Free = 100% free, no language behind a paywall.** The Free/Pro split is about **features**
@@ -94,12 +94,16 @@ network call, ever:
 
 - **G2P**: embedded models + lexicons (CharsiuG2P, misaki EN).
 - **Kokoro synthesis model** (`model_quantized.onnx`, ~88 MB).
-- **37 official voices** (`voices/*.bin`) covering the 6 supported languages, with one
+- **38 official voices** (`voices/*.bin`) covering the 6 supported languages, with one
   default voice per locale used automatically when none is passed explicitly.
 
 Total AAR size: **~97 MB**. That's the trade-off for "it just works" out of the box — a
 leaner, download-based variant may come in a future release for developers who need a
 smaller APK.
+
+**Not on Android?** [`voices/ff_Marine.pt`](voices/ff_Marine.pt) is the same French voice
+(Marine) in the raw Kokoro-82M format — drop it into any `kokoro-onnx` / Kokoro-82M
+project directly, no SDK required.
 
 ## Roadmap
 
