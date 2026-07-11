@@ -50,3 +50,35 @@ jobs:
           path: free/build/outputs/aar/*.aar
           retention-days: 7
           if-no-files-found: error
+
+      - name: Docs version consistency check
+        # Source of truth = what's ACTUALLY live on Maven Central (not free/build.gradle.kts,
+        # which can be bumped locally without ever being published — happened on 2026-07-11:
+        # jokobeetts was bumped to 1.1.1 in-repo but only 1.1.0 was ever pushed to Maven
+        # Central, 1.1.1 going out via JitPack/GitHub Releases only). Docs' Gradle snippets
+        # must match what a reader can actually `implementation(...)` right now.
+        run: |
+          VERSION=$(curl -sf "https://repo1.maven.org/maven2/com/jokobee/jokobeetts/maven-metadata.xml" \
+            | grep -oP '<release>\K[^<]+')
+          if [ -z "$VERSION" ]; then
+            echo "::error::could not fetch the current release version from Maven Central metadata"
+            exit 1
+          fi
+          echo "Live on Maven Central: $VERSION"
+
+          fail=0
+          check() {
+            local file="$1"
+            if ! grep -q "com.jokobee:jokobeetts:$VERSION" "$file"; then
+              echo "::error file=$file::does not mention the Maven Central version ($VERSION) — likely stale. Update its Gradle snippet(s)."
+              fail=1
+            fi
+          }
+          check README.md
+          check docs/USAGE.md
+
+          if [ "$fail" -eq 1 ]; then
+            echo "::error::Docs are out of sync with what's live on Maven Central. Note: it's OK for JitPack/GitHub Releases to be ahead of Maven Central (see README's JitPack note) — this check only enforces the Maven Central Gradle snippets, not every version mentioned anywhere."
+            exit 1
+          fi
+          echo "Docs are in sync with $VERSION."
