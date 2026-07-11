@@ -9,30 +9,31 @@ Text → 24 kHz audio, 100% local. The Kokoro model and 38 official voices are *
 the AAR** — zero download, zero network, zero setup.
 **Open Core** model: public **Free** tier (this repo) + commercial **Pro** tier.
 
-> **Version 1.0.0.** Complete TTS engine, validated end-to-end on-device (Pixel 7 Pro),
-> shipped as a single all-in-one AAR — see [CHANGELOG.md](CHANGELOG.md).
+> Complete TTS engine, validated end-to-end on-device (Pixel 7 Pro),
+> shipped as a single all-in-one AAR — see [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## Quickstart
 
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("com.jokobee:jokobeetts:1.0.0")
+    implementation("com.jokobee:jokobeetts:1.1.0")
 }
 ```
 
-> Also published under the aliases `com.jokobee:tts-ai-android:1.0.0` and
-> `com.jokobee:tts-android-ai:1.0.0` (same artifact, easier to find by generic search) —
+> Also published under the aliases `com.jokobee:tts-ai-android:1.1.0` and
+> `com.jokobee:tts-android-ai:1.1.0` (same artifact, easier to find by generic search) —
 > pick whichever coordinate you prefer, they resolve to the same engine.
 
-Alternative — via [JitPack](https://jitpack.io/#Jokobee/JokobeeTTS):
+Alternative — via [JitPack](https://jitpack.io/#Jokobee/JokobeeTTS) (has the latest fixes
+before they land on Maven Central — see [CHANGELOG.md](CHANGELOG.md)):
 
 ```kotlin
 repositories {
     maven { url = uri("https://jitpack.io") }
 }
 dependencies {
-    implementation("com.github.Jokobee.JokobeeTTS:jokobeetts:v1.0.1")
+    implementation("com.github.Jokobee.JokobeeTTS:jokobeetts:v1.1.1")
 }
 ```
 
@@ -43,7 +44,7 @@ val audio = tts.synthesize("Hello world", lang = "en")
 // done. no download, no setup, no API key.
 ```
 
-## What ships (v1.0.0)
+## What ships
 
 - **Normalization** — 6 languages (fr, en_US, en_GB, es, it, pt_BR):
   numbers, dates, times, currencies, ordinals, fractions, ranges, roman numerals, units,

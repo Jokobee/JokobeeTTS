@@ -9,12 +9,13 @@ product's trademark).
 
 | Component | Author/Project | License | Role |
 |---|---|---|---|
-| **Kokoro-82M** | hexgrad | **Apache-2.0** | synthesis model + 37 official voices. JokobeeTTS is "**based on Kokoro-82M**". |
+| **Kokoro-82M** | hexgrad | **Apache-2.0** | synthesis model + 37 of the 38 bundled voices. JokobeeTTS is "**based on Kokoro-82M**". |
 | **ONNX Runtime** | Microsoft | **MIT** | inference engine |
 | **CharsiuG2P** | CharsiuNLP | **MIT** | phonemization (grapheme → phoneme) |
 | **misaki** | hexgrad (Kokoro) | **MIT** | English phonemization (grapheme → phoneme) |
 | **ICU4J** (`com.ibm.icu:icu4j`) | Unicode, Inc. | **Unicode/ICU License** (permissive) | number verbalization (RBNF spellout) |
 | JokobeeTTS code | Jokobee | Apache-2.0 (Free tier) | normalization, voice registry, orchestration |
+| **Marine voice** (`ff_marine`) | Jokobee | free to use | 38th bundled voice, trained by Jokobee on public-domain audio (LibriVox) — not part of the original Kokoro-82M voice set. |
 
 **No GPL/LGPL dependency in the distributed artifact.**
 

@@ -16,17 +16,18 @@ Everything (model, voices, G2P) ships **inside the AAR** — no download, no net
 
 ## Installation
 
-> Maven Central publication is planned for 1.0. In the meantime, build locally
-> (`./gradlew :free:assembleRelease`).
-
 ```kotlin
-// build.gradle.kts (once published)
+// build.gradle.kts
 dependencies {
-    implementation("com.jokobee:jokobeetts-free:1.0.0")   // depends on :core
+    implementation("com.jokobee:jokobeetts:1.1.0")   // depends on :core automatically
 }
 ```
 
-The AAR embeds **everything**: G2P, the Kokoro synthesis model, and 37 official voices.
+Also on [JitPack](https://jitpack.io/#Jokobee/JokobeeTTS) (`com.github.Jokobee.JokobeeTTS:jokobeetts:v1.1.1`)
+if you need the latest fix before it lands on Maven Central — see the main
+[README](../README.md#quickstart).
+
+The AAR embeds **everything**: G2P, the Kokoro synthesis model, and 38 official voices.
 No further setup.
 
 ---
@@ -61,7 +62,7 @@ clipped by the player's init latency). Adjust via `leadMs` / `trailMs` (0 = raw)
 
 ## Bundled model & voices
 
-The Kokoro synthesis model (`model_quantized.onnx`, ~88 MB) and 37 official voice files
+The Kokoro synthesis model (`model_quantized.onnx`, ~88 MB) and 38 official voice files
 (`voices/*.bin`, ~20 MB) are packaged as AAR assets and loaded directly from memory —
 `Tts.create(context)` never touches the filesystem or the network.
 
@@ -75,7 +76,7 @@ why the total AAR is **~97 MB**: that's the cost of "it just works" with zero se
 ```kotlin
 val tts = Tts.create(context)
 
-tts.voices?.list()             // all 37 bundled official voices
+tts.voices?.list()             // all 38 bundled official voices
 tts.voices?.get("af_heart")    // a specific one by id
 ```
 
@@ -146,4 +147,5 @@ val wav = tts.synthesizeToWav("Bonjour le monde", "fr", voice)
 - The pipeline and ONNX sessions are reusable; release resources at end of life.
 - ABI: Free = `arm64-v8a`. `x86_64` support (emulator/Chromebook) is a Pro feature.
 - The AAR is **~97 MB** (bundled model + voices). If APK size matters more than zero-setup
-  for your use case, that's noted as a possible future option — not available in v1.0.0.
+  for your use case, a leaner download-based variant is on the [roadmap](../README.md#roadmap)
+  but not available yet.
