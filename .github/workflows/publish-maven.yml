@@ -1,10 +1,10 @@
-name: Publish Free (core + free + aliases + Marine voice) to Maven Central
+name: Publish Free (core + free + aliases) to Maven Central
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (e.g. 1.1.0) — must match coordinates() in core/free build.gradle.kts. The kokoro-french-voice-female modules publish at their own fixed 1.0.0 regardless of this input.'
+        description: 'Version to publish (e.g. 1.1.0) — must match coordinates() in core/free build.gradle.kts.'
         required: true
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
             exit 1
           fi
 
-      - name: Publish core + free + aliases + Marine voice to Maven Central
+      - name: Publish core + free + aliases to Maven Central
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
@@ -45,7 +45,8 @@ jobs:
           chmod +x ./gradlew
           ./gradlew :core:publishToMavenCentral :free:publishToMavenCentral \
             :tts-ai-android:publishToMavenCentral :tts-android-ai:publishToMavenCentral \
-            :kokoro-french-voice-female:publishToMavenCentral \
-            :kokoro-female-french-voice:publishToMavenCentral \
-            :kokoro-french-voice-marine:publishToMavenCentral \
             --no-configuration-cache --no-daemon
+          # kokoro-french-voice-female / kokoro-female-french-voice / kokoro-french-voice-marine
+          # were a ONE-TIME publish (fixed version 1.0.0, already live on Maven Central) —
+          # deliberately NOT re-included here. Re-running them would resubmit an identical
+          # component and fail the whole batch deployment ("already exists").
