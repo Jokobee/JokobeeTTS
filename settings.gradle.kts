@@ -25,4 +25,9 @@ rootProject.name = "JokobeeTTS"
 // Open Core — PUBLIC repo: :core + :free (Maven Central).
 // The :pro tier lives in the PRIVATE JokobeeTTS-Private repo (composite build into here).
 // tts-ai-android / tts-android-ai: zero-code discoverability aliases for :free.
-include(":core", ":free", ":tts-ai-android", ":tts-android-ai")
+// kokoro-french-voice-female: free Marine voice, zero Android dependency (ByteArray).
+// kokoro-female-french-voice / kokoro-french-voice-marine: discoverability aliases for it.
+include(
+    ":core", ":free", ":tts-ai-android", ":tts-android-ai",
+    ":kokoro-french-voice-female", ":kokoro-female-french-voice", ":kokoro-french-voice-marine",
+)
