@@ -19,9 +19,16 @@ Kokoro-82M
 --------------------------------------------------------------------------------
 Copyright (c) hexgrad.
 Licensed under the Apache License, Version 2.0.
-Speech synthesis model (ONNX weights) + 37 official voices, both bundled in the AAR.
+Speech synthesis model (ONNX weights) + 37 of the 38 bundled voices.
 JokobeeTTS is "based on Kokoro-82M".
 Repository: https://github.com/hexgrad/kokoro
+
+--------------------------------------------------------------------------------
+Marine voice (ff_marine)
+--------------------------------------------------------------------------------
+Copyright 2026 Jokobee (jokobee.com).
+Free to use. The 38th bundled voice, trained by Jokobee on public-domain audio
+(LibriVox) -- not part of the original Kokoro-82M voice set.
 
 --------------------------------------------------------------------------------
 misaki
