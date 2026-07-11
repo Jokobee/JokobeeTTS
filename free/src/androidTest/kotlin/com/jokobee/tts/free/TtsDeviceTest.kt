@@ -95,4 +95,26 @@ class TtsDeviceTest {
         assertTrue("zero-config WAV (fr) too short", wav.size > 44 + 24000)
         assertTrue("zero-config WAV (en) too short", wavEn.size > 44 + 24000)
     }
+
+    /** Marine (ff_marine) must be auto-discovered exactly like the 37 original
+     * official voices — same VoiceCatalog.official(context) path, no special-casing. */
+    @Test fun marineIsWiredLikeOfficialVoicesOnDevice() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val tts = Tts.create(ctx)
+
+        assertTrue("38 voices expected (37 original + Marine), got ${tts.voices?.size}",
+            (tts.voices?.size ?: 0) >= 38)
+        assertTrue("ff_marine not in catalog", tts.voices?.contains("ff_marine") == true)
+
+        val marine = tts.voices?.get("ff_marine")
+        assertTrue("ff_marine wrong id", marine?.id == "ff_marine")
+
+        // Same call path as any other official voice — no special-casing.
+        val wav = tts.synthesizeToWav("Bonjour, je m'appelle Marine.", "fr", marine, leadMs = 500, trailMs = 200)
+        val out = File(ctx.getExternalFilesDir(null), "marine_official_catalog_device.wav")
+        out.writeBytes(wav)
+
+        Log.i(tag, "Marine (official catalog path): ${out.absolutePath} (${wav.size} octets)")
+        assertTrue("Marine WAV too short", wav.size > 44 + 24000)
+    }
 }
