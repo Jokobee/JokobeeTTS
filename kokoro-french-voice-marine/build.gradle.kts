@@ -36,7 +36,7 @@ mavenPublishing {
 
     pom {
         name.set("Kokoro French Voice — Marine (Jokobee)")
-        description.set("Marine, a free French female voice for Kokoro-82M text-to-speech. Alias for com.jokobee:kokoro-french-voice-female.")
+        description.set("Marine, a free French female voice for Kokoro-82M text-to-speech. Alias for com.jokobee:kokoro-french-voice-female. jokobee.com")
         url.set("https://github.com/Jokobee/JokobeeTTS")
         licenses {
             license {

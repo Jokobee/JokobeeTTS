@@ -32,7 +32,7 @@ mavenPublishing {
 
     pom {
         name.set("Kokoro French Voice — Marine (Free)")
-        description.set("Marine, a free French female voice for Kokoro-82M text-to-speech. Ready-to-use ByteArray, no Android Context required — works standalone with Kokoro-82M/kokoro-onnx, or with JokobeeTTS.")
+        description.set("Marine, a free French female voice for Kokoro-82M text-to-speech. Ready-to-use ByteArray, no Android Context required — works standalone with Kokoro-82M/kokoro-onnx, or with JokobeeTTS. jokobee.com")
         url.set("https://github.com/Jokobee/JokobeeTTS")
         licenses {
             license {
