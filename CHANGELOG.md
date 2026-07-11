@@ -4,20 +4,31 @@ Format [Keep a Changelog](https://keepachangelog.com/), versioning [SemVer](http
 This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier has its own
 tracking (see [README](README.md#modules--tiers)).
 
-## [Unreleased]
+## [1.1.1]
 
 ### Fixed — French G2P (CharsiuG2P)
 
-Five built-in `tts.lexicon` entries (`fr`/`fr_CA`), applied automatically by
+- `"Jokobee"`: read `jɔkɔbi` (starting with the "y" glide, as in "yes") instead
+  of `dʒɔkɔbi` — checked broadly against native French "j" words (jour, jardin,
+  Jacques, Julie, Japon, etc.), all correct; this OOV-name misread was isolated
+  to the brand name. Built-in `tts.lexicon` entry (`fr`/`fr_CA`).
+
+## [1.1.0]
+
+### Added
+
+- **Marine** (`ff_marine`) — a 38th bundled official voice (free French female
+  voice), wired identically to the 37 original official voices (same
+  auto-discovery, same `VoiceCatalog` path, validated on-device).
+
+### Fixed — French G2P (CharsiuG2P)
+
+Four built-in `tts.lexicon` entries (`fr`/`fr_CA`), applied automatically by
 `Tts.create(...)` — benefits Free and Pro (Pro reuses the same `Tts.create`):
 
 - `"vraiment"`: missing its final nasal vowel (`vʁɛm` instead of `vʁɛmɑ̃`).
 - `"ai"` (verb *avoir*, 1st person): read as a diphthong (`aj`) instead of `ɛ`,
   breaking common contractions like `"j'ai"`/`"n'ai"` (`ʒaj` instead of `ʒɛ`).
-- `"Jokobee"`: read `jɔkɔbi` (starting with the "y" glide, as in "yes") instead
-  of `dʒɔkɔbi` — checked broadly against native French "j" words (jour, jardin,
-  Jacques, Julie, Japon, etc.), all correct; this OOV-name misread was isolated
-  to the brand name.
 - `"JokobeeTTS"` (one word, brand styling): mangled to `jɔkɔbit` (the `TTS` part
   disappears).
 - `"Android"`: read `ɑ̃dʁwa` (losing the `-oid` ending) instead of `ɑ̃dʁɔid`
