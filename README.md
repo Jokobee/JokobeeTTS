@@ -101,10 +101,11 @@ Total AAR size: **~97 MB**. That's the trade-off for "it just works" out of the 
 leaner, download-based variant may come in a future release for developers who need a
 smaller APK.
 
-**Not on Android?** [`ff_Marine.pt`](https://github.com/Jokobee/JokobeeTTS/releases/tag/v1.1.0)
-(release asset) is the same French voice (Marine) in the raw Kokoro-82M format — drop it
-into any `kokoro-onnx` / Kokoro-82M project directly, no SDK required. Also available as a
-standalone Maven artifact: `com.jokobee:kokoro-french-voice-female`.
+**Using Kokoro-82M / `kokoro-onnx` directly instead of the JokobeeTTS SDK?**
+[`ff_Marine.pt`](https://github.com/Jokobee/JokobeeTTS/releases/tag/v1.1.0) (release asset)
+is the same French voice (Marine), in the raw Kokoro-82M format — works on Android, iOS,
+desktop, server, anywhere Kokoro-82M runs. Also available as a standalone Maven artifact:
+`com.jokobee:kokoro-french-voice-female`.
 
 ## Roadmap
 

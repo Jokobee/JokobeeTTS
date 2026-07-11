@@ -2,7 +2,8 @@
 
 `ff_marine.pt` is the same **Marine** voice bundled in the AAR (`ff_marine.bin`,
 see `VOICES-GUIDE.md`), in the raw PyTorch tensor format `(510, 256)` used
-directly by Kokoro-82M / `kokoro-onnx` — no Android SDK required.
+directly by Kokoro-82M / `kokoro-onnx` — no JokobeeTTS SDK required. Works on
+any platform Kokoro-82M runs on (Android, iOS, desktop, server).
 
 ```python
 import torch
