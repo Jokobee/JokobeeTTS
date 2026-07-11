@@ -107,6 +107,13 @@ is the same French voice (Marine), in the raw Kokoro-82M format — works on And
 desktop, server, anywhere Kokoro-82M runs. Also available as a standalone Maven artifact:
 `com.jokobee:kokoro-french-voice-female`.
 
+Note: `.pt` is a PyTorch container (523,894 bytes, includes tensor metadata) — **not**
+directly usable with `Voice.of(id, lang, bytes)`, which expects the flat `.bin` format
+(exactly 522,240 bytes, no header). Passing `.pt` bytes raw throws a clear
+`"invalid size"` error. Convert first — `MarineVoice.bin` (same Maven artifact) is
+already in the right format, or extract it yourself in a few lines of Python
+(`torch.load(...).numpy().astype('<f4').tobytes()`).
+
 ## Roadmap
 
 - Leaner, download-based AAR variant for developers who need a smaller APK footprint.
