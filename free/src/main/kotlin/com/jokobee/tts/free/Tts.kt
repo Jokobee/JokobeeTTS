@@ -169,9 +169,29 @@ public class Tts(
                 context, fallback = g2p, british = true,
                 dictionary = adapters.dictionary, accent = adapters.accent,
             )
-            return Frontend(g2p, enG2p = { text, lang ->
+            val frontend = Frontend(g2p, enG2p = { text, lang ->
                 (if (lang == "en_GB") enGb else en).phonemize(text)
             }, adapters = adapters, loanwords = LoanwordsLexicon.fromAssets(context))
+            // Correctif CharsiuG2P (2026-07-10) : "vraiment" perd sa terminaison nasale
+            // ("vʁɛm" au lieu de "vʁɛmɑ̃"), seul mot en -ment observé avec ce défaut.
+            frontend.lexicon.add("vraiment", "vʁɛmɑ̃", "fr")
+            frontend.lexicon.add("vraiment", "vʁɛmɑ̃", "fr_CA")
+            // Correctif CharsiuG2P (2026-07-10) : "ai" (verbe avoir, 1re pers.) lu
+            // comme une diphtongue "aj" au lieu de "ɛ" -- casse "j'ai"/"n'ai".
+            frontend.lexicon.add("ai", "ɛ", "fr")
+            frontend.lexicon.add("ai", "ɛ", "fr_CA")
+            // Correctif CharsiuG2P (2026-07-11) : "JokobeeTTS" (marque, un seul
+            // mot) massacre par le G2P. Piege en plus : le rendu de secours
+            // ("Jokobee TTS" avec espace) commence par "j" IPA = le son "y"
+            // (yes), pas le "J" de la marque -- donnait "Yokobee". Corrige en
+            // "dʒ" (comme "Jokobee" a l'anglaise).
+            frontend.lexicon.add("JokobeeTTS", "dʒɔkɔbitetɛs", "fr")
+            frontend.lexicon.add("JokobeeTTS", "dʒɔkɔbitetɛs", "fr_CA")
+            // Correctif CharsiuG2P (2026-07-11) : "Android" lu "ɑ̃dʁwa" (perd
+            // le "-oid") au lieu de "ɑ̃dʁɔid" (comme "androïde").
+            frontend.lexicon.add("Android", "ɑ̃dʁɔid", "fr")
+            frontend.lexicon.add("Android", "ɑ̃dʁɔid", "fr_CA")
+            return frontend
         }
 
         /** Ready-to-use TTS pipeline, model loaded from an external file (e.g. Pro's own download path). */

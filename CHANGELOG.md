@@ -4,6 +4,24 @@ Format [Keep a Changelog](https://keepachangelog.com/), versioning [SemVer](http
 This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier has its own
 tracking (see [README](README.md#modules--tiers)).
 
+## [Unreleased]
+
+### Fixed — French G2P (CharsiuG2P)
+
+Four built-in `tts.lexicon` entries (`fr`/`fr_CA`), applied automatically by
+`Tts.create(...)` — benefits Free and Pro (Pro reuses the same `Tts.create`):
+
+- `"vraiment"`: missing its final nasal vowel (`vʁɛm` instead of `vʁɛmɑ̃`).
+- `"ai"` (verb *avoir*, 1st person): read as a diphthong (`aj`) instead of `ɛ`,
+  breaking common contractions like `"j'ai"`/`"n'ai"` (`ʒaj` instead of `ʒɛ`).
+- `"JokobeeTTS"` (one word, brand styling): mangled to `jɔkɔbit` (the `TTS` part
+  disappears).
+- `"Android"`: read `ɑ̃dʁwa` (losing the `-oid` ending) instead of `ɑ̃dʁɔid`
+  (as in *androïde*).
+
+See `PRONUNCIATION-GUIDE.md` (Pro repo) for the diagnostic method — you can patch
+similar cases yourself via `tts.lexicon`, no SDK update needed.
+
 ## [1.0.0] — 2026-07-09
 
 > **v1.0.0**: complete TTS engine, validated on-device (Pixel 7 Pro), shipped as a single
