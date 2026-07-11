@@ -102,7 +102,7 @@ leaner, download-based variant may come in a future release for developers who n
 smaller APK.
 
 **Using Kokoro-82M / `kokoro-onnx` directly instead of the JokobeeTTS SDK?**
-[`ff_Marine.pt`](https://github.com/Jokobee/JokobeeTTS/releases/tag/v1.1.0) (release asset)
+[`ff_Marine.pt`](https://github.com/Jokobee/JokobeeTTS/releases/latest) (release asset)
 is the same French voice (Marine), in the raw Kokoro-82M format — works on Android, iOS,
 desktop, server, anywhere Kokoro-82M runs. Also available as a standalone Maven artifact:
 `com.jokobee:kokoro-french-voice-female`.
