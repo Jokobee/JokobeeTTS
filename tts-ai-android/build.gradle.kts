@@ -36,7 +36,7 @@ mavenPublishing {
 
     pom {
         name.set("TTS AI Android (JokobeeTTS)")
-        description.set("On-device multilingual AI text-to-speech engine for Android, based on Kokoro-82M. Alias for com.jokobee:jokobeetts.")
+        description.set("On-device multilingual AI text-to-speech engine for Android, based on Kokoro-82M. Alias for com.jokobee:jokobeetts. jokobee.com")
         url.set("https://github.com/Jokobee/JokobeeTTS")
         licenses {
             license {

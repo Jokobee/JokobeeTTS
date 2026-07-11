@@ -36,7 +36,7 @@ mavenPublishing {
 
     pom {
         name.set("JokobeeTTS Core")
-        description.set("Contracts, exceptions, LangRouter, TextSplitter and Voice model shared by JokobeeTTS.")
+        description.set("Contracts, exceptions, LangRouter, TextSplitter and Voice model shared by JokobeeTTS. jokobee.com")
         url.set("https://github.com/Jokobee/JokobeeTTS")
         licenses {
             license {
