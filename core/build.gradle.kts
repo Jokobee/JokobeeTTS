@@ -28,7 +28,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("com.jokobee", "jokobeetts-core", "1.0.0")
+    coordinates("com.jokobee", "jokobeetts-core", "1.1.0")
     if (providers.gradleProperty("signingInMemoryKey").isPresent) {
         signAllPublications()
         publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
