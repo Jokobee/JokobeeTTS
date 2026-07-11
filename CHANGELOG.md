@@ -8,12 +8,16 @@ tracking (see [README](README.md#modules--tiers)).
 
 ### Fixed — French G2P (CharsiuG2P)
 
-Four built-in `tts.lexicon` entries (`fr`/`fr_CA`), applied automatically by
+Five built-in `tts.lexicon` entries (`fr`/`fr_CA`), applied automatically by
 `Tts.create(...)` — benefits Free and Pro (Pro reuses the same `Tts.create`):
 
 - `"vraiment"`: missing its final nasal vowel (`vʁɛm` instead of `vʁɛmɑ̃`).
 - `"ai"` (verb *avoir*, 1st person): read as a diphthong (`aj`) instead of `ɛ`,
   breaking common contractions like `"j'ai"`/`"n'ai"` (`ʒaj` instead of `ʒɛ`).
+- `"Jokobee"`: read `jɔkɔbi` (starting with the "y" glide, as in "yes") instead
+  of `dʒɔkɔbi` — checked broadly against native French "j" words (jour, jardin,
+  Jacques, Julie, Japon, etc.), all correct; this OOV-name misread was isolated
+  to the brand name.
 - `"JokobeeTTS"` (one word, brand styling): mangled to `jɔkɔbit` (the `TTS` part
   disappears).
 - `"Android"`: read `ɑ̃dʁwa` (losing the `-oid` ending) instead of `ɑ̃dʁɔid`

@@ -191,6 +191,11 @@ public class Tts(
             // le "-oid") au lieu de "ɑ̃dʁɔid" (comme "androïde").
             frontend.lexicon.add("Android", "ɑ̃dʁɔid", "fr")
             frontend.lexicon.add("Android", "ɑ̃dʁɔid", "fr_CA")
+            // Correctif CharsiuG2P (2026-07-11) : "Jokobee" seul (pas
+            // seulement "JokobeeTTS") a le meme bug -- lu "jɔkɔbi" ("y",
+            // comme "yes") au lieu de "dʒɔkɔbi" (le "J" anglais de la marque).
+            frontend.lexicon.add("Jokobee", "dʒɔkɔbi", "fr")
+            frontend.lexicon.add("Jokobee", "dʒɔkɔbi", "fr_CA")
             return frontend
         }
 
