@@ -53,7 +53,7 @@ mavenPublishing {
 
     pom {
         name.set("JokobeeTTS")
-        description.set("On-device multilingual text-to-speech engine for Android, based on Kokoro-82M — normalization, G2P and 38 official voices across 6 languages. jokobee.com")
+        description.set("JokobeeTTS — on-device multilingual TTS (text-to-speech) engine for Android, based on Kokoro-82M. Text normalization, G2P and 38 official voices across 6 languages, zero setup: model + voices bundled in the AAR, no download, no network. jokobee.com")
         url.set("https://github.com/Jokobee/JokobeeTTS")
         licenses {
             license {
