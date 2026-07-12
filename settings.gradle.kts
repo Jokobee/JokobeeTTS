@@ -28,6 +28,6 @@ rootProject.name = "JokobeeTTS"
 // kokoro-french-voice-female: free Marine voice, zero Android dependency (ByteArray).
 // kokoro-female-french-voice / kokoro-french-voice-marine: discoverability aliases for it.
 include(
-    ":core", ":free", ":tts-ai-android", ":tts-android-ai",
+    ":core", ":free", ":tts-ai-android", ":tts-android-ai", ":tts-android",
     ":kokoro-french-voice-female", ":kokoro-female-french-voice", ":kokoro-french-voice-marine",
 )

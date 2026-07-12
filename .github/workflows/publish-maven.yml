@@ -6,6 +6,10 @@ on:
       version:
         description: 'Version to publish (e.g. 1.1.0) — must match coordinates() in core/free build.gradle.kts.'
         required: true
+      alias_only:
+        description: 'Publish ONLY the tts-android discoverability alias (skip core/free/tts-ai-android/tts-android-ai, already published at this version)'
+        required: false
+        default: 'false'
 
 jobs:
   publish:
@@ -27,6 +31,7 @@ jobs:
 
       - name: Skip if version already on Maven Central
         id: check
+        if: github.event.inputs.alias_only != 'true'
         run: |
           VERSION="${{ github.event.inputs.version }}"
           URL="https://repo1.maven.org/maven2/com/jokobee/jokobeetts/${VERSION}/jokobeetts-${VERSION}.pom"
@@ -43,6 +48,11 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           chmod +x ./gradlew
+          if [ "${{ github.event.inputs.alias_only }}" = "true" ]; then
+            echo "alias_only mode: publishing ONLY tts-android, skipping core/free/tts-ai-android/tts-android-ai (already published at this version)."
+            ./gradlew :tts-android:publishToMavenCentral --no-configuration-cache --no-daemon
+            exit 0
+          fi
           ./gradlew :core:publishToMavenCentral :free:publishToMavenCentral \
             :tts-ai-android:publishToMavenCentral :tts-android-ai:publishToMavenCentral \
             --no-configuration-cache --no-daemon
