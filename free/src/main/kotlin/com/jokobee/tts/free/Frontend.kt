@@ -32,9 +32,77 @@ public class Frontend(
         val pre = adapters.normalization.apply(text, lang, adapters.accent.current?.id)
         val normalized = Normalizers.forLang(lang, verbalizer).normalize(pre)
         if ((lang == "en_US" || lang == "en_GB") && enG2p != null) {
-            return enG2p.invoke(normalized, lang)   // English G2P (us/gb depending on lang), no PhonemePost
+            return englishPhonemes(normalized, lang, enG2p)
         }
         return pipeline.phonemizeAnnotations(mergeMultiWord(annotate(normalized, lang), lang), lang)
+    }
+
+    /**
+     * English, with the custom lexicon honoured.
+     *
+     * ## The defect this repairs
+     *
+     * The English branch returned `enG2p(text)` directly, which skips [pipeline] — and
+     * [pipeline] is where [LexiconG2p] lives. So `lexicon.add(...)` worked in French,
+     * Spanish, Italian and Portuguese, and **did nothing at all in English**, silently.
+     * Measured on device: the same sentence with and without an entry produced
+     * byte-identical audio (116 ko both times), while French moved 106 → 100 ko.
+     *
+     * Silent is the whole problem. `add()` returned normally, the audio played, and
+     * nothing anywhere said the entry had been ignored.
+     *
+     * ## Why it splits rather than routing English through [pipeline]
+     *
+     * The English G2P is a different, better path for English — misaki's lexicon and its
+     * own handling — and sending English through the generic chain would trade a real
+     * quality gain for a hook most callers never use. So the text is cut **only around
+     * the words the lexicon actually claims**, and every remaining run still goes to the
+     * English G2P whole.
+     *
+     * **When nothing matches, this returns exactly what the old code returned** — the
+     * same call, on the same string. An app that never touches the lexicon cannot hear a
+     * difference, which is the property that makes the fix safe to ship.
+     *
+     * The cost, stated rather than hidden: a claimed word cuts the sentence, so the
+     * English G2P sees two shorter runs instead of one. That is the price of overriding
+     * a word inside a sentence, and it is paid only by callers who asked for it.
+     */
+    private fun englishPhonemes(
+        text: String,
+        lang: String,
+        en: (String, String) -> String,
+    ): String {
+        val tokens = TOKEN_RE.findall(text)
+        if (tokens.none { isWord(it) && lexicon.lookup(it, lang) != null }) {
+            return en(text, lang)   // chemin inchange, octet pour octet
+        }
+
+        val out = StringBuilder()
+        val run = StringBuilder()
+
+        fun append(piece: String) {
+            if (piece.isEmpty()) return
+            if (out.isNotEmpty()) out.append(' ')
+            out.append(piece)
+        }
+
+        fun flushRun() {
+            val pending = run.toString().trim()
+            run.setLength(0)
+            if (pending.isNotEmpty()) append(en(pending, lang))
+        }
+
+        for (token in tokens) {
+            val forced = if (isWord(token)) lexicon.lookup(token, lang) else null
+            if (forced == null) {
+                run.append(token).append(' ')
+            } else {
+                flushRun()
+                append(forced)
+            }
+        }
+        flushRun()
+        return out.toString()
     }
 
     /** Word-by-word annotations */

@@ -4,6 +4,42 @@ Format [Keep a Changelog](https://keepachangelog.com/), versioning [SemVer](http
 This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier has its own
 tracking (see [README](README.md#modules--tiers)).
 
+## [Unreleased]
+
+### Fixed — the custom lexicon was ignored in English, silently
+
+- **`Frontend.toPhonemes` skipped `LexiconG2p` for `en_US` and `en_GB`.** The English
+  branch returned `enG2p(text)` directly, and that call bypasses the chain where the
+  layer-1 lexicon lives. So `Tts.lexicon.add(...)` worked in French, Spanish, Italian and
+  Portuguese and **did nothing at all in English**.
+
+  **Silent is the whole problem.** `add()` returned normally, the audio played, and
+  nothing anywhere reported that the entry had been dropped — a caller would have
+  concluded their IPA was wrong. Measured on a Pixel 8a, the same sentence with and
+  without an entry:
+
+  | | control | with entry | |
+  |---|---|---|---|
+  | French | 106 kB | **100 kB** | the entry arrives |
+  | English, before | 116 kB | **116 kB** | byte-identical — dropped |
+  | English, after | 116 kB | **113 kB** | the entry arrives |
+
+  The text is now cut **only around the words the lexicon actually claims**, and every
+  remaining run still goes to the English G2P whole — which is a better path for English
+  than the generic chain, and stays the default. When nothing matches, the call is the
+  old call on the old string: **the English control is 116 kB before and after**, which
+  is what proves no one else is affected.
+
+  The cost, stated rather than hidden: a claimed word cuts the sentence, so the English
+  G2P sees two shorter runs instead of one. Only callers who asked for an override pay it.
+
+### Changed
+
+- **`FrenchExceptions` no longer registers each word twice.** It added a capitalised copy
+  of every entry, on the belief that lookup was case-sensitive. `MapLexiconSource.key()`
+  lowercases on **both** sides, so the second call overwrote the first with the same
+  value. No behaviour change; the file and its KDoc now say what is true.
+
 ## [1.2.0]
 
 ### Added — the engine can now be closed

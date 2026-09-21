@@ -30,8 +30,11 @@ package com.jokobee.tts.free
  * belong there, and it makes a wrong entry visible — an entry that does not fit its
  * group's rule is probably wrong.
  *
- * Each word is registered lowercase **and** capitalised: lookup is case-sensitive and
- * sentence-initial capitals are the common case.
+ * Write each word lowercase. `MapLexiconSource` lowercases on both sides of its key, so
+ * "Monsieur" at the start of a sentence finds the entry written "monsieur". An earlier
+ * version of this file registered every word twice, capitalised as well, on the belief
+ * that lookup was case-sensitive; reading `key()` showed it is not, and the second
+ * registration overwrote the first with the same value.
  *
  * ⚠️ **Context-dependent words are deliberately absent.** "plus" is `/ply/` or `/plys/`
  * depending on meaning, "tous" is `/tu/` or `/tus/` depending on whether it is an
@@ -147,10 +150,8 @@ internal object FrenchExceptions {
     fun installInto(frontend: Frontend) {
         for (group in GROUPS) {
             for ((word, ipa) in group.words) {
-                val capitalised = word.replaceFirstChar { it.uppercase() }
                 for (lang in listOf("fr", "fr_CA")) {
                     frontend.lexicon.add(word, ipa, lang)
-                    frontend.lexicon.add(capitalised, ipa, lang)
                 }
             }
         }
