@@ -22,6 +22,14 @@ tracking (see [README](README.md#modules--tiers)).
   An instance is unusable after `close()`: a further call reaches a closed session and
   raises. That is deliberate — the alternative is synthesising against freed memory.
 
+### Added — a caller can name the voice it is about to get
+
+- **`Tts.defaultVoiceFor(lang)` is public.** It was private, so the zero-config path
+  produced audio without telling anyone which voice made it: a caller could only log
+  `null`, could not reproduce a rendering, and could not show the user what it picked.
+  Asking the engine rather than re-deriving the rule caller-side keeps one source of
+  truth.
+
 ### Fixed — the default voice now follows what is installed
 
 - **`Tts` no longer demands a voice that was removed from the APK.** The zero-config
@@ -38,8 +46,20 @@ tracking (see [README](README.md#modules--tiers)).
   installed voice at all still raises `UnsupportedLanguageException`, which is the
   honest answer.
 
-- **`fm` (French male) was missing from the voice-id prefix table**, so `fm_*.bin` files
-  dropped into the `voices` assets were skipped in silence.
+### Added — a French exception dictionary
+
+- **`FrenchExceptions`** — words whose spelling does not predict their pronunciation:
+  the `-emment` adverbs (`/amɑ̃/`, not `/emɑ̃/`), silent letters (`automne`, `condamner`,
+  `baptême`, `sculpteur`), `-ill-` read `/il/` (`ville`, `mille`, `tranquille`), the
+  outright contradictions (`monsieur` `/məsjø/`, `femme` `/fam/`, `second` `/səɡɔ̃/`),
+  and the loanwords a French-rule G2P mangles (`week-end`, `yacht`, `clown`, `bluetooth`).
+
+  Grouped **by rule** rather than alphabetically: a group says which other words belong
+  in it, and an entry that does not fit its rule is probably wrong.
+
+  Context-dependent words are deliberately absent. `plus`, `tous` and `fils` each have
+  two pronunciations that depend on meaning; a single entry would fix half the cases and
+  break the other half, turning an occasional error into a systematic one.
 
 ## [1.1.1]
 

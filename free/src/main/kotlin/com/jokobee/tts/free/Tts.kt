@@ -81,8 +81,18 @@ public class Tts(
     // Short-form alias accepted by the zero-config API ("en" -> "en_US"); every other lang is unchanged.
     private fun resolveLangAlias(lang: String): String = if (lang == "en") "en_US" else lang
 
-    // Looks up the default official voice for a language in the bundled catalog (zero-config API only).
-    private fun defaultVoiceFor(lang: String): Voice {
+    /**
+     * The voice this engine would use for [lang] when none is passed.
+     *
+     * Public so a caller can **name the voice it is about to get**. It used to be
+     * private, so the zero-config path produced audio without telling anyone which voice
+     * made it: a caller could log `null`, could not reproduce a rendering, and could not
+     * show the user a choice. Asking here rather than re-deriving the rule on the caller
+     * side keeps one source of truth.
+     *
+     * @throws UnsupportedLanguageException when no installed voice speaks [lang].
+     */
+    public fun defaultVoiceFor(lang: String): Voice {
         val catalog = voices ?: throw IllegalStateException(
             "No default voice available: this Tts instance has no bundled voice catalog " +
                 "(use Tts.create(context) for the zero-config API, or pass a Voice explicitly).",
@@ -231,6 +241,11 @@ public class Tts(
             // comme "yes") au lieu de "dʒɔkɔbi" (le "J" anglais de la marque).
             frontend.lexicon.add("Jokobee", "dʒɔkɔbi", "fr")
             frontend.lexicon.add("Jokobee", "dʒɔkɔbi", "fr_CA")
+
+            // Le dictionnaire d'exceptions francaises du tier gratuit, groupe par
+            // regle. Voir FrenchExceptions — sorti d'ici parce qu'une liste qui grandit
+            // n'a pas sa place au milieu d'une fabrique.
+            FrenchExceptions.installInto(frontend)
             return frontend
         }
 

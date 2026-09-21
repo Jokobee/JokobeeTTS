@@ -35,7 +35,7 @@ public open class VoiceCatalog {
         // not bundled since normalization/G2P for those languages isn't implemented here).
         private val PREFIX_TO_LANG: Map<String, String> = mapOf(
             "af" to "en_US", "am" to "en_US", "bf" to "en_GB", "bm" to "en_GB",
-            "ef" to "es", "em" to "es", "ff" to "fr", "fm" to "fr", "if" to "it", "im" to "it",
+            "ef" to "es", "em" to "es", "ff" to "fr", "if" to "it", "im" to "it",
             "pf" to "pt_BR", "pm" to "pt_BR",
         )
 
@@ -47,8 +47,14 @@ public open class VoiceCatalog {
                 val id = name.removeSuffix(".bin")
                 // An unknown prefix is skipped rather than guessed: a voice loaded
                 // under the wrong language would be phonemized with the wrong rules,
-                // which sounds worse than not offering it. `fm` (French male) was
-                // missing from the table, so those files were dropped here in silence.
+                // which sounds worse than not offering it.
+                //
+                // ⚠️ `fm` (French male) is absent ON PURPOSE. Those are the French Voice
+                // Pack voices, which are sold; the free tier must not load them even if
+                // the .bin files are present. They come in through the Pro tier's
+                // VoiceRegistry, which is the supported and paid path. Adding `fm` here
+                // would turn a paid pack into a free one — it was added once by mistake,
+                // read as an oversight rather than as the gate it is.
                 val lang = PREFIX_TO_LANG[id.substringBefore('_')] ?: continue
                 val bytes = context.assets.open("voices/$name").use { it.readBytes() }
                 catalog.add(Voice.of(id, lang, bytes))
