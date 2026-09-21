@@ -14,6 +14,15 @@ package com.jokobee.tts.free
  * minute. It is deliberately not the Pro dictionary, which corrects the loanword lexicon
  * entry by entry and carries the encrypted adapters.
  *
+ * ## Why the name is not neutral
+ *
+ * Every entry is a French word, every group is a rule of French orthography, and
+ * [installInto] registers for `fr` and `fr_CA` only — so the class says what it is, the
+ * way [FrenchNormalizer] and [SpanishNormalizer] do. A neutral name would claim a
+ * coverage this does not have. The one mechanism here that **is** cross-language,
+ * anglicisms, already has its neutral home in [LoanwordsLexicon]; what this file holds is
+ * the French reading of them, which is a per-language decision by nature.
+ *
  * ## How to add to it
  *
  * Entries are grouped **by rule**, not alphabetically, and every group says what the
@@ -100,9 +109,14 @@ internal object FrenchExceptions {
             ),
         ),
         Group(
-            "Loanwords kept in French spelling but said the source way — or halfway. " +
-                "These are the ones a statistical G2P mangles most visibly, because it " +
-                "applies French letter rules to English letters.",
+            "Anglicisms said the FRENCH way. This group deliberately overrides the " +
+                "English pronunciations in loanwords_en_ipa.tsv, which a French " +
+                "speaker does not use: \"wifi\" is /wifi/, not /ˈwaɪˌfaɪ/, and " +
+                "\"bluetooth\" ends in /s/, not /θ/ — a phoneme French has no use " +
+                "for. The override works because Frontend puts `lexicon` in layer 1, " +
+                "above the loanwords table; eight of these words are in that table " +
+                "with their English IPA. Adding a word here is therefore a decision " +
+                "about how French says it, never a gap in the English list.",
             listOf(
                 "week-end" to "wikɛnd",
                 "weekend" to "wikɛnd",
