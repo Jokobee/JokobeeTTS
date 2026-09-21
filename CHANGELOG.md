@@ -6,6 +6,44 @@ tracking (see [README](README.md#modules--tiers)).
 
 ## [Unreleased]
 
+### Fixed — English dropped out-of-vocabulary phonemes, silently
+
+- **`PhonemePost` is now applied on the English path too.** It is the safety net that
+  rewrites IPA the model does not know into IPA it does: `ɫ`→`l`, `ɝ`→`ɜɹ`, `ɚ`→`əɹ`,
+  `g`→`ɡ`, tie bars to ligatures. Without it `KokoroTokenizer.encode` simply **drops**
+  any character missing from the vocabulary — `vocab[c]?.let { … }`, no error, no log.
+
+  The English branch returned its G2P output raw, on the reasoning that misaki is already
+  in-vocabulary. That holds for misaki's *own* output and for nothing else — and this
+  branch now also splices in **caller-supplied** lexicon IPA, which is exactly the data
+  that needs the net.
+
+  Measured on a Pixel 8a, the same word given `ɫ` then `l`:
+
+  | | `ɫ` | `l` | |
+  |---|---|---|---|
+  | French | 57 644 B | 57 644 B | identical — the net was running |
+  | English, before | 73 244 B | 74 444 B | **different — the `ɫ` was dropped** |
+  | English, after | 74 444 B | 74 444 B | identical |
+
+  **Applying it regresses nothing, and that is verified rather than assumed**: the four
+  misaki lexicons contain no `ɫ`, `ɝ`, `ɚ` or Latin `g`, and **zero** entries change
+  under NFD. On misaki's own output it is a no-op.
+
+  The two G2P paths stay separate, as designed — misaki for English, CharsiuG2P plus the
+  loanword table for the Latin languages. Only the final normalisation is now shared.
+
+### Not reproduced — secondary stress does not break words
+
+- A working note claimed that the **123** entries of `loanwords_en_ipa.tsv` carrying a
+  secondary stress `ˌ` broke words. **It does not reproduce.** `ˌ` is in the model's
+  vocabulary, so nothing is dropped, and synthesising three of those entries with and
+  without it moved the audio by −5.6 %, +4.5 % and +7.9 % — ordinary prosodic variation,
+  nothing like the pause a split word would produce.
+
+  Recorded rather than quietly dropped: a suspicion that was carried for weeks and turns
+  out to be unfounded is worth the same line as one that is confirmed.
+
 ### Fixed — the custom lexicon was ignored in English, silently
 
 - **`Frontend.toPhonemes` skipped `LexiconG2p` for `en_US` and `en_GB`.** The English

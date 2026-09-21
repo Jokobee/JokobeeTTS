@@ -38,7 +38,31 @@ public class Frontend(
     }
 
     /**
-     * English, with the custom lexicon honoured.
+     * English, with the custom lexicon honoured **and [PhonemePost] applied**.
+     *
+     * ## ⚠️ The English path used to skip PhonemePost, and dropped phonemes for it
+     *
+     * [PhonemePost] is the safety net that rewrites out-of-vocabulary IPA into symbols
+     * the model knows: `ɫ`→`l`, `ɝ`→`ɜɹ`, `ɚ`→`əɹ`, `g`→`ɡ`, tie bars to ligatures.
+     * Without it, [KokoroTokenizer.encode] simply **drops** any character the vocabulary
+     * does not contain — `vocab[c]?.let { ... }`, no error, no log.
+     *
+     * The English branch returned its G2P output raw, on the reasoning that misaki is
+     * already in-vocabulary. That holds for misaki's *own* output and for nothing else —
+     * and since 2026-09-21 this branch also splices in **caller-supplied** lexicon IPA,
+     * which is exactly the data that needs the net.
+     *
+     * Measured on a Pixel 8a, the same word with `ɫ` and with `l`:
+     *
+     * | | `ɫ` | `l` | |
+     * |---|---|---|---|
+     * | French | 57 644 B | 57 644 B | identical — PhonemePost ran |
+     * | English, before | 73 244 B | 74 444 B | **different — the `ɫ` was dropped** |
+     *
+     * **Applying it here regresses nothing, and that is verified rather than assumed**:
+     * the four misaki lexicons (`us_gold`, `us_silver`, `gb_gold`, `gb_silver`) contain
+     * **no** `ɫ`, `ɝ`, `ɚ` or Latin `g`, and **zero** entries change under NFD. On
+     * misaki's own output PhonemePost is a no-op; on everything else it is the fix.
      *
      * ## The defect this repairs
      *
@@ -74,7 +98,7 @@ public class Frontend(
     ): String {
         val tokens = TOKEN_RE.findall(text)
         if (tokens.none { isWord(it) && lexicon.lookup(it, lang) != null }) {
-            return en(text, lang)   // chemin inchange, octet pour octet
+            return PhonemePost.apply(en(text, lang), lang)
         }
 
         val out = StringBuilder()
@@ -102,7 +126,7 @@ public class Frontend(
             }
         }
         flushRun()
-        return out.toString()
+        return PhonemePost.apply(out.toString(), lang)
     }
 
     /** Word-by-word annotations */
