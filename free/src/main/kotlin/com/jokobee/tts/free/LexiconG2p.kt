@@ -8,6 +8,10 @@ public class LexiconG2p(
     private val lexicon: LexiconSource,
     private val delegate: G2p,
 ) : G2p {
+
+    /** Forwards down the chain: the session that holds memory is at the bottom. */
+    override fun close(): Unit = delegate.close()
+
     override fun phonemize(word: String, lang: String): String =
         lexicon.lookup(word, lang) ?: delegate.phonemize(word, lang)
 }

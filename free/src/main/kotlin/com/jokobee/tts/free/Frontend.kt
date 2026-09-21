@@ -15,6 +15,11 @@ public class Frontend(
     /** Internal loanwords (CharsiuG2P path), automatic. */
     private val loanwords: LoanwordsLexicon = LoanwordsLexicon.EMPTY,
 ) {
+
+    /** Releases the G2P chain. Wrapped by [Tts.close]; call it if you built a Frontend
+     *  yourself. */
+    public fun close(): Unit = g2p.close()
+
     private val pipeline = PhonemePipeline(
         AccentG2p(
             adapters.accent,

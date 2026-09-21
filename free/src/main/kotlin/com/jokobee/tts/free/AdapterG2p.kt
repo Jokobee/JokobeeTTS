@@ -7,6 +7,10 @@ internal class DictionaryG2p(
     private val registry: DictionaryRegistry,
     private val delegate: G2p,
 ) : G2p {
+
+    /** Forwards down the chain. */
+    override fun close(): Unit = delegate.close()
+
     override fun phonemize(word: String, lang: String): String =
         registry.lookup(word, lang) ?: delegate.phonemize(word, lang)
 }
@@ -16,6 +20,10 @@ internal class LoanwordsG2p(
     private val loanwords: LoanwordsLexicon,
     private val delegate: G2p,
 ) : G2p {
+
+    /** Forwards down the chain. */
+    override fun close(): Unit = delegate.close()
+
     override fun phonemize(word: String, lang: String): String =
         loanwords.lookup(word, lang) ?: delegate.phonemize(word, lang)
 }
@@ -25,6 +33,10 @@ internal class AccentG2p(
     private val registry: AccentRegistry,
     private val delegate: G2p,
 ) : G2p {
+
+    /** Forwards down the chain. */
+    override fun close(): Unit = delegate.close()
+
     override fun phonemize(word: String, lang: String): String =
         registry.apply(delegate.phonemize(word, lang), word, lang)
 }

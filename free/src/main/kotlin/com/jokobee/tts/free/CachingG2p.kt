@@ -7,6 +7,10 @@ public class CachingG2p(
     private val delegate: G2p,
     private val maxEntries: Int = 5000,
 ) : G2p {
+
+    /** Forwards down the chain: the session that holds memory is at the bottom. */
+    override fun close(): Unit = delegate.close()
+
     private val cache = object : LinkedHashMap<String, String>(256, 0.75f, true) {
         override fun removeEldestEntry(eldest: Map.Entry<String, String>): Boolean = size > maxEntries
     }

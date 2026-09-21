@@ -4,6 +4,43 @@ Format [Keep a Changelog](https://keepachangelog.com/), versioning [SemVer](http
 This changelog covers the **Free tier** (`:core` + `:free`). The **Pro** tier has its own
 tracking (see [README](README.md#modules--tiers)).
 
+## [1.2.0]
+
+### Added — the engine can now be closed
+
+- **`Tts` implements `Closeable`.** `Tts.close()` releases the model session and the
+  G2P sessions. `G2p` and `Synthesizer` gained a no-op `close()`, and every wrapper in
+  the G2P chain forwards it, so closing the outermost releases the innermost.
+
+  **Why it matters.** Both hold `OrtSession`s, which hold *native* memory a garbage
+  collector does not reclaim promptly. Without a way to close, an app that opens and
+  closes speech repeatedly leaks it. Measured on a Pixel 8a, three open/speak/close
+  cycles: the native heap grew by about **350 MB per cycle** while the Java heap never
+  moved, so the leak was invisible to any Java-side profiler. With `close()`, the same
+  three cycles hold steady at **22 MB**.
+
+  An instance is unusable after `close()`: a further call reaches a closed session and
+  raises. That is deliberate — the alternative is synthesising against freed memory.
+
+### Fixed — the default voice now follows what is installed
+
+- **`Tts` no longer demands a voice that was removed from the APK.** The zero-config
+  path took its default from a fixed table, so it broke every app that trims its assets
+  — and trimming is the documented way to shrink an APK, each voice file being ~510 kB.
+
+  Measured: with `ff_siwis.bin` and `ff_marine.bin` removed, two French voices remained
+  usable in the catalog, and `synthesize(lang = "fr")` with no explicit voice still
+  demanded `ff_siwis` and threw. Passing a remaining voice explicitly worked, so only
+  the lookup was wrong.
+
+  The curated default is still preferred; it is simply checked against the catalog
+  first, with any installed voice of that language as the fallback. A language with no
+  installed voice at all still raises `UnsupportedLanguageException`, which is the
+  honest answer.
+
+- **`fm` (French male) was missing from the voice-id prefix table**, so `fm_*.bin` files
+  dropped into the `voices` assets were skipped in silence.
+
 ## [1.1.1]
 
 ### Fixed — French G2P (CharsiuG2P)

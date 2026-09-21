@@ -32,7 +32,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("com.jokobee", "tts-android", "1.1.1")
+    coordinates("com.jokobee", "tts-android", "1.2.0")
     if (providers.gradleProperty("signingInMemoryKey").isPresent) {
         signAllPublications()
         publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL, automaticRelease = false)
